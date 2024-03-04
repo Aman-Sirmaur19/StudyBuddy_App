@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "924782093651",
+    "project_id": "prepnight-94ecb",
+    "storage_bucket": "prepnight-94ecb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924782093651:android:44297ecdb6a36ad862ada6",
+        "android_client_info": {
+          "package_name": "com.example.prep_night"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJMhC804vKz3c1FwWGloK0nCtEPt6lpL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
