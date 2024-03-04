@@ -20,7 +20,8 @@ class Dialogs {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(msg, style: const TextStyle(letterSpacing: 1)),
+            Text(msg,
+                style: const TextStyle(letterSpacing: 1, color: Colors.white)),
             const Icon(Icons.check_circle, color: Colors.green),
           ],
         ),
