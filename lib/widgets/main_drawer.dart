@@ -77,19 +77,61 @@ class MainDrawer extends StatelessWidget {
           () {},
         ),
         const Spacer(),
-        ElevatedButton.icon(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all(Colors.green),
-            backgroundColor: MaterialStateProperty.all(Colors.grey[800]),
-          ),
-          icon: const GlowIcon(Icons.payments_outlined),
-          label: const GlowText('Donate'),
-          onPressed: () {},
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton.outlined(
+                    icon: const GlowIcon(Icons.payments_outlined, color: Colors.green),
+                    constraints:
+                        const BoxConstraints(minWidth: 50, minHeight: 50),
+                    onPressed: () {},
+                  ),
+                ),
+                const Text('Donate Now!'),
+                const Text(''),
+              ],
+            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton.outlined(
+                    icon: const GlowIcon(Icons.share, color: Colors.lightBlue),
+                    constraints:
+                        const BoxConstraints(minWidth: 50, minHeight: 50),
+                    onPressed: () {},
+                  ),
+                ),
+                const Text('Share with your'),
+                const Text('friends!'),
+              ],
+            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton.outlined(
+                    icon: const GlowIcon(Icons.star_rate_outlined, color: Colors.redAccent),
+                    iconSize: 30,
+                    constraints:
+                        const BoxConstraints(minWidth: 50, minHeight: 50),
+                    onPressed: () {},
+                  ),
+                ),
+                const Text('Rate us!'),
+                const Text(''),
+              ],
+            ),
+          ],
         ),
         const Spacer(),
         Padding(
           padding: EdgeInsets.only(bottom: mq.height * .02),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.copyright_rounded),
