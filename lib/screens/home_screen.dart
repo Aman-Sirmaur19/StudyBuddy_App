@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:prep_night/screens/pdf_viewer_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../api/apis.dart';
@@ -25,6 +26,31 @@ class _HomeScreenState extends State<HomeScreen> {
   FilePickerResult? _pickedFile;
   String? _name;
   bool _isPicked = false;
+
+  List<Map<String, dynamic>> pdfData = [];
+
+  // for accessing files
+  void getAllPdfs() async {
+    final results = await APIs.firestore.collection('PDFs').get();
+    pdfData = results.docs.map((e) => e.data()).toList();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAllPdfs();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getAllPdfs();
+  }
+
+  Future<void> _refresh() async {
+    didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,60 +90,90 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      body: _isPicked
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Image.asset('assets/images/pdf.png',
-                      width: mq.width * .5),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    '$_name',
-                    style: const TextStyle(fontSize: 15),
+      body: RefreshIndicator(
+        onRefresh: () => _refresh(),
+        child: _isPicked
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Do you want to upload ?',
+                    style: TextStyle(fontSize: 25),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: ElevatedButton(
-                        child: const Text('Yes'),
-                        onPressed: () async {
-                          APIs.pickFile(_pickedFile);
-                          Dialogs.showUpdateSnackBar(
-                              context, 'PDF Uploaded Successfully!');
-                          setState(() {
-                            _isPicked = false;
-                            _pickedFile = null;
-                          });
-                        },
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Image.asset('assets/images/pdf.png',
+                        width: mq.width * .45),
+                  ),
+                  Text(_name!),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          child: const Text('Yes'),
+                          onPressed: () {
+                            setState(() {
+                              APIs.pickFile(context, _pickedFile);
+                              _pickedFile = null;
+                              _isPicked = false;
+                            });
+                          },
+                        ),
+                        ElevatedButton(
+                          child: const Text('No'),
+                          onPressed: () {
+                            setState(() {
+                              _pickedFile = null;
+                              _isPicked = false;
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: ElevatedButton(
-                        child: const Text('No'),
-                        onPressed: () {
-                          setState(() {
-                            _pickedFile = null;
-                            _isPicked = false;
-                          });
-                        },
-                      ),
+                  ),
+                ],
+              )
+            : pdfData.isEmpty
+                ? Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(mq.width * .25),
+                      child: Image.asset('assets/images/study.jpg',
+                          width: mq.width * .7),
                     ),
-                  ],
-                ),
-              ],
-            )
-          : Center(
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(mq.width * .25),
-                  child: Image.asset('assets/images/study.jpg',
-                      width: mq.width * .7))),
+                  )
+                : GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                    ),
+                    itemCount: pdfData.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PdfViewerScreen(
+                                      pdfName: pdfData[index]['name'],
+                                      pdfUrl: pdfData[index]['url'],
+                                    )));
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/images/pdf.png',
+                                  width: mq.width * .35),
+                              Text(pdfData[index]['name'], maxLines: 1),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+      ),
     );
   }
 
@@ -144,8 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     await FirebaseAuth.instance.signOut().then((value) {
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => AuthScreen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const AuthScreen()));
                     });
                   },
                 ),

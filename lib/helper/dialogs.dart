@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Dialogs {
-  static void showSnackBar(BuildContext context, String msg) {
+  static void showErrorSnackBar(BuildContext context, String msg) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -13,11 +13,12 @@ class Dialogs {
     );
   }
 
-  static void showUpdateSnackBar(BuildContext context, String msg) {
+  static void showSnackBar(BuildContext context, String msg) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(msg,
