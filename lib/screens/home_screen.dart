@@ -33,8 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // for accessing files
   void getAllPdfs() async {
-    final results = await APIs.firestore.collection('PDFs').get();
-    pdfData = results.docs.map((e) => e.data()).toList();
+    final results = await APIs.storage.ref('PDFs').listAll();
+    pdfData = results.items
+        .where((item) => item.name.endsWith('.pdf'))
+        .map((item) => {
+              'name': item.name,
+              'url': item.fullPath,
+            })
+        .toList();
     setState(() {});
   }
 
@@ -44,15 +50,17 @@ class _HomeScreenState extends State<HomeScreen> {
     getAllPdfs();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    getAllPdfs();
-    log(pdfData.length.toString());
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   getAllPdfs();
+  //   log(pdfData.length.toString());
+  // }
 
   Future<void> _refresh() async {
-    didChangeDependencies();
+    // didChangeDependencies();
+    getAllPdfs();
+    log(pdfData.length.toString());
   }
 
   @override
@@ -96,86 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator(
         onRefresh: () => _refresh(),
         child: _isPicked
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Do you want to upload ?',
-                    style: TextStyle(fontSize: 25),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Image.asset('assets/images/pdf.png',
-                        width: mq.width * .45),
-                  ),
-                  Text(_name!),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          child: const Text('Yes'),
-                          onPressed: () {
-                            setState(() {
-                              APIs.pickFile(context, _pickedFile);
-                              _pickedFile = null;
-                              _isPicked = false;
-                            });
-                          },
-                        ),
-                        ElevatedButton(
-                          child: const Text('No'),
-                          onPressed: () {
-                            setState(() {
-                              _pickedFile = null;
-                              _isPicked = false;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
+            ? _pdfIsPicked()
             : pdfData.isEmpty
-                ? Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(mq.width * .25),
-                      child: Image.asset('assets/images/study.jpg',
-                          width: mq.width * .7),
-                    ),
-                  )
-                : GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemCount: pdfData.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => PdfViewerScreen(
-                                      pdfName: pdfData[index]['name'],
-                                      pdfUrl: pdfData[index]['url'],
-                                    )));
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/images/pdf.png',
-                                  width: mq.width * .35),
-                              Text(pdfData[index]['name'], maxLines: 1),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                ? _pdfDataIsEmpty()
+                : _pdfDataIsNotEmpty(),
       ),
     );
   }
@@ -218,4 +150,112 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         });
   }
+
+  Widget _pdfIsPicked() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Do you want to upload ?',
+          style: TextStyle(fontSize: 25),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Image.asset('assets/images/pdf.png', width: mq.width * .45),
+        ),
+        Text(_name!),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                child: const Text('Yes'),
+                onPressed: () {
+                  setState(() {
+                    APIs.pickFile(context, _pickedFile);
+                    _pickedFile = null;
+                    _isPicked = false;
+                  });
+                },
+              ),
+              ElevatedButton(
+                child: const Text('No'),
+                onPressed: () {
+                  setState(() {
+                    _pickedFile = null;
+                    _isPicked = false;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _pdfDataIsEmpty() {
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(mq.width * .25),
+        child: Image.asset('assets/images/study.jpg', width: mq.width * .7),
+      ),
+    );
+  }
+
+  Widget _pdfDataIsNotEmpty() {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+      ),
+      itemCount: pdfData.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => PdfViewerScreen(
+                        pdfName: pdfData[index]['name'],
+                        pdfUrl: pdfData[index]['url'],
+                      )));
+            },
+            child: Column(
+              children: [
+                Image.asset('assets/images/pdf.png', width: mq.width * .35),
+                Text(pdfData[index]['name'], maxLines: 1),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
+
+// // for accessing files
+// void getAllPdfs() async {
+//   final results = await APIs.firestore.collection('PDFs').get();
+//   pdfData = results.docs.map((e) => e.data()).toList();
+//   setState(() {});
+// }
+//
+// @override
+// void initState() {
+//   super.initState();
+//   getAllPdfs();
+// }
+//
+// @override
+// void didChangeDependencies() {
+//   super.didChangeDependencies();
+//   getAllPdfs();
+//   log(pdfData.length.toString());
+// }
+//
+// Future<void> _refresh() async {
+//   didChangeDependencies();
+// }

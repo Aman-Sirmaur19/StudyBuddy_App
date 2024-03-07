@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_pdf_viewer/easy_pdf_viewer.dart';
 
+import '../api/apis.dart';
+
 class PdfViewerScreen extends StatefulWidget {
   final String pdfName, pdfUrl;
 
@@ -15,7 +17,9 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   PDFDocument? document;
 
   void initialisePdf() async {
-    document = await PDFDocument.fromURL(widget.pdfUrl);
+    final imageUrl =
+        await APIs.storage.ref().child(widget.pdfUrl).getDownloadURL();
+    document = await PDFDocument.fromURL(imageUrl);
     setState(() {});
   }
 
