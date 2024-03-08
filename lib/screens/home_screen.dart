@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:prep_night/screens/pdf_viewer_screen.dart';
-import 'package:provider/provider.dart';
+import 'package:prep_night/screens/upload_pdf_screen.dart';
 
 import '../api/apis.dart';
 import '../main.dart';
 import '../helper/dialogs.dart';
-import '../providers/my_themes.dart';
 import '../widgets/main_drawer.dart';
 
 import './auth_screen.dart';
@@ -25,9 +24,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final user = FirebaseAuth.instance.currentUser;
-  FilePickerResult? _pickedFile;
-  String? _name;
-  bool _isPicked = false;
 
   List<Map<String, dynamic>> pdfData = [];
 
@@ -50,13 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     getAllPdfs();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   getAllPdfs();
-  //   log(pdfData.length.toString());
-  // }
-
   Future<void> _refresh() async {
     // didChangeDependencies();
     getAllPdfs();
@@ -65,15 +54,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
-        leading: GlowIcon(
-          CupertinoIcons.home,
-          color:
-              themeProvider.isDarkMode ? Colors.lightGreenAccent : Colors.green,
-        ),
+        // leading: GlowIcon(
+        //   CupertinoIcons.home,
+        //   color:
+        //       themeProvider.isDarkMode ? Colors.lightGreenAccent : Colors.green,
+        // ),
         title: const Text('PrepNight'),
         centerTitle: true,
         actions: [
@@ -93,21 +80,22 @@ class _HomeScreenState extends State<HomeScreen> {
             allowCompression: true,
           );
           if (pickedFile != null) {
-            setState(() {
-              _pickedFile = pickedFile;
-              _name = pickedFile.files[0].name;
-              _isPicked = true;
-            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => UploadPdfScreen(
+                  pickedFile: pickedFile,
+                  name: pickedFile.files[0].name,
+                  path: pickedFile.files[0].path!,
+                ),
+              ),
+            );
           }
         },
       ),
       body: RefreshIndicator(
         onRefresh: () => _refresh(),
-        child: _isPicked
-            ? _pdfIsPicked()
-            : pdfData.isEmpty
-                ? _pdfDataIsEmpty()
-                : _pdfDataIsNotEmpty(),
+        child: pdfData.isEmpty ? _pdfDataIsEmpty() : _pdfDataIsNotEmpty(),
       ),
     );
   }
@@ -149,50 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         });
-  }
-
-  Widget _pdfIsPicked() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'Do you want to upload ?',
-          style: TextStyle(fontSize: 25),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Image.asset('assets/images/pdf.png', width: mq.width * .45),
-        ),
-        Text(_name!),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                child: const Text('Yes'),
-                onPressed: () {
-                  setState(() {
-                    APIs.pickFile(context, _pickedFile);
-                    _pickedFile = null;
-                    _isPicked = false;
-                  });
-                },
-              ),
-              ElevatedButton(
-                child: const Text('No'),
-                onPressed: () {
-                  setState(() {
-                    _pickedFile = null;
-                    _isPicked = false;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _pdfDataIsEmpty() {

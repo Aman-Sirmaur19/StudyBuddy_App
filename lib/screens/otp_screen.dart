@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/my_themes.dart';
 import 'home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -23,6 +25,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('OTP Screen'),
@@ -31,11 +35,11 @@ class _OTPScreenState extends State<OTPScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Enter OTP',
             style: TextStyle(
               fontSize: 30,
-              color: Colors.black54,
+              color: themeProvider.isDarkMode ? Colors.white : Colors.black54,
               fontWeight: FontWeight.bold,
             ),
           ),
