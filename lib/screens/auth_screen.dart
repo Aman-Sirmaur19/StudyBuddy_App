@@ -27,6 +27,7 @@ class _AuthScreenState extends State<AuthScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: TextField(
+              textAlign: TextAlign.center,
               controller: phoneController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
+import 'package:prep_night/api/apis.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/my_themes.dart';
@@ -46,6 +47,7 @@ class _OTPScreenState extends State<OTPScreen> {
           Padding(
             padding: const EdgeInsets.all(25),
             child: Pinput(
+              keyboardType: TextInputType.number,
               length: 6,
               onChanged: (value) {
                 setState(() {
@@ -56,7 +58,7 @@ class _OTPScreenState extends State<OTPScreen> {
           ),
           const SizedBox(height: 30),
           ElevatedButton(
-            child: Text('Verify OTP'),
+            child: const Text('Verify OTP'),
             onPressed: () async {
               try {
                 PhoneAuthCredential credential =
@@ -64,11 +66,16 @@ class _OTPScreenState extends State<OTPScreen> {
                   verificationId: widget.verificationId,
                   smsCode: otp,
                 );
-                FirebaseAuth.instance
-                    .signInWithCredential(credential)
-                    .then((value) {
-                  Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                APIs.auth.signInWithCredential(credential).then((value) async {
+                  if ((await APIs.userExists())) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => HomeScreen()));
+                  } else {
+                    await APIs.createUser().then((value) {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (_) => HomeScreen()));
+                    });
+                  }
                 });
               } catch (exception) {
                 log(exception.toString());

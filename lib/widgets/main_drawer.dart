@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:provider/provider.dart';
 
+import '../api/apis.dart';
 import '../main.dart';
 import '../providers/my_themes.dart';
 import './change_theme_button.dart';
@@ -22,6 +23,7 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final name = APIs.user.displayName;
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Drawer(
         child: Column(
@@ -35,9 +37,11 @@ class MainDrawer extends StatelessWidget {
               Padding(
                 padding:
                     EdgeInsets.only(top: mq.height * .01, left: mq.width * .05),
-                child: const Text(
-                  'Let\'s Study!',
-                  style: TextStyle(
+                child: Text(
+                  name == null
+                      ? 'Let\'s Study!'
+                      : 'Hi ${name.split(' ').first}!',
+                  style: const TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 30,
                       color: Colors.yellow),
@@ -62,9 +66,9 @@ class MainDrawer extends StatelessWidget {
           ),
           title: Text(
             themeProvider.isDarkMode ? 'Light Mode' : 'Dark Mode',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          trailing: ChangeThemeButton(),
+          trailing: const ChangeThemeButton(),
         ),
         buildListTile(
           'About',
@@ -85,7 +89,8 @@ class MainDrawer extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton.outlined(
-                    icon: const GlowIcon(Icons.payments_outlined, color: Colors.green),
+                    icon: const GlowIcon(Icons.payments_outlined,
+                        color: Colors.green),
                     constraints:
                         const BoxConstraints(minWidth: 50, minHeight: 50),
                     onPressed: () {},
@@ -115,7 +120,8 @@ class MainDrawer extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton.outlined(
-                    icon: const GlowIcon(Icons.star_rate_outlined, color: Colors.redAccent),
+                    icon: const GlowIcon(Icons.star_rate_outlined,
+                        color: Colors.redAccent),
                     iconSize: 30,
                     constraints:
                         const BoxConstraints(minWidth: 50, minHeight: 50),

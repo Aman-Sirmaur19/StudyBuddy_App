@@ -1,12 +1,9 @@
 import 'dart:developer';
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_glow/flutter_glow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:prep_night/screens/pdf_viewer_screen.dart';
-import 'package:prep_night/screens/upload_pdf_screen.dart';
+import 'package:flutter_glow/flutter_glow.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../api/apis.dart';
 import '../main.dart';
@@ -14,6 +11,8 @@ import '../helper/dialogs.dart';
 import '../widgets/main_drawer.dart';
 
 import './auth_screen.dart';
+import './pdf_viewer_screen.dart';
+import './upload_pdf_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,8 +22,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final user = FirebaseAuth.instance.currentUser;
-
   List<Map<String, dynamic>> pdfData = [];
 
   // for accessing files
@@ -56,11 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // leading: GlowIcon(
-        //   CupertinoIcons.home,
-        //   color:
-        //       themeProvider.isDarkMode ? Colors.lightGreenAccent : Colors.green,
-        // ),
         title: const Text('PrepNight'),
         centerTitle: true,
         actions: [
@@ -70,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.upload_file_outlined),
         onPressed: () async {
