@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermoji.dart';
+import 'package:prep_night/screens/leaderboard_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../api/apis.dart';
@@ -53,7 +54,7 @@ class MainDrawer extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
                 child: image != ''
-                    ? Container(
+                    ? SizedBox(
                         width: mq.width * .15, child: SvgPicture.string(img))
                     : Image.asset('assets/images/book.png', width: 50),
               ),
@@ -87,9 +88,17 @@ class MainDrawer extends StatelessWidget {
           },
         ),
         buildListTile(
-          'Filters',
-          Icons.settings,
+          'Check for updates!',
+          Icons.download_outlined,
           () {},
+        ),
+        buildListTile(
+          'Leaderboard',
+          Icons.leaderboard_outlined,
+          () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => LeaderboardScreen()));
+          },
         ),
         const Spacer(),
         Row(

@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           // ),
           theme: MyThemes.lightTheme,
           darkTheme: MyThemes.darkTheme,
-          home: SplashScreen(),
+          home: const SplashScreen(),
         );
       },
     );
