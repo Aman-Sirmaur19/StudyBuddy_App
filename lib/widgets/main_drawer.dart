@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermoji.dart';
+import 'package:prep_night/helper/dialogs.dart';
 import 'package:prep_night/screens/leaderboard_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../api/apis.dart';
 import '../main.dart';
@@ -11,9 +13,14 @@ import '../providers/my_themes.dart';
 import '../screens/profile_screen.dart';
 import './change_theme_button.dart';
 
-class MainDrawer extends StatelessWidget {
+class MainDrawer extends StatefulWidget {
   const MainDrawer({super.key});
 
+  @override
+  State<MainDrawer> createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
   Widget buildListTile(String title, IconData icon, VoidCallback tapHandler) {
     return ListTile(
       leading: Icon(icon, size: 26),
@@ -23,6 +30,12 @@ class MainDrawer extends StatelessWidget {
       ),
       onTap: tapHandler,
     );
+  }
+
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      Dialogs.showErrorSnackBar(context, 'Could not launch $url');
+    }
   }
 
   @override
@@ -157,18 +170,128 @@ class MainDrawer extends StatelessWidget {
         const Spacer(),
         Padding(
           padding: EdgeInsets.only(bottom: mq.height * .02),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.copyright_rounded),
-              Text(
-                'Aman Sirmaur',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
+          child: InkWell(
+            onTap: () => showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.purple[50],
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(mq.width * .15),
+                          child: Image.asset(
+                            'assets/images/Aman Kumar.heic',
+                            width: mq.width * .3,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Aman Sirmaur',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black54,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(mq.width * .01),
+                          child: const Text(
+                            'NIT AGARTALA',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        InkWell(
+                          child: Image.asset('assets/images/linkedin.png',
+                              width: mq.width * .07),
+                          onTap: () async {
+                            const url =
+                                'https://www.linkedin.com/in/aman-kumar-257613257/';
+                            setState(() {
+                              _launchInBrowser(Uri.parse(url));
+                            });
+                          },
+                        ),
+                        InkWell(
+                          child: Image.asset('assets/images/github.png',
+                              width: mq.width * .07),
+                          onTap: () async {
+                            const url = 'https://github.com/Aman-Sirmaur19';
+                            setState(() {
+                              _launchInBrowser(Uri.parse(url));
+                            });
+                          },
+                        ),
+                        InkWell(
+                          child: Image.asset('assets/images/instagram.png',
+                              width: mq.width * .07),
+                          onTap: () async {
+                            const url =
+                                'https://www.instagram.com/aman_sirmaur19/';
+                            setState(() {
+                              _launchInBrowser(Uri.parse(url));
+                            });
+                          },
+                        ),
+                        InkWell(
+                          child: Image.asset('assets/images/twitter.png',
+                              width: mq.width * .07),
+                          onTap: () async {
+                            const url =
+                                'https://x.com/AmanSirmaur?t=2QWiqzkaEgpBFNmLI38sbA&s=09';
+                            setState(() {
+                              _launchInBrowser(Uri.parse(url));
+                            });
+                          },
+                        ),
+                        InkWell(
+                          child: Image.asset('assets/images/youtube.png',
+                              width: mq.width * .07),
+                          onTap: () async {
+                            const url = 'https://www.youtube.com/@AmanSirmaur';
+                            setState(() {
+                              _launchInBrowser(Uri.parse(url));
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Close',
+                            style: TextStyle(color: Colors.purple)),
+                      ),
+                    ],
+                  );
+                }),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.copyright_rounded),
+                Text(
+                  'Aman Sirmaur',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
