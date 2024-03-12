@@ -45,6 +45,9 @@ dependencies:
   file_picker: ^6.1.1
   easy_pdf_viewer: ^1.0.7
   percent_indicator: ^4.2.3
+  cached_network_image: ^3.3.1
+  fluttermoji: ^1.0.2
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:

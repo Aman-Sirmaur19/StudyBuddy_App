@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fluttermoji/fluttermoji.dart';
 import 'package:provider/provider.dart';
 
 import '../api/apis.dart';
 import '../main.dart';
 import '../providers/my_themes.dart';
+import '../screens/profile_screen.dart';
 import './change_theme_button.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -23,8 +26,10 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = APIs.user.displayName;
+    final name = APIs.me.name;
+    final image = APIs.me.image;
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final img = FluttermojiFunctions().decodeFluttermojifromString(image);
     return Drawer(
         child: Column(
       children: <Widget>[
@@ -38,9 +43,7 @@ class MainDrawer extends StatelessWidget {
                 padding:
                     EdgeInsets.only(top: mq.height * .01, left: mq.width * .05),
                 child: Text(
-                  name == null
-                      ? 'Let\'s Study!'
-                      : 'Hi ${name.split(' ').first}!',
+                  name == '' ? 'Let\'s Study!' : 'Hi ${name.split(' ').first}!',
                   style: const TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 30,
@@ -49,7 +52,10 @@ class MainDrawer extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
-                child: Image.asset('assets/images/book.png', width: 50),
+                child: image != ''
+                    ? Container(
+                        width: mq.width * .15, child: SvgPicture.string(img))
+                    : Image.asset('assets/images/book.png', width: 50),
               ),
             ],
           ),
@@ -73,7 +79,12 @@ class MainDrawer extends StatelessWidget {
         buildListTile(
           'About',
           Icons.person,
-          () {},
+          () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ProfileScreen(user: APIs.me)));
+          },
         ),
         buildListTile(
           'Filters',
