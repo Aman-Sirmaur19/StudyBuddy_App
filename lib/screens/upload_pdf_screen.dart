@@ -106,7 +106,11 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
     final ref = APIs.storage.ref().child('PDFs/$fileName');
 
     // for uploading file
-    final uploadTask = ref.putFile(file);
+    final uploadTask = ref.putFile(
+        file,
+        SettableMetadata(
+          customMetadata: {'uploader': APIs.user.uid},
+        ));
 
     uploadTask.snapshotEvents.listen((event) async {
       switch (event.state) {
@@ -134,6 +138,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           Navigator.pop(context);
           downloadLink = await ref.getDownloadURL();
           log('Pdf uploaded successfully!');
+          log('Uploader: ${event.metadata?.customMetadata?['uploader']}');
           break;
       }
     });

@@ -36,6 +36,23 @@ class APIs {
         .exists;
   }
 
+  // for finding a user name by its user id
+  static Future<String?> getUserName(String userId) async {
+    try {
+      DocumentSnapshot userSnapshot =
+          await firestore.collection('users').doc(userId).get();
+      if (userSnapshot.exists) {
+        String userName = userSnapshot['name'] ?? 'No Name';
+        return userName;
+      } else {
+        log('User not found');
+      }
+    } catch (e) {
+      log('Error getting user info: $e');
+    }
+    return null;
+  }
+
   // for getting current user info
   static Future<void> getSelfInfo() async {
     await firestore

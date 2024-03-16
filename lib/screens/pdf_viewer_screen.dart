@@ -17,9 +17,8 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   PDFDocument? document;
 
   void initialisePdf() async {
-    final imageUrl =
-        await APIs.storage.ref().child(widget.pdfUrl).getDownloadURL();
-    document = await PDFDocument.fromURL(imageUrl);
+    final url = await APIs.storage.ref().child(widget.pdfUrl).getDownloadURL();
+    document = await PDFDocument.fromURL(url);
     setState(() {});
   }
 

@@ -34,13 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
   // for accessing files
   void getAllPdfs() async {
     final results = await APIs.storage.ref('PDFs').listAll();
-    pdfData = results.items
-        .where((item) => item.name.endsWith('.pdf'))
-        .map((item) => {
-              'name': item.name,
-              'url': item.fullPath,
-            })
-        .toList();
+    pdfData = await Future.wait(
+      results.items
+          .where((item) => item.name.endsWith('.pdf'))
+          .map((item) async {
+        final metadata = await item.getMetadata();
+        final uploaderName =
+            await APIs.getUserName(metadata.customMetadata!['uploader']!);
+        return {
+          'name': item.name,
+          'url': item.fullPath,
+          'metadata': metadata,
+          'uploader': uploaderName,
+        };
+      }).toList(),
+    );
     setState(() {});
   }
 
@@ -198,16 +206,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _pdfDataIsNotEmpty() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
-      ),
+    return ListView.builder(
       itemCount: _isSearching ? _searchList.length : pdfData.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
+        return Card(
           child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
@@ -220,15 +222,39 @@ class _HomeScreenState extends State<HomeScreen> {
                             : pdfData[index]['url'],
                       )));
             },
-            child: Column(
-              children: [
-                Image.asset('assets/images/pdf.png', width: mq.width * .35),
-                Text(
+            child: ListTile(
+              leading:
+                  Image.asset('assets/images/pdf.png', width: mq.width * .15),
+              title: Text(
+                _isSearching
+                    ? _searchList[index]['name'].split('.').first
+                    : pdfData[index]['name'].split('.').first,
+                maxLines: 1,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Row(
+                children: [
+                  Text(
                     _isSearching
-                        ? _searchList[index]['name']
-                        : pdfData[index]['name'],
-                    maxLines: 1),
-              ],
+                        ? _searchList[index]['uploader']
+                        : pdfData[index]['uploader'],
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    color: Colors.red,
+                    icon: Icon(Icons.favorite_border_rounded),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.download),
+                onPressed: () {},
+              ),
             ),
           ),
         );
