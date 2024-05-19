@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> pdfData = [];
+  List<Map<String, dynamic>> pdfDataList = [];
 
   // for storing search status
   bool _isSearching = false;
@@ -54,15 +56,37 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  Future<List<Map<String, dynamic>>> fetchPdfData() async {
+    try {
+      // Get a reference to the 'pdfs' collection
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance.collection('pdfs').get();
+
+      // Convert the QuerySnapshot into a List<Map<String, dynamic>>
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> pdfInfo = doc.data();
+        pdfInfo['pdfId'] = doc.id; // Add the document ID to the data
+        pdfDataList.add(pdfInfo);
+      }
+
+      return pdfDataList;
+    } catch (e) {
+      print("Error fetching PDF data: $e");
+      throw e;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     APIs.getSelfInfo();
     getAllPdfs();
+    fetchPdfData();
   }
 
   Future<void> _refresh() async {
     getAllPdfs();
+    fetchPdfData();
   }
 
   @override
@@ -207,6 +231,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListView.builder(
       itemCount: _isSearching ? _searchList.length : pdfData.length,
       itemBuilder: (context, index) {
+        int i = pdfDataList.indexWhere((element) =>
+            element['pdfId'].toString() == pdfData[index]['pdfId']);
+        bool userLiked =
+            pdfDataList[i]['likes']?.contains(APIs.user.uid) ?? false;
         return Card(
           child: InkWell(
             onTap: () {
@@ -246,12 +274,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.only(left: mq.width * .03),
                     child: IconButton(
                       color: Colors.blue,
-                      icon: const Icon(Icons.thumb_up_alt_outlined),
-                      onPressed: () {},
+                      icon: userLiked
+                          ? const Icon(Icons.thumb_up_alt_rounded)
+                          : const Icon(Icons.thumb_up_alt_outlined),
+                      onPressed: () async {
+                        final pdfRef = APIs.firestore
+                            .collection('pdfs')
+                            .doc(pdfData[index]['pdfId']);
+                        final docSnapshot = await pdfRef.get();
+                        final currentLikes =
+                            List<String>.from(docSnapshot.data()?['likes']);
+                        if (!currentLikes.contains(APIs.user.uid)) {
+                          currentLikes.add(APIs.user.uid);
+                          await pdfRef.update({'likes': currentLikes});
+                          setState(() {
+                            pdfDataList[i]['likes']?.add(APIs.user.uid);
+                            userLiked = true;
+                          });
+                        } else {
+                          currentLikes.remove(APIs.user.uid);
+                          await pdfRef.update({'likes': currentLikes});
+                          setState(() {
+                            pdfDataList[i]['likes']?.remove(APIs.user.uid);
+                            userLiked = false;
+                          });
+                        }
+                      },
                     ),
                   ),
-                  const Text('2',
-                      style: TextStyle(
+                  Text(pdfDataList[i]['likes'].length.toString(),
+                      style: const TextStyle(
                           color: Colors.blue, fontWeight: FontWeight.bold)),
                   if (APIs.user.uid == pdfData[index]['uploaderId'])
                     Padding(
@@ -259,17 +311,46 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: IconButton(
                         color: Colors.red,
                         icon: const Icon(Icons.delete_rounded),
-                        onPressed: () async {
-                          await APIs.firestore
-                              .collection('pdfs')
-                              .doc(pdfData[index]['pdfId']).delete();
-                          await APIs.storage
-                              .ref()
-                              .child('PDFs/${pdfData[index]['name']}')
-                              .delete()
-                              .then((value) => Dialogs.showSnackBar(context,
-                                  'Deleted successfully!\nKindly pull down to refresh.'));
-                        },
+                        onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                  'Do you want to delete?',
+                                  style: TextStyle(fontSize: 20),
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    TextButton(
+                                      child: const Text('Yes'),
+                                      onPressed: () async {
+                                        await APIs.firestore
+                                            .collection('pdfs')
+                                            .doc(pdfData[index]['pdfId'])
+                                            .delete();
+                                        await APIs.storage
+                                            .ref()
+                                            .child(
+                                                'PDFs/${pdfData[index]['name']}')
+                                            .delete()
+                                            .then((value) =>
+                                                Dialogs.showSnackBar(context,
+                                                    'Deleted successfully!'));
+                                        Navigator.pop(context);
+                                        _refresh();
+                                      },
+                                    ),
+                                    TextButton(
+                                        child: const Text('No'),
+                                        onPressed: () =>
+                                            Navigator.pop(context)),
+                                  ],
+                                ),
+                              );
+                            }),
                       ),
                     )
                 ],

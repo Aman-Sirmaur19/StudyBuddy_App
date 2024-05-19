@@ -142,7 +142,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           final pdfInfo = PDF(
             event.metadata?.customMetadata?['pdfId'],
             event.metadata?.customMetadata?['uploader'],
-            0,
+            [],
           );
           await APIs.firestore
               .collection('pdfs')
