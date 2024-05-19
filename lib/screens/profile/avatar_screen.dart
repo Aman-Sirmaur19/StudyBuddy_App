@@ -9,7 +9,7 @@ import 'package:fluttermoji/fluttermojiSaveWidget.dart';
 import 'package:fluttermoji/fluttermojiThemeData.dart';
 import 'package:prep_night/api/apis.dart';
 
-import '../main.dart';
+import '../../main.dart';
 
 class AvatarScreen extends StatelessWidget {
   const AvatarScreen({super.key});

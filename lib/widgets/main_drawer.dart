@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../api/apis.dart';
 import '../main.dart';
 import '../providers/my_themes.dart';
-import '../screens/profile_screen.dart';
+import '../screens/profile/profile_screen.dart';
 import './change_theme_button.dart';
 
 class MainDrawer extends StatefulWidget {

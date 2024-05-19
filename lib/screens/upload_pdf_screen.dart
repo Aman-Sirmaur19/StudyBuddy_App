@@ -9,6 +9,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../main.dart';
+import '../models/pdf_model.dart';
 
 class UploadPdfScreen extends StatefulWidget {
   final FilePickerResult? pickedFile;
@@ -77,8 +78,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
               ElevatedButton(
                 child: const Text('Yes'),
                 onPressed: () async {
-                  await APIs.pickFile(context, widget.pickedFile,
-                      uploadPdf(context, widget.name, File(widget.path)));
+                  await uploadPdf(context, widget.name, File(widget.path));
                 },
               ),
               ElevatedButton(
@@ -109,7 +109,10 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
     final uploadTask = ref.putFile(
         file,
         SettableMetadata(
-          customMetadata: {'uploader': APIs.user.uid},
+          customMetadata: {
+            'uploader': APIs.user.uid,
+            'pdfId': DateTime.now().toString()
+          },
         ));
 
     uploadTask.snapshotEvents.listen((event) async {
@@ -134,7 +137,20 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           setState(() {
             loading = false;
           });
-          Dialogs.showSnackBar(context, 'PDF uploaded successfully!');
+          await APIs.updateUploads();
+
+          final pdfInfo = PDF(
+            event.metadata?.customMetadata?['pdfId'],
+            event.metadata?.customMetadata?['uploader'],
+            0,
+          );
+          await APIs.firestore
+              .collection('pdfs')
+              .doc(event.metadata?.customMetadata?['pdfId'])
+              .set(pdfInfo.toJson());
+
+          Dialogs.showSnackBar(context,
+              'PDF uploaded successfully!\nKindly pull down to refresh.');
           Navigator.pop(context);
           downloadLink = await ref.getDownloadURL();
           log('Pdf uploaded successfully!');

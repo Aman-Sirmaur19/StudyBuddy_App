@@ -4,9 +4,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import '../models/main_user.dart';
 
@@ -75,13 +72,14 @@ class APIs {
 
     final mainUser = MainUser(
       id: user.uid,
-      name: user.displayName.toString(),
+      name: '',
       branch: '',
       college: '',
-      email: user.email.toString(),
+      email: '',
       about: 'Hey, I am using PrepNight!',
-      image: user.photoURL.toString(),
+      image: '',
       createdAt: time,
+      uploads: 0,
     );
 
     return await firestore
@@ -104,6 +102,13 @@ class APIs {
       'college': me.college,
       'email': me.email,
     });
+  }
+
+  static Future<void> updateUploads() async {
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({'uploads': me.uploads++});
   }
 
   // update profile picture of user
@@ -132,25 +137,25 @@ class APIs {
   /// ******** FilePicking related API *********
 
   // for picking files
-  static Future<void> pickFile(BuildContext context,
-      FilePickerResult? pickedFile, Future<String> uploadPdf) async {
-    // final pickedFile = await FilePicker.platform.pickFiles(
-    //   type: FileType.custom,
-    //   allowedExtensions: ['pdf'],
-    //   allowCompression: true,
-    // );
-
-    if (pickedFile != null) {
-      String fileName = pickedFile.files[0].name;
-      File file = File(pickedFile.files[0].path!);
-      final ext = file.path.split('.').last; // file extension
-      final downloadLink = await uploadPdf;
-
-      // for adding
-      await firestore.collection('PDFs').add({
-        'name': fileName,
-        'url': downloadLink,
-      });
-    }
-  }
+  // static Future<void> pickFile(BuildContext context,
+  //     FilePickerResult? pickedFile, Future<String> uploadPdf) async {
+  //   // final pickedFile = await FilePicker.platform.pickFiles(
+  //   //   type: FileType.custom,
+  //   //   allowedExtensions: ['pdf'],
+  //   //   allowCompression: true,
+  //   // );
+  //
+  //   if (pickedFile != null) {
+  //     String fileName = pickedFile.files[0].name;
+  //     File file = File(pickedFile.files[0].path!);
+  //     final ext = file.path.split('.').last; // file extension
+  //     final downloadLink = await uploadPdf;
+  //
+  //     // for adding
+  //     // await firestore.collection('PDFs').add({
+  //     //   'name': fileName,
+  //     //   'url': downloadLink,
+  //     // });
+  //   }
+  // }
 }

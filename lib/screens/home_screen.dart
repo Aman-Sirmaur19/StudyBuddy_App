@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +9,7 @@ import '../main.dart';
 import '../helper/dialogs.dart';
 import '../widgets/main_drawer.dart';
 
-import './auth_screen.dart';
+import './auth/auth_screen.dart';
 import './pdf_viewer_screen.dart';
 import './upload_pdf_screen.dart';
 
@@ -41,11 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
         final metadata = await item.getMetadata();
         final uploaderName =
             await APIs.getUserName(metadata.customMetadata!['uploader']!);
+        final uploaderId = metadata.customMetadata!['uploader']!;
+        final pdfId = metadata.customMetadata!['pdfId']!;
         return {
           'name': item.name,
           'url': item.fullPath,
           'metadata': metadata,
           'uploader': uploaderName,
+          'uploaderId': uploaderId,
+          'pdfId': pdfId,
         };
       }).toList(),
     );
@@ -61,22 +63,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _refresh() async {
     getAllPdfs();
-    log(pdfData.length.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: WillPopScope(
-        onWillPop: () {
+      child: PopScope(
+        onPopInvoked: (bool _) {
           if (_isSearching) {
             setState(() {
               _isSearching = !_isSearching;
             });
-            return Future.value(false);
-          } else {
-            return Future.value(true);
           }
         },
         child: Scaffold(
@@ -106,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                   )
-                : Text('PrepNight'),
+                : const Text('PrepNight'),
             centerTitle: true,
             actions: [
               IconButton(
@@ -125,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          drawer: MainDrawer(),
+          drawer: const MainDrawer(),
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.upload_file_outlined),
             onPressed: () async {
@@ -244,11 +242,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  IconButton(
-                    color: Colors.red,
-                    icon: Icon(Icons.favorite_border_rounded),
-                    onPressed: () {},
+                  Padding(
+                    padding: EdgeInsets.only(left: mq.width * .03),
+                    child: IconButton(
+                      color: Colors.blue,
+                      icon: const Icon(Icons.thumb_up_alt_outlined),
+                      onPressed: () {},
+                    ),
                   ),
+                  const Text('2',
+                      style: TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold)),
+                  if (APIs.user.uid == pdfData[index]['uploaderId'])
+                    Padding(
+                      padding: EdgeInsets.only(left: mq.width * .03),
+                      child: IconButton(
+                        color: Colors.red,
+                        icon: const Icon(Icons.delete_rounded),
+                        onPressed: () async {
+                          await APIs.firestore
+                              .collection('pdfs')
+                              .doc(pdfData[index]['pdfId']).delete();
+                          await APIs.storage
+                              .ref()
+                              .child('PDFs/${pdfData[index]['name']}')
+                              .delete()
+                              .then((value) => Dialogs.showSnackBar(context,
+                                  'Deleted successfully!\nKindly pull down to refresh.'));
+                        },
+                      ),
+                    )
                 ],
               ),
               trailing: IconButton(

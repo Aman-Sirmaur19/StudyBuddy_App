@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../api/apis.dart';
 import '../helper/dialogs.dart';
-import 'auth_screen.dart';
+import 'auth/auth_screen.dart';
 import 'home_screen.dart';
 import '../main.dart';
 
@@ -28,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Reloading current user data each time when the app starts
       await FirebaseAuth.instance.currentUser?.reload();
 
-      if (FirebaseAuth.instance.currentUser != null) {
+      if (APIs.auth.currentUser != null) {
         // Navigate to home screen
         Navigator.pushReplacement(
           context,

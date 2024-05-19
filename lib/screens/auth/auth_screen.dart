@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:prep_night/helper/dialogs.dart';
 
+import 'package:prep_night/helper/dialogs.dart';
 import 'otp_screen.dart';
 
 class AuthScreen extends StatefulWidget {

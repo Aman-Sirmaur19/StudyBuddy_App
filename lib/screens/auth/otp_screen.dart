@@ -6,8 +6,8 @@ import 'package:pinput/pinput.dart';
 import 'package:prep_night/api/apis.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/my_themes.dart';
-import 'home_screen.dart';
+import '../../providers/my_themes.dart';
+import '../home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   final String verificationId;
