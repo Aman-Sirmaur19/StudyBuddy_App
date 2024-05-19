@@ -24,7 +24,7 @@ class MainUser {
   MainUser.fromJson(Map<String, dynamic> json) {
     image = json['image'] ?? '';
     about = json['about'] ?? '';
-    name = json['name'] ?? '';
+    name = json['name'] ?? 'Unknown';
     branch = json['branch'] ?? '';
     college = json['college'] ?? '';
     createdAt = json['created_at'] ?? '';

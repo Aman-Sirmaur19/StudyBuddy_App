@@ -39,7 +39,7 @@ class APIs {
       DocumentSnapshot userSnapshot =
           await firestore.collection('users').doc(userId).get();
       if (userSnapshot.exists) {
-        String userName = userSnapshot['name'] ?? 'No Name';
+        String userName = userSnapshot['name'] ?? 'Unknown';
         return userName;
       } else {
         log('User not found');
@@ -72,7 +72,7 @@ class APIs {
 
     final mainUser = MainUser(
       id: user.uid,
-      name: '',
+      name: 'Unknown',
       branch: '',
       college: '',
       email: '',
