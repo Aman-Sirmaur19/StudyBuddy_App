@@ -339,6 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .then((value) =>
                                                 Dialogs.showSnackBar(context,
                                                     'Deleted successfully!'));
+                                        await APIs.updateUploads(-1);
                                         Navigator.pop(context);
                                         _refresh();
                                       },

@@ -104,11 +104,12 @@ class APIs {
     });
   }
 
-  static Future<void> updateUploads() async {
+  static Future<void> updateUploads(int n) async {
+    await getSelfInfo();
     await firestore
         .collection('users')
         .doc(user.uid)
-        .update({'uploads': me.uploads++});
+        .update({'uploads': me.uploads + n});
   }
 
   // update profile picture of user
@@ -136,26 +137,26 @@ class APIs {
 
   /// ******** FilePicking related API *********
 
-  // for picking files
-  // static Future<void> pickFile(BuildContext context,
-  //     FilePickerResult? pickedFile, Future<String> uploadPdf) async {
-  //   // final pickedFile = await FilePicker.platform.pickFiles(
-  //   //   type: FileType.custom,
-  //   //   allowedExtensions: ['pdf'],
-  //   //   allowCompression: true,
-  //   // );
-  //
-  //   if (pickedFile != null) {
-  //     String fileName = pickedFile.files[0].name;
-  //     File file = File(pickedFile.files[0].path!);
-  //     final ext = file.path.split('.').last; // file extension
-  //     final downloadLink = await uploadPdf;
-  //
-  //     // for adding
-  //     // await firestore.collection('PDFs').add({
-  //     //   'name': fileName,
-  //     //   'url': downloadLink,
-  //     // });
-  //   }
-  // }
+// for picking files
+// static Future<void> pickFile(BuildContext context,
+//     FilePickerResult? pickedFile, Future<String> uploadPdf) async {
+//   // final pickedFile = await FilePicker.platform.pickFiles(
+//   //   type: FileType.custom,
+//   //   allowedExtensions: ['pdf'],
+//   //   allowCompression: true,
+//   // );
+//
+//   if (pickedFile != null) {
+//     String fileName = pickedFile.files[0].name;
+//     File file = File(pickedFile.files[0].path!);
+//     final ext = file.path.split('.').last; // file extension
+//     final downloadLink = await uploadPdf;
+//
+//     // for adding
+//     // await firestore.collection('PDFs').add({
+//     //   'name': fileName,
+//     //   'url': downloadLink,
+//     // });
+//   }
+// }
 }

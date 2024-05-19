@@ -137,7 +137,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           setState(() {
             loading = false;
           });
-          await APIs.updateUploads();
+          await APIs.updateUploads(1);
 
           final pdfInfo = PDF(
             event.metadata?.customMetadata?['pdfId'],
@@ -158,14 +158,6 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           break;
       }
     });
-
-    // for uploading pdfs
-    // await ref.putFile(file).whenComplete(() {
-    //   Dialogs.showSnackBar(context, 'PDF uploaded successfully!');
-    // });
-
-    // for generating download link
-    // final downloadLink = await ref.getDownloadURL();
     return downloadLink;
   }
 }
