@@ -1,15 +1,16 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/pdf_model.dart';
+import '../widgets/category_item.dart';
 
 class UploadPdfScreen extends StatefulWidget {
   final FilePickerResult? pickedFile;
@@ -31,27 +32,85 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   bool loading = false;
   double perCent = 0;
 
+  final nameController = TextEditingController();
+  final categoryController = TextEditingController();
+  String? selectedCategory;
+
+  List<String> categories = [];
+
+  void addCategoriesFromDummyData() {
+    categories.clear();
+    for (final category in DUMMY_CATEGORIES) {
+      categories.add(category.title);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nameController.dispose();
+    categoryController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    addCategoriesFromDummyData();
     return Scaffold(
       appBar: AppBar(title: const Text('Upload')),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            loading
-                ? CircularPercentIndicator(
-                    radius: 100,
-                    lineWidth: 10,
-                    percent: perCent / 100,
-                    backgroundColor: Colors.grey,
-                    progressColor: Colors.green,
-                    center: Text('${perCent.toStringAsFixed(1)}%',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                  )
-                : _pdfIsPicked(),
-          ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Padding(
+          padding: EdgeInsets.only(top: mq.width * .2),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                loading
+                    ? Center(
+                      child: CircularPercentIndicator(
+                          radius: 100,
+                          lineWidth: 10,
+                          percent: perCent / 100,
+                          backgroundColor: Colors.grey,
+                          progressColor: Colors.green,
+                          center: Text('${perCent.toStringAsFixed(1)}%',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                    )
+                    : _pdfIsPicked(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // custom textField
+  Widget textField({
+    required String labelText,
+    required TextInputType inputType,
+    required int maxLines,
+    required TextEditingController controller,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: mq.width * .03, vertical: mq.width * .05),
+      child: TextFormField(
+        cursorColor: Theme.of(context).colorScheme.primary,
+        controller: controller,
+        keyboardType: inputType,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          enabledBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          focusedBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          labelText: labelText,
+          border: InputBorder.none,
+          filled: true,
         ),
       ),
     );
@@ -61,28 +120,47 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          'Do you want to upload ?',
-          style: TextStyle(fontSize: 25),
-        ),
         Padding(
-          padding: const EdgeInsets.all(12),
-          child: Image.asset('assets/images/pdf.png', width: mq.width * .45),
+          padding: EdgeInsets.only(bottom: mq.width * .02),
+          child: Image.asset('assets/images/pdf.png', width: mq.width * .35),
         ),
         Text(widget.name),
+        textField(
+          labelText: 'PDF Name',
+          inputType: TextInputType.text,
+          maxLines: 1,
+          controller: nameController,
+        ),
+        DropdownButton(
+          borderRadius: BorderRadius.circular(20),
+          value: selectedCategory,
+          hint: const Text('Select Category'),
+          onChanged: (String? value) {
+            setState(() {
+              selectedCategory = value;
+              categoryController.text = value ?? '';
+            });
+          },
+          items: categories.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                child: const Text('Yes'),
+                child: const Text('Upload'),
                 onPressed: () async {
-                  await uploadPdf(context, widget.name, File(widget.path));
+                  await uploadPdf(File(widget.path));
                 },
               ),
               ElevatedButton(
-                child: const Text('No'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -95,23 +173,29 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   }
 
   // for uploading pdfs
-  Future<String> uploadPdf(
-      BuildContext context, String fileName, File file) async {
+  Future<String> uploadPdf(File file) async {
+    if (nameController.text.trim().isEmpty ||
+        categoryController.text.trim().isEmpty) {
+      Dialogs.showErrorSnackBar(context, 'Fill all the fields.');
+      return '';
+    }
     setState(() {
       loading = true;
     });
     String downloadLink = '';
 
     // storage file reference with path
-    final ref = APIs.storage.ref().child('PDFs/$fileName');
+    final ref = APIs.storage
+        .ref()
+        .child('PDFs/${categoryController.text}/${nameController.text}.pdf');
 
     // for uploading file
     final uploadTask = ref.putFile(
         file,
         SettableMetadata(
           customMetadata: {
+            'pdfId': DateTime.now().toString(),
             'uploader': APIs.user.uid,
-            'pdfId': DateTime.now().toString()
           },
         ));
 
@@ -141,7 +225,9 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
 
           final pdfInfo = PDF(
             event.metadata?.customMetadata?['pdfId'],
+            nameController.text,
             event.metadata?.customMetadata?['uploader'],
+            categoryController.text,
             [],
           );
           await APIs.firestore
@@ -150,7 +236,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
               .set(pdfInfo.toJson());
 
           Dialogs.showSnackBar(context,
-              'PDF uploaded successfully!\nKindly pull down to refresh.');
+              'PDF uploaded successfully!');
           Navigator.pop(context);
           downloadLink = await ref.getDownloadURL();
           log('Pdf uploaded successfully!');

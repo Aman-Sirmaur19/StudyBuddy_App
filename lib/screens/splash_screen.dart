@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
-import 'auth/auth_screen.dart';
-import 'home_screen.dart';
-import '../main.dart';
+
+import './auth/auth_screen.dart';
+import './home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -14,8 +16,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // Navigate to home screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => HomeScreen()),
         );
       } else {
         // Navigate to login screen

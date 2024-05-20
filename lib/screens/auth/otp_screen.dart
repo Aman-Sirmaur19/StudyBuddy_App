@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
-import 'package:prep_night/api/apis.dart';
 import 'package:provider/provider.dart';
 
+import '../../api/apis.dart';
 import '../../providers/my_themes.dart';
 import '../home_screen.dart';
 
