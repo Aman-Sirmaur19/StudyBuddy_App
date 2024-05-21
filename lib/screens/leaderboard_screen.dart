@@ -23,7 +23,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Leaderboard'), centerTitle: true),
+      appBar: AppBar(
+          title: const Text(
+            'Leaderboard',
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+          ),
+          centerTitle: true),
       body: StreamBuilder(
           stream: APIs.getAllUsers(),
           builder: (context, snapshot) {

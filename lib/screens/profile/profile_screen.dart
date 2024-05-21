@@ -29,7 +29,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // for hiding keyboard
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('My Profile')),
+        appBar: AppBar(
+            title: const Text(
+          'My Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+        )),
         body: Form(
           key: _formKey,
           child: Padding(

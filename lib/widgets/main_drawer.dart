@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermoji.dart';
-import 'package:prep_night/helper/dialogs.dart';
-import 'package:prep_night/screens/leaderboard_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../api/apis.dart';
 import '../main.dart';
+import '../api/apis.dart';
+import '../helper/dialogs.dart';
 import '../providers/my_themes.dart';
+import '../screens/leaderboard_screen.dart';
 import '../screens/profile/profile_screen.dart';
+
 import './change_theme_button.dart';
 
 class MainDrawer extends StatefulWidget {
@@ -57,7 +58,9 @@ class _MainDrawerState extends State<MainDrawer> {
                 padding:
                     EdgeInsets.only(top: mq.height * .01, left: mq.width * .05),
                 child: Text(
-                  name == '' ? 'Let\'s Study!' : 'Hi ${name.split(' ').first}!',
+                  name == 'Unknown'
+                      ? 'Let\'s Study!'
+                      : 'Hi ${name.split(' ').first}!',
                   style: const TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 30,
@@ -110,7 +113,7 @@ class _MainDrawerState extends State<MainDrawer> {
           Icons.leaderboard_outlined,
           () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (_) => LeaderboardScreen()));
+                MaterialPageRoute(builder: (_) => const LeaderboardScreen()));
           },
         ),
         const Spacer(),
