@@ -9,6 +9,7 @@ import 'package:fluttermoji/fluttermojiSaveWidget.dart';
 import 'package:fluttermoji/fluttermojiThemeData.dart';
 import 'package:prep_night/api/apis.dart';
 
+import '../../helper/dialogs.dart';
 import '../../main.dart';
 
 class AvatarScreen extends StatelessWidget {
@@ -47,6 +48,8 @@ class AvatarScreen extends StatelessWidget {
                           .collection('users')
                           .doc(APIs.user.uid)
                           .update({'image': image});
+                      Dialogs.showSnackBar(context,
+                          'Profile picture updated!\nKindly pull down in home-screen to\nrefresh.');
                     }),
                   ],
                 ),
@@ -58,7 +61,8 @@ class AvatarScreen extends StatelessWidget {
                   scaffoldWidth: min(600, mq.width * 0.85),
                   autosave: false,
                   theme: FluttermojiThemeData(
-                      boxDecoration: BoxDecoration(boxShadow: [BoxShadow()])),
+                      boxDecoration:
+                          const BoxDecoration(boxShadow: [BoxShadow()])),
                 ),
               ),
             ],

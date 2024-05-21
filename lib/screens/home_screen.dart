@@ -14,6 +14,8 @@ import '../widgets/main_drawer.dart';
 import './auth/auth_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -30,75 +32,85 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(builder: (ctx) => PdfScreen(category: category)));
   }
 
+  Future<void> _refresh() async {
+    await APIs.getSelfInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PrepNight'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(CupertinoIcons.add),
-            onPressed: () async {
-              final pickedFile = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['pdf'],
-                allowCompression: true,
-              );
-              if (pickedFile != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UploadPdfScreen(
-                      pickedFile: pickedFile,
-                      name: pickedFile.files[0].name,
-                      path: pickedFile.files[0].path!,
-                    ),
-                  ),
-                );
-              }
-            },
+    return RefreshIndicator(
+      onRefresh: () => _refresh(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'PrepNight',
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
-          IconButton(
-            icon: const GlowIcon(Icons.logout, color: Colors.redAccent),
-            onPressed: showAlertDialog,
-          )
-        ],
-      ),
-      drawer: const MainDrawer(),
-      body: GridView(
-        padding: const EdgeInsets.all(25),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
-        ),
-        children: DUMMY_CATEGORIES
-            .map((catData) => InkWell(
-                  onTap: () => selectCategory(context, catData.title),
-                  splashColor: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(15),
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          catData.color.withOpacity(0.7),
-                          catData.color,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(CupertinoIcons.add),
+              onPressed: () async {
+                final pickedFile = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['pdf'],
+                  allowCompression: true,
+                );
+                if (pickedFile != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UploadPdfScreen(
+                        pickedFile: pickedFile,
+                        name: pickedFile.files[0].name,
+                        path: pickedFile.files[0].path!,
                       ),
-                      borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Text(
-                      catData.title,
-                      style: Theme.of(context).textTheme.headline6,
+                  );
+                }
+              },
+            ),
+            IconButton(
+              icon: const GlowIcon(Icons.logout, color: Colors.redAccent),
+              onPressed: showAlertDialog,
+            )
+          ],
+        ),
+        drawer: const MainDrawer(),
+        body: GridView(
+          padding: const EdgeInsets.all(25),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+          ),
+          children: DUMMY_CATEGORIES
+              .map((catData) => InkWell(
+                    onTap: () => selectCategory(context, catData.title),
+                    splashColor: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            catData.color.withOpacity(0.7),
+                            catData.color,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        catData.title,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
                     ),
-                  ),
-                ))
-            .toList(),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }

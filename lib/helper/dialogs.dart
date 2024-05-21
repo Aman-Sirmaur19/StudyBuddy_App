@@ -18,7 +18,7 @@ class Dialogs {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(msg,

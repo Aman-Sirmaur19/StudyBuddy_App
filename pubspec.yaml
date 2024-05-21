@@ -50,6 +50,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   url_launcher: ^6.2.5
   path_provider: ^2.1.2
+  country_picker: ^2.0.26
 
 dev_dependencies:
   flutter_test:

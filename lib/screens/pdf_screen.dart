@@ -34,7 +34,7 @@ class _PdfScreenState extends State<PdfScreen> {
     final results = await APIs.storage.ref('PDFs/${widget.category}').listAll();
     pdfData = await Future.wait(
       results.items
-          .where((item) => item.name.endsWith('.pdf')) //<---------------
+          .where((item) => item.name.endsWith('.pdf'))
           .map((item) async {
         final metadata = await item.getMetadata();
         final uploaderId = metadata.customMetadata!['uploader']!;
@@ -126,7 +126,11 @@ class _PdfScreenState extends State<PdfScreen> {
                       }
                     },
                   )
-                : const Text('Categories'),
+                : Text(
+                    widget.category,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, letterSpacing: 2),
+                  ),
             centerTitle: true,
             actions: [
               IconButton(
@@ -141,16 +145,13 @@ class _PdfScreenState extends State<PdfScreen> {
               ),
             ],
           ),
-          body: RefreshIndicator(
-            onRefresh: () => _refresh(),
-            child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : pdfData.isEmpty
-                    ? _pdfDataIsEmpty()
-                    : _pdfDataIsNotEmpty(),
-          ),
+          body: _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : pdfData.isEmpty
+                  ? SingleChildScrollView(child: _pdfDataIsEmpty())
+                  : _pdfDataIsNotEmpty(),
         ),
       ),
     );
