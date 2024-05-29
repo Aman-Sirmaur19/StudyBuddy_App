@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
@@ -94,7 +92,11 @@ class _OTPScreenState extends State<OTPScreen> {
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
-                        child: const Text('Verify OTP'),
+                        child: Text(
+                          'Verify OTP',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
                         onPressed: () async {
                           if (otp.isEmpty) {
                             Dialogs.showErrorSnackBar(

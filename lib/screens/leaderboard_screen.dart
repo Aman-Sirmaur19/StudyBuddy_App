@@ -47,15 +47,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     data?.map((e) => MainUser.fromJson(e.data())).toList() ??
                         [];
                 _list.sort((a, b) => b.uploads.compareTo(a.uploads));
+                int count = 0;
+                for (var i in _list) {
+                  if (i.uploads > 0) {
+                    count++;
+                  }
+                }
 
-                if (_list.isNotEmpty) {
+                if (count != 0) {
                   return Column(
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
                             left: mq.width * .02, right: mq.width * .005),
                         child: ListTile(
-                          leading: Text(
+                          leading: const Text(
                             'Rank',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -65,7 +71,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           title: Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: mq.width * .07),
-                            child: Text(
+                            child: const Text(
                               'User',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -73,7 +79,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                               ),
                             ),
                           ),
-                          trailing: Text(
+                          trailing: const Text(
                             'Uploads',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -88,55 +94,50 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           physics: const BouncingScrollPhysics(),
                           itemCount: _list.length,
                           itemBuilder: (context, index) {
-                            return _list[index].uploads != 0
-                                ? Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: mq.width * .05),
-                                    child: ListTile(
-                                      leading: Text(
-                                        (index + 1).toString(),
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: mq.width * .05),
+                              child: ListTile(
+                                leading: Text(
+                                  (index + 1).toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                title: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: mq.width * .05),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        _list[index].name.split(' ').first,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
                                         ),
                                       ),
-                                      title: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: mq.width * .05),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              _list[index]
-                                                  .name
-                                                  .split(' ')
-                                                  .first,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            if (index < 3)
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: mq.width * .05),
-                                                child: Image.asset(
-                                                  'assets/images/$index-medal.png',
-                                                  width: mq.width * .065,
-                                                ),
-                                              )
-                                          ],
-                                        ),
-                                      ),
-                                      trailing: Text(
-                                        _list[index].uploads.toString(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : null;
+                                      if (index < 3)
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: mq.width * .05),
+                                          child: Image.asset(
+                                            'assets/images/$index-medal.png',
+                                            width: mq.width * .065,
+                                          ),
+                                        )
+                                    ],
+                                  ),
+                                ),
+                                trailing: Text(
+                                  _list[index].uploads.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            );
                           },
                         ),
                       ),
@@ -144,23 +145,24 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   );
                 } else {
                   return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Nothing to show right now!',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black.withOpacity(.68),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: mq.height * .1),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'No one has uploaded yet!',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: mq.height * .05),
-                        Image.asset(
-                          'assets/images/waiting.png',
-                          height: mq.height * .3,
-                        ),
-                      ],
+                          SizedBox(height: mq.height * .03),
+                          Image.asset(
+                            'assets/images/leaderboard.png',
+                            height: mq.height * .4,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }

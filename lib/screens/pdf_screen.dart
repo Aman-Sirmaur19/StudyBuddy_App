@@ -7,10 +7,11 @@ import '../api/apis.dart';
 import '../main.dart';
 import '../helper/dialogs.dart';
 
+import '../models/category.dart';
 import './pdf_viewer_screen.dart';
 
 class PdfScreen extends StatefulWidget {
-  final String category;
+  final Category category;
 
   const PdfScreen({super.key, required this.category});
 
@@ -32,7 +33,8 @@ class _PdfScreenState extends State<PdfScreen> {
 
   // for accessing files
   void getAllPdfs() async {
-    final results = await APIs.storage.ref('PDFs/${widget.category}').listAll();
+    final results =
+        await APIs.storage.ref('PDFs/${widget.category.title}').listAll();
     pdfData = await Future.wait(
       results.items
           .where((item) => item.name.endsWith('.pdf'))
@@ -130,7 +132,7 @@ class _PdfScreenState extends State<PdfScreen> {
                     },
                   )
                 : Text(
-                    widget.category,
+                    widget.category.title,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, letterSpacing: 2),
                   ),
@@ -178,7 +180,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 ),
               ),
             ),
-            Image.asset('assets/images/waiting.png', width: mq.width * .4),
+            Image.asset(widget.category.image, width: mq.width * .5),
           ],
         ),
       ),
@@ -208,7 +210,7 @@ class _PdfScreenState extends State<PdfScreen> {
             },
             child: ListTile(
               leading:
-                  Image.asset('assets/images/pdf.png', width: mq.width * .15),
+                  Image.asset(widget.category.image, width: mq.width * .15),
               title: Text(
                 _isSearching
                     ? _searchList[index]['name'].split('.').first
@@ -283,7 +285,11 @@ class _PdfScreenState extends State<PdfScreen> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     TextButton(
-                                      child: const Text('Yes'),
+                                      child: Text('Yes',
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary)),
                                       onPressed: () async {
                                         await APIs.firestore
                                             .collection('pdfs')
@@ -292,7 +298,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                         await APIs.storage
                                             .ref()
                                             .child(
-                                                'PDFs/${widget.category}/${pdfData[index]['name']}')
+                                                'PDFs/${widget.category.title}/${pdfData[index]['name']}')
                                             .delete()
                                             .then((value) =>
                                                 Dialogs.showSnackBar(context,
@@ -303,7 +309,11 @@ class _PdfScreenState extends State<PdfScreen> {
                                       },
                                     ),
                                     TextButton(
-                                        child: const Text('No'),
+                                        child: Text('No',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary)),
                                         onPressed: () =>
                                             Navigator.pop(context)),
                                   ],

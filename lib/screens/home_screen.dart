@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 
+import '../main.dart';
+import '../models/category.dart';
 import '../screens/pdf_screen.dart';
 import '../screens/upload_pdf_screen.dart';
 import '../api/apis.dart';
@@ -77,20 +79,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         drawer: const MainDrawer(),
         body: GridView(
-          padding: const EdgeInsets.all(25),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
+          padding: EdgeInsets.all(mq.width * .06),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: mq.width * .5,
             childAspectRatio: 3 / 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
+            crossAxisSpacing: mq.width * .05,
+            mainAxisSpacing: mq.width * .05,
           ),
           children: DUMMY_CATEGORIES
               .map((catData) => InkWell(
-                    onTap: () => selectCategory(context, catData.title),
+                    onTap: () => selectCategory(context, catData),
                     splashColor: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(15),
                     child: Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: EdgeInsets.all(mq.width * .04),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -102,10 +104,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: Text(
-                        catData.title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Image.asset(
+                              catData.image,
+                              width: mq.width * .15,
+                            ),
+                          ),
+                          Text(
+                            catData.title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ))
@@ -115,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void selectCategory(BuildContext ctx, String category) {
+  void selectCategory(BuildContext ctx, Category category) {
     Navigator.of(ctx).push(
         MaterialPageRoute(builder: (ctx) => PdfScreen(category: category)));
   }

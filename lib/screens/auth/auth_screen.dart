@@ -149,7 +149,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 SizedBox(height: mq.height * .02),
                 _isLoading == 0
                     ? ElevatedButton(
-                        child: const Text('Send OTP'),
+                        child: Text(
+                          'Send OTP',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
                         onPressed: sendOtp,
                       )
                     : _isLoading == 1
