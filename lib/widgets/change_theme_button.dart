@@ -10,6 +10,8 @@ class ChangeThemeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Switch.adaptive(
+      activeColor: Colors.black,
+      activeTrackColor: Colors.green,
       value: themeProvider.isDarkMode,
       onChanged: (value) {
         final provider = Provider.of<ThemeProvider>(context, listen: false);

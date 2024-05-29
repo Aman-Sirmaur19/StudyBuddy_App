@@ -27,15 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     APIs.getSelfInfo();
   }
 
-  void selectCategory(BuildContext ctx, String category) {
-    Navigator.of(ctx).push(
-        MaterialPageRoute(builder: (ctx) => PdfScreen(category: category)));
-  }
-
-  Future<void> _refresh() async {
-    await APIs.getSelfInfo();
-  }
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -46,10 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
             'StudyBuddy',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true,
           actions: [
             IconButton(
               icon: const Icon(CupertinoIcons.add),
+              tooltip: 'Upload',
               onPressed: () async {
                 final pickedFile = await FilePicker.platform.pickFiles(
                   type: FileType.custom,
@@ -71,11 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.info_outline_rounded),
+              icon: const Icon(CupertinoIcons.info),
+              tooltip: 'Info',
               onPressed: showInfoAlertDialog,
             ),
             IconButton(
               icon: const GlowIcon(Icons.logout, color: Colors.redAccent),
+              tooltip: 'Logout',
               onPressed: showLogOutAlertDialog,
             )
           ],
@@ -109,7 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: Text(
                         catData.title,
-                        style: Theme.of(context).textTheme.headline6,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
                   ))
@@ -119,24 +115,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void selectCategory(BuildContext ctx, String category) {
+    Navigator.of(ctx).push(
+        MaterialPageRoute(builder: (ctx) => PdfScreen(category: category)));
+  }
+
+  Future<void> _refresh() async {
+    await APIs.getSelfInfo();
+  }
+
   showInfoAlertDialog() {
     return showDialog(
         context: context,
         builder: (context) {
           return const AlertDialog(
             title: Text(
-              '--> NOTE <--',
-              style: TextStyle(fontSize: 20),
+              '-- NOTE --',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                    '\u2022 It is recommended to set your profile, if you haven\'t.'),
-                Text('\u2022 You can upload PDFs by tapping on \'+\' button.'),
+                  '\u2022 It is recommended to set your profile, if you haven\'t.\n',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 Text(
-                    '\u2022 It is recommended to upload PDFs of compressed size.'),
+                  '\u2022 You can upload PDFs by tapping on \'+\' button.\n',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '\u2022 It is recommended to upload PDFs of compressed size.\n',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '\u2022 Copyright section is \'clickable\'.\n',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           );
@@ -157,7 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(
-                  child: const Text('Yes'),
+                  child: Text(
+                    'Yes',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
+                  ),
                   onPressed: () async {
                     // for showing progress dialog
                     Dialogs.showProgressBar(context);
@@ -174,7 +195,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 TextButton(
-                    child: const Text('No'),
+                    child: Text(
+                      'No',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                     onPressed: () => Navigator.pop(context)),
               ],
             ),

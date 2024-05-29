@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,7 @@ class _PdfScreenState extends State<PdfScreen> {
       results.items
           .where((item) => item.name.endsWith('.pdf'))
           .map((item) async {
+        final downloadUrl = await item.getDownloadURL();
         final metadata = await item.getMetadata();
         final uploaderId = metadata.customMetadata!['uploader']!;
         final uploaderName = await APIs.getUserName(uploaderId);
@@ -47,6 +49,7 @@ class _PdfScreenState extends State<PdfScreen> {
           'uploader': uploaderName,
           'uploaderId': uploaderId,
           'pdfId': pdfId,
+          'downloadUrl': downloadUrl,
         };
       }).toList(),
     );
@@ -137,6 +140,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 icon: Icon(_isSearching
                     ? CupertinoIcons.clear_circled_solid
                     : CupertinoIcons.search),
+                tooltip: 'Search',
                 onPressed: () {
                   setState(() {
                     _isSearching = !_isSearching;
@@ -144,6 +148,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 },
               ),
             ],
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           body: _isLoading
               ? const Center(
@@ -311,7 +316,7 @@ class _PdfScreenState extends State<PdfScreen> {
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.download),
-                onPressed: () {},
+                onPressed: () => downloadPdf(pdfData[index]['downloadUrl']),
               ),
             ),
           ),
@@ -319,4 +324,6 @@ class _PdfScreenState extends State<PdfScreen> {
       },
     );
   }
+
+  Future downloadPdf(Reference ref) async {}
 }

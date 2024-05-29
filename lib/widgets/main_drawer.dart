@@ -51,7 +51,7 @@ class _MainDrawerState extends State<MainDrawer> {
         Container(
           height: mq.height * .15,
           alignment: Alignment.centerLeft,
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.primary,
           child: Row(
             children: [
               Padding(
@@ -61,10 +61,12 @@ class _MainDrawerState extends State<MainDrawer> {
                   name == 'Unknown'
                       ? 'Let\'s Study!'
                       : 'Hi ${name.split(' ').first}!',
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 30,
-                      color: Colors.yellow),
+                      color: themeProvider.isDarkMode
+                          ? Colors.yellow.shade800
+                          : Colors.blue.shade800),
                 ),
               ),
               Padding(
@@ -95,7 +97,7 @@ class _MainDrawerState extends State<MainDrawer> {
         ),
         buildListTile(
           'About',
-          Icons.person,
+          Icons.person_outline,
           () {
             Navigator.push(
                 context,
@@ -104,7 +106,7 @@ class _MainDrawerState extends State<MainDrawer> {
           },
         ),
         buildListTile(
-          'Check for updates!',
+          'Downloads',
           Icons.download_outlined,
           () {},
         ),
@@ -178,7 +180,8 @@ class _MainDrawerState extends State<MainDrawer> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    backgroundColor: Colors.purple[50],
+                    backgroundColor:
+                        themeProvider.isDarkMode ? Colors.brown.shade100 : null,
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
@@ -276,8 +279,11 @@ class _MainDrawerState extends State<MainDrawer> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text('Close',
-                            style: TextStyle(color: Colors.purple)),
+                        child: Text('Close',
+                            style: TextStyle(
+                                color: themeProvider.isDarkMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.secondary)),
                       ),
                     ],
                   );

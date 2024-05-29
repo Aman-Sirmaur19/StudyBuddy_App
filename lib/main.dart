@@ -41,10 +41,6 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'StudyBuddy',
           themeMode: themeProvider.themeMode,
-          // theme: ThemeData(
-          //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          //   useMaterial3: true,
-          // ),
           theme: MyThemes.lightTheme,
           darkTheme: MyThemes.darkTheme,
           home: const SplashScreen(),

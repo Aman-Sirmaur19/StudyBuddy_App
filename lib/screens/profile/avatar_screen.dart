@@ -19,7 +19,13 @@ class AvatarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String image = '';
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          'Custom Avatar',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

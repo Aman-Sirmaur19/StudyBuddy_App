@@ -30,10 +30,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-          'My Profile',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
-        )),
+          title: const Text(
+            'My Profile',
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
         body: Form(
           key: _formKey,
           child: Padding(
@@ -63,9 +65,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required Field',
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         CupertinoIcons.person,
-                        color: Colors.lightBlue,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       labelText: 'Name',
                       hintText: 'eg. Aman Sirmaur',
@@ -80,9 +82,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required Field',
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         CupertinoIcons.pencil_ellipsis_rectangle,
-                        color: Colors.lightBlue,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       labelText: 'About',
                       hintText: 'eg. Feeling Happy!',
@@ -97,9 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required Field',
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
-                        Icons.school,
-                        color: Colors.lightBlue,
+                      prefixIcon: Icon(
+                        Icons.school_outlined,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       labelText: 'Branch',
                       hintText: 'eg. Mechanical Engineering',
@@ -114,9 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required Field',
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.apartment,
-                        color: Colors.lightBlue,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       labelText: 'College',
                       hintText: 'eg. NIT Agartala',
@@ -128,11 +130,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
-                      backgroundColor: Colors.lightBlue.shade50,
+                      // backgroundColor: Colors.lightBlue.shade50,
                       fixedSize: Size(mq.width * .35, mq.height * .05),
                     ),
-                    icon: const Icon(Icons.edit_note_outlined),
-                    label: const Text('Update'),
+                    icon: Icon(Icons.edit_note_outlined,
+                        color: Theme.of(context).colorScheme.secondary),
+                    label: Text(
+                      'Update',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();

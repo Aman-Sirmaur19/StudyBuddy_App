@@ -32,7 +32,12 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.pdfName, maxLines: 1),
+        title: Text(
+          widget.pdfName,
+          maxLines: 1,
+          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: document != null
           ? PDFViewer(document: document!)

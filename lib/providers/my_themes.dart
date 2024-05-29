@@ -14,13 +14,13 @@ class ThemeProvider extends ChangeNotifier {
 class MyThemes {
   static final darkTheme = ThemeData(
     scaffoldBackgroundColor: Colors.grey.shade900,
-    primaryColor: Colors.lightGreen,
-    colorScheme: ColorScheme.dark(),
-    iconTheme: IconThemeData(color: Colors.yellow, opacity: 0.8),
+    colorScheme: ColorScheme.dark(
+        primary: Colors.brown.shade700, secondary: Colors.brown.shade300),
+    iconTheme: const IconThemeData(color: Colors.yellow, opacity: 0.8),
   );
   static final lightTheme = ThemeData(
     scaffoldBackgroundColor: Colors.white,
-    primaryColor: Colors.blue,
-    colorScheme: ColorScheme.light(),
+    colorScheme: ColorScheme.light(
+        primary: Colors.blue.shade200, secondary: Colors.blue.shade400),
   );
 }

@@ -28,6 +28,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             'Leaderboard',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true),
       body: StreamBuilder(
           stream: APIs.getAllUsers(),

@@ -56,7 +56,13 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   Widget build(BuildContext context) {
     addCategoriesFromDummyData();
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload')),
+      appBar: AppBar(
+        title: const Text(
+          'Upload',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Padding(
@@ -68,7 +74,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
               children: [
                 loading
                     ? Center(
-                      child: CircularPercentIndicator(
+                        child: CircularPercentIndicator(
                           radius: 100,
                           lineWidth: 10,
                           percent: perCent / 100,
@@ -78,7 +84,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ),
-                    )
+                      )
                     : _pdfIsPicked(),
               ],
             ),
@@ -154,13 +160,17 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                child: const Text('Upload'),
+                child: Text('Upload',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary)),
                 onPressed: () async {
                   await uploadPdf(File(widget.path));
                 },
               ),
               ElevatedButton(
-                child: const Text('Cancel'),
+                child: Text('Cancel',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary)),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -235,8 +245,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
               .doc(event.metadata?.customMetadata?['pdfId'])
               .set(pdfInfo.toJson());
 
-          Dialogs.showSnackBar(context,
-              'PDF uploaded successfully!');
+          Dialogs.showSnackBar(context, 'PDF uploaded successfully!');
           Navigator.pop(context);
           downloadLink = await ref.getDownloadURL();
           log('Pdf uploaded successfully!');
