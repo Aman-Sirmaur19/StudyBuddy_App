@@ -6,6 +6,7 @@ import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 
 import '../../api/apis.dart';
+import '../../helper/dialogs.dart';
 import '../../main.dart';
 import '../../providers/my_themes.dart';
 import '../home_screen.dart';
@@ -45,7 +46,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           borderRadius: BorderRadius.circular(mq.width * .05),
                           child: Image.asset('assets/images/study.jpg',
                               width: mq.width * .2)),
-                      const Text('PrepNight',
+                      const Text('StudyBuddy',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
@@ -95,6 +96,12 @@ class _OTPScreenState extends State<OTPScreen> {
                     : ElevatedButton(
                         child: const Text('Verify OTP'),
                         onPressed: () async {
+                          if (otp.isEmpty) {
+                            Dialogs.showErrorSnackBar(
+                                context, 'Please enter the OTP.');
+                            return;
+                          }
+
                           setState(() {
                             _isLoading = true;
                           });
@@ -105,28 +112,33 @@ class _OTPScreenState extends State<OTPScreen> {
                               verificationId: widget.verificationId,
                               smsCode: otp,
                             );
-                            APIs.auth
+                            await APIs.auth
                                 .signInWithCredential(credential)
                                 .then((value) async {
-                              if ((await APIs.userExists())) {
+                              if (await APIs.userExists()) {
                                 Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => HomeScreen()));
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => HomeScreen()),
+                                );
                               } else {
                                 await APIs.createUser().then((value) {
                                   Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => HomeScreen()));
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => HomeScreen()),
+                                  );
                                 });
                               }
                             });
-                          } catch (exception) {
+                          } on FirebaseAuthException catch (e) {
+                            Dialogs.showErrorSnackBar(context, e.message!);
+                          } catch (e) {
+                            Dialogs.showErrorSnackBar(context, e.toString());
+                          } finally {
                             setState(() {
                               _isLoading = false;
                             });
-                            log(exception.toString());
                           }
                         },
                       ),

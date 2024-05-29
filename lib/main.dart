@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         final themeProvider = Provider.of<ThemeProvider>(context);
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'PrepNight',
+          title: 'StudyBuddy',
           themeMode: themeProvider.themeMode,
           // theme: ThemeData(
           //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

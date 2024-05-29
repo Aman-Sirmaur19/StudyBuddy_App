@@ -58,7 +58,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           borderRadius: BorderRadius.circular(mq.width * .05),
                           child: Image.asset('assets/images/study.jpg',
                               width: mq.width * .2)),
-                      const Text('PrepNight',
+                      const Text('StudyBuddy',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30,

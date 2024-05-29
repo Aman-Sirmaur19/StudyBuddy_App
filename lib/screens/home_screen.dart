@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'PrepNight',
+            'StudyBuddy',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
           centerTitle: true,
@@ -71,8 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             IconButton(
+              icon: const Icon(Icons.info_outline_rounded),
+              onPressed: showInfoAlertDialog,
+            ),
+            IconButton(
               icon: const GlowIcon(Icons.logout, color: Colors.redAccent),
-              onPressed: showAlertDialog,
+              onPressed: showLogOutAlertDialog,
             )
           ],
         ),
@@ -115,7 +119,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future showAlertDialog() {
+  showInfoAlertDialog() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text(
+              '--> NOTE <--',
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                    '\u2022 It is recommended to set your profile, if you haven\'t.'),
+                Text('\u2022 You can upload PDFs by tapping on \'+\' button.'),
+                Text(
+                    '\u2022 It is recommended to upload PDFs of compressed size.'),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future showLogOutAlertDialog() {
     return showDialog(
         context: context,
         builder: (context) {

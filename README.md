@@ -1,4 +1,4 @@
-# prep_night
+# study_buddy
 
 A new Flutter project.
 
