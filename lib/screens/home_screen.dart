@@ -35,9 +35,24 @@ class _HomeScreenState extends State<HomeScreen> {
       onRefresh: () => _refresh(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'StudyBuddy',
-            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Study',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    letterSpacing: 1,
+                    color: Colors.yellowAccent.shade700,
+                  )),
+              Text('Buddy',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    letterSpacing: 1,
+                    color: Colors.redAccent.shade400,
+                  )),
+            ],
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true,

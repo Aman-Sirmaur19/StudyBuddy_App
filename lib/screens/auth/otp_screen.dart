@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
@@ -40,16 +42,37 @@ class _OTPScreenState extends State<OTPScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.width * .05),
-                          child: Image.asset('assets/images/study.jpg',
-                              width: mq.width * .2)),
-                      const Text('StudyBuddy',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                            letterSpacing: 2,
-                          )),
+                      Image.asset('assets/images/study_buddy.png',
+                          width: mq.width * .2),
+                      Container(
+                        margin: const EdgeInsets.only(left: 3),
+                        decoration: BoxDecoration(
+                          gradient: SweepGradient(colors: [
+                            Colors.lightBlue.withOpacity(.85),
+                            Colors.lightBlue.shade400,
+                            Colors.lightBlue.shade400,
+                          ], startAngle: -1 * pi / 6, endAngle: pi * 11 / 6),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          children: [
+                            Text('Study',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  letterSpacing: 2,
+                                  color: Colors.yellowAccent.shade700,
+                                )),
+                            Text('Buddy',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  letterSpacing: 2,
+                                  color: Colors.redAccent.shade400,
+                                )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -61,10 +84,19 @@ class _OTPScreenState extends State<OTPScreen> {
                   'Enter OTP',
                   style: TextStyle(
                     fontSize: 25,
-                    color: themeProvider.isDarkMode
-                        ? Colors.white
-                        : Colors.black54,
+                    color:
+                        themeProvider.isDarkMode ? Colors.grey : Colors.black54,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Enter the 6-digits verification code sent on your phone number',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color:
+                        themeProvider.isDarkMode ? Colors.grey : Colors.black54,
                   ),
                 ),
                 SizedBox(height: mq.height * .05),

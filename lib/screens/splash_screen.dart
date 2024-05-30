@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthentication() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
 
     try {
       // Reloading current user data each time when the app starts
@@ -77,11 +79,41 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // if (isLoading) CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(mq.width * .25),
-              child:
-                  Image.asset('assets/images/study.jpg', width: mq.width * .7),
+            Image.asset('assets/images/study_buddy.png', width: mq.width * .6),
+            const SizedBox(height: 15),
+            Container(
+              margin: const EdgeInsets.only(left: 3),
+              decoration: BoxDecoration(
+                gradient: SweepGradient(
+                  colors: [
+                    Colors.lightBlue.withOpacity(.85),
+                    Colors.lightBlue.shade400,
+                    Colors.lightBlue.shade400,
+                  ],
+                  startAngle: -1 * pi / 6,
+                  endAngle: pi * 11 / 6,
+                ),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Study',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        letterSpacing: 2,
+                        color: Colors.yellowAccent.shade700,
+                      )),
+                  Text('Buddy',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        letterSpacing: 2,
+                        color: Colors.redAccent.shade400,
+                      )),
+                ],
+              ),
             ),
           ],
         ),

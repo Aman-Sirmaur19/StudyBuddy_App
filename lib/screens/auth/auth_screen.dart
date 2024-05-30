@@ -1,11 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../helper/dialogs.dart';
 
+import '../../providers/my_themes.dart';
 import 'otp_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -40,6 +44,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -54,16 +60,37 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.width * .05),
-                          child: Image.asset('assets/images/study.jpg',
-                              width: mq.width * .2)),
-                      const Text('StudyBuddy',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                            letterSpacing: 2,
-                          )),
+                      Image.asset('assets/images/study_buddy.png',
+                          width: mq.width * .2),
+                      Container(
+                        margin: const EdgeInsets.only(left: 3),
+                        decoration: BoxDecoration(
+                          gradient: SweepGradient(colors: [
+                            Colors.lightBlue.withOpacity(.85),
+                            Colors.lightBlue.shade400,
+                            Colors.lightBlue.shade400,
+                          ], startAngle: -1 * pi / 6, endAngle: pi * 11 / 6),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Row(
+                          children: [
+                            Text('Study',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  letterSpacing: 2,
+                                  color: Colors.yellowAccent.shade700,
+                                )),
+                            Text('Buddy',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  letterSpacing: 2,
+                                  color: Colors.redAccent.shade400,
+                                )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -71,16 +98,23 @@ class _AuthScreenState extends State<AuthScreen> {
                     borderRadius: BorderRadius.circular(mq.width * .1),
                     child: Image.asset('assets/images/login.jpg',
                         width: mq.width * .65)),
-                const Text(
+                Text(
                   'Register Here',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color:
+                        themeProvider.isDarkMode ? Colors.grey : Colors.black54,
+                  ),
                 ),
-                const Text(
+                Text(
                   'Enter your phone number. We\'ll send you a verification code',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
+                    color:
+                        themeProvider.isDarkMode ? Colors.grey : Colors.black54,
                   ),
                 ),
                 SizedBox(height: mq.height * .05),

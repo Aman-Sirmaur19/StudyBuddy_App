@@ -150,7 +150,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 },
               ),
             ],
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: widget.category.color.withOpacity(.7),
           ),
           body: _isLoading
               ? const Center(

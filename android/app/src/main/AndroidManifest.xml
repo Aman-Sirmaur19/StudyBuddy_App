@@ -23,7 +23,7 @@
     </queries>
 
     <application
-        android:label="prep_night"
+        android:label="StudyBuddy"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

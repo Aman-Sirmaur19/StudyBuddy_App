@@ -94,50 +94,55 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           physics: const BouncingScrollPhysics(),
                           itemCount: _list.length,
                           itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: mq.width * .05),
-                              child: ListTile(
-                                leading: Text(
-                                  (index + 1).toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                title: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: mq.width * .05),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        _list[index].name.split(' ').first,
+                            return _list[index].uploads > 0
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: mq.width * .05),
+                                    child: ListTile(
+                                      leading: Text(
+                                        (index + 1).toString(),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
                                         ),
                                       ),
-                                      if (index < 3)
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: mq.width * .05),
-                                          child: Image.asset(
-                                            'assets/images/$index-medal.png',
-                                            width: mq.width * .065,
-                                          ),
-                                        )
-                                    ],
-                                  ),
-                                ),
-                                trailing: Text(
-                                  _list[index].uploads.toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                            );
+                                      title: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: mq.width * .05),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              _list[index]
+                                                  .name
+                                                  .split(' ')
+                                                  .first,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            if (index < 3)
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: mq.width * .05),
+                                                child: Image.asset(
+                                                  'assets/images/$index-medal.png',
+                                                  width: mq.width * .065,
+                                                ),
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                      trailing: Text(
+                                        _list[index].uploads.toString(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : null;
                           },
                         ),
                       ),
@@ -150,7 +155,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       child: Column(
                         children: [
                           const Text(
-                            'No one has uploaded yet!',
+                            'Nobody has uploaded yet!',
                             style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
