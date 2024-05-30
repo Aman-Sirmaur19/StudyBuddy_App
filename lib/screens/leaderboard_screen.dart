@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fluttermoji/fluttermojiFunctions.dart';
 
 import '../main.dart';
 import '../api/apis.dart';
@@ -94,50 +96,64 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           physics: const BouncingScrollPhysics(),
                           itemCount: _list.length,
                           itemBuilder: (context, index) {
+                            final img = FluttermojiFunctions()
+                                .decodeFluttermojifromString(
+                                    _list[index].image);
+
                             return _list[index].uploads > 0
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: mq.width * .05),
-                                    child: ListTile(
-                                      leading: Text(
-                                        (index + 1).toString(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      title: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: mq.width * .05),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              _list[index]
-                                                  .name
-                                                  .split(' ')
-                                                  .first,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            if (index < 3)
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: mq.width * .05),
-                                                child: Image.asset(
-                                                  'assets/images/$index-medal.png',
-                                                  width: mq.width * .065,
-                                                ),
+                                        horizontal: mq.width * .02),
+                                    child: Card(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      child: ListTile(
+                                        leading: index < 3
+                                            ? Image.asset(
+                                                'assets/images/$index-medal.png',
+                                                width: mq.width * .065,
                                               )
-                                          ],
+                                            : Text(
+                                                ' ${(index + 1).toString()}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                        title: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: mq.width * .07),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                _list[index]
+                                                    .name
+                                                    .split(' ')
+                                                    .first,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    left: mq.width * .01),
+                                                child: SvgPicture.string(img,
+                                                    width: mq.width * .09),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      trailing: Text(
-                                        _list[index].uploads.toString(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                        trailing: Container(
+                                          margin: EdgeInsets.only(
+                                              right: mq.width * .04),
+                                          child: Text(
+                                            _list[index].uploads.toString(),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
