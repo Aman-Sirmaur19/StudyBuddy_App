@@ -57,6 +57,8 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         // Handle other FirebaseAuthExceptions if needed
         print('Error checking authentication: $e');
+        Dialogs.showErrorSnackBar(context,
+            'Something went wrong! (Check internet and restart the app)');
       }
     } catch (e) {
       // Handle generic errors
