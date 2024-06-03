@@ -63,7 +63,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       : 'Hi ${name.split(' ').first}!',
                   style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      fontSize: 30,
+                      fontSize: name.length > 9 ? 25 : 30,
                       color: themeProvider.isDarkMode
                           ? Colors.yellow.shade800
                           : Colors.blue.shade800),
@@ -106,17 +106,17 @@ class _MainDrawerState extends State<MainDrawer> {
           },
         ),
         buildListTile(
-          'Downloads',
-          Icons.download_outlined,
-          () {},
-        ),
-        buildListTile(
           'Leaderboard',
           Icons.leaderboard_outlined,
           () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const LeaderboardScreen()));
           },
+        ),
+        buildListTile(
+          'More Apps!',
+          Icons.apps_outage_outlined,
+          () {},
         ),
         const Spacer(),
         Row(

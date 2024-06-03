@@ -51,10 +51,24 @@ dependencies:
   url_launcher: ^6.2.5
   path_provider: ^2.1.2
   country_picker: ^2.0.26
+  dio: ^5.4.3+1
+  permission_handler: ^11.3.1
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/study_buddy.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/logo_foreground.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

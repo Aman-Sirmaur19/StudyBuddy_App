@@ -6,7 +6,7 @@ import 'package:flutter_glow/flutter_glow.dart';
 
 import '../main.dart';
 import '../models/category.dart';
-import '../screens/pdf_screen.dart';
+import '../screens/pdf_screen2.dart';
 import '../screens/upload_pdf_screen.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   void initState() {
     super.initState();
