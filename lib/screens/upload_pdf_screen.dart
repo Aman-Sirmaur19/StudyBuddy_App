@@ -11,6 +11,7 @@ import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/pdf_model.dart';
 import '../widgets/category_item.dart';
+import '../widgets/particle_animation.dart';
 
 class UploadPdfScreen extends StatefulWidget {
   final FilePickerResult? pickedFile;
@@ -65,30 +66,35 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Padding(
-          padding: EdgeInsets.only(top: mq.width * .2),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                loading
-                    ? Center(
-                        child: CircularPercentIndicator(
-                          radius: 100,
-                          lineWidth: 10,
-                          percent: perCent / 100,
-                          backgroundColor: Colors.grey,
-                          progressColor: Colors.green,
-                          center: Text('${perCent.toStringAsFixed(1)}%',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      )
-                    : _pdfIsPicked(),
-              ],
+        child: Stack(
+          children: [
+            particles(context),
+            Padding(
+              padding: EdgeInsets.only(top: mq.width * .2),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    loading
+                        ? Center(
+                            child: CircularPercentIndicator(
+                              radius: 100,
+                              lineWidth: 10,
+                              percent: perCent / 100,
+                              backgroundColor: Colors.grey,
+                              progressColor: Colors.green,
+                              center: Text('${perCent.toStringAsFixed(1)}%',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          )
+                        : _pdfIsPicked(),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

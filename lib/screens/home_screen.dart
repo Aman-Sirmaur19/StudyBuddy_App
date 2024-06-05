@@ -12,6 +12,7 @@ import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../widgets/category_item.dart';
 import '../widgets/main_drawer.dart';
+import '../widgets/particle_animation.dart';
 
 import './auth/auth_screen.dart';
 
@@ -93,53 +94,58 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         drawer: const MainDrawer(),
-        body: GridView(
-          padding: EdgeInsets.all(mq.width * .06),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: mq.width * .5,
-            childAspectRatio: 3 / 2,
-            crossAxisSpacing: mq.width * .05,
-            mainAxisSpacing: mq.width * .05,
-          ),
-          children: DUMMY_CATEGORIES
-              .map((catData) => InkWell(
-                    onTap: () => selectCategory(context, catData),
-                    splashColor: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                      padding: EdgeInsets.all(mq.width * .04),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            catData.color.withOpacity(0.7),
-                            catData.color,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+        body: Stack(
+          children: [
+            particles(context),
+            GridView(
+              padding: EdgeInsets.all(mq.width * .06),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: mq.width * .5,
+                childAspectRatio: 3 / 2,
+                crossAxisSpacing: mq.width * .05,
+                mainAxisSpacing: mq.width * .05,
+              ),
+              children: DUMMY_CATEGORIES
+                  .map((catData) => InkWell(
+                        onTap: () => selectCategory(context, catData),
+                        splashColor: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Image.asset(
-                              catData.image,
-                              width: mq.width * .15,
+                        child: Container(
+                          padding: EdgeInsets.all(mq.width * .04),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                catData.color.withOpacity(0.7),
+                                catData.color,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          Text(
-                            catData.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Image.asset(
+                                  catData.image,
+                                  width: mq.width * .15,
+                                ),
+                              ),
+                              Text(
+                                catData.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ))
-              .toList(),
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
         ),
       ),
     );

@@ -13,6 +13,7 @@ import '../providers/permission.dart';
 import '../helper/dialogs.dart';
 import '../models/category.dart';
 
+import '../widgets/particle_animation.dart';
 import './pdf_viewer_screen.dart';
 
 class PdfScreen extends StatefulWidget {
@@ -196,13 +197,18 @@ class _PdfScreenState extends State<PdfScreen> {
             ],
             backgroundColor: widget.category.color.withOpacity(.7),
           ),
-          body: _isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : pdfData.isEmpty
-                  ? SingleChildScrollView(child: _pdfDataIsEmpty())
-                  : _pdfDataIsNotEmpty(),
+          body: Stack(
+            children: [
+              particles(context),
+              _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : pdfData.isEmpty
+                      ? SingleChildScrollView(child: _pdfDataIsEmpty())
+                      : _pdfDataIsNotEmpty(),
+            ],
+          ),
         ),
       ),
     );
