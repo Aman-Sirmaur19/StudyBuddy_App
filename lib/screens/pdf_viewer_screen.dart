@@ -5,9 +5,13 @@ import '../api/apis.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   final String pdfName, pdfUrl;
+  final Color color;
 
   const PdfViewerScreen(
-      {super.key, required this.pdfName, required this.pdfUrl});
+      {super.key,
+      required this.pdfName,
+      required this.pdfUrl,
+      required this.color});
 
   @override
   State<PdfViewerScreen> createState() => _PdfViewerScreenState();
@@ -32,12 +36,13 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
-          widget.pdfName,
+          widget.pdfName.split('.').first,
           maxLines: 1,
           style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: widget.color,
       ),
       body: document != null
           ? PDFViewer(document: document!)

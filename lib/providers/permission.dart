@@ -1,11 +1,18 @@
+import 'dart:developer';
+
 import 'package:permission_handler/permission_handler.dart';
 
 class CheckPermission {
   static isStoragePermission() async {
-    var isStorage = await Permission.manageExternalStorage.status;
-    if (!isStorage.isGranted) {
+    var isStorageLowerVersion = await Permission.storage.status;
+    var isStorageHigherVersion = await Permission.manageExternalStorage.status;
+    log(isStorageLowerVersion.toString());
+    log(isStorageHigherVersion.toString());
+    if (!isStorageLowerVersion.isGranted && !isStorageHigherVersion.isGranted) {
+      await Permission.storage.request();
       await Permission.manageExternalStorage.request();
-      if (!isStorage.isGranted) {
+      if (!isStorageLowerVersion.isGranted &&
+          !isStorageHigherVersion.isGranted) {
         return false;
       } else {
         return true;

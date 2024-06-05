@@ -26,9 +26,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text(
-            'Leaderboard',
-            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Leaderboard',
+                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+              ),
+              Container(
+                width: mq.width * .12,
+                margin: EdgeInsets.only(left: 5),
+                child: Image.asset(
+                  'assets/images/leaderboard.png',
+                ),
+              ),
+            ],
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true),
@@ -61,7 +73,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
-                            left: mq.width * .02, right: mq.width * .005),
+                            left: mq.width * .017, right: mq.width * .005),
                         child: ListTile(
                           leading: const Text(
                             'Rank',
@@ -114,7 +126,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                                 width: mq.width * .065,
                                               )
                                             : Text(
-                                                ' ${(index + 1).toString()}',
+                                                '${(index + 1).toString()}',
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20,

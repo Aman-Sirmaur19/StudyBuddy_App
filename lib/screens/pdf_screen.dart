@@ -65,20 +65,21 @@ class _PdfScreenState extends State<PdfScreen> {
         };
       }).toList(),
     );
-    setState(() {
-      _isLoading = false;
-    });
 
-    // Initialize the download state maps
+    // Initialize the download state maps and check if the file is downloaded
     for (var pdf in pdfData) {
-      checkFileDownloaded(pdf['name']);
+      bool fileDownloaded = await checkFileDownloaded(pdf['name']);
       setState(() {
         downloading[pdf['name']] = false;
-        fileExists[pdf['name']] = false;
+        fileExists[pdf['name']] = fileDownloaded;
         progress[pdf['name']] = 0.0;
         cancelTokens[pdf['name']] = CancelToken();
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<List<Map<String, dynamic>>> fetchPdfData() async {
@@ -101,13 +102,11 @@ class _PdfScreenState extends State<PdfScreen> {
     }
   }
 
-  checkFileDownloaded(String name) async {
+  Future<bool> checkFileDownloaded(String name) async {
     String filePath = '/storage/emulated/0/StudyBuddy/$name';
     bool check = await File(filePath).exists();
     log(check.toString());
-    setState(() {
-      fileExists[name] = check;
-    });
+    return check;
   }
 
   @override
@@ -161,10 +160,25 @@ class _PdfScreenState extends State<PdfScreen> {
                       }
                     },
                   )
-                : Text(
-                    widget.category.title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, letterSpacing: 2),
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.category.title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 10),
+                        width: mq.width * .11,
+                        child: Image.asset(
+                          widget.category.image,
+                        ),
+                      ),
+                    ],
                   ),
             centerTitle: true,
             actions: [
@@ -225,36 +239,38 @@ class _PdfScreenState extends State<PdfScreen> {
             element['pdfId'].toString() == pdfData[index]['pdfId']);
         bool userLiked =
             pdfDataList[i]['likes']?.contains(APIs.user.uid) ?? false;
-        checkFileDownloaded(pdfData[index]['name']);
         return Card(
-          child: InkWell(
-            onTap: () {
-              fileExists[pdfData[index]['name']] == true
-                  ? openFile(pdfData[index]['name'])
-                  : Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => PdfViewerScreen(
-                            pdfName: _isSearching
-                                ? _searchList[index]['name']
-                                : pdfData[index]['name'],
-                            pdfUrl: _isSearching
-                                ? _searchList[index]['url']
-                                : pdfData[index]['url'],
-                          )));
-            },
-            child: ListTile(
-                leading:
-                    Image.asset(widget.category.image, width: mq.width * .15),
-                title: Text(
-                  _isSearching
-                      ? _searchList[index]['name'].split('.').first
-                      : pdfData[index]['name'].split('.').first,
-                  maxLines: 1,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+            child: InkWell(
+          onTap: () {
+            fileExists[pdfData[index]['name']] == true
+                ? openFile(pdfData[index]['name'])
+                : Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PdfViewerScreen(
+                          pdfName: _isSearching
+                              ? _searchList[index]['name']
+                              : pdfData[index]['name'],
+                          pdfUrl: _isSearching
+                              ? _searchList[index]['url']
+                              : pdfData[index]['url'],
+                          color: widget.category.color.withOpacity(.7),
+                        )));
+          },
+          child: ListTile(
+              leading:
+                  Image.asset(widget.category.image, width: mq.width * .15),
+              title: Text(
+                _isSearching
+                    ? _searchList[index]['name'].split('.').first
+                    : pdfData[index]['name'].split('.').first,
+                maxLines: 1,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
                       children: [
                         Text(
                           _isSearching
@@ -266,195 +282,228 @@ class _PdfScreenState extends State<PdfScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: mq.width * .03),
-                          child: IconButton(
-                            color: Colors.blue,
-                            icon: userLiked
-                                ? const Icon(Icons.thumb_up_alt_rounded)
-                                : const Icon(Icons.thumb_up_alt_outlined),
-                            onPressed: () async {
-                              final pdfRef = APIs.firestore
-                                  .collection('pdfs')
-                                  .doc(pdfData[index]['pdfId']);
-                              final docSnapshot = await pdfRef.get();
-                              final currentLikes = List<String>.from(
-                                  docSnapshot.data()?['likes']);
-                              if (!currentLikes.contains(APIs.user.uid)) {
-                                currentLikes.add(APIs.user.uid);
-                                await pdfRef.update({'likes': currentLikes});
-                                setState(() {
-                                  pdfDataList[i]['likes']?.add(APIs.user.uid);
-                                  userLiked = true;
-                                });
-                              } else {
-                                currentLikes.remove(APIs.user.uid);
-                                await pdfRef.update({'likes': currentLikes});
-                                setState(() {
-                                  pdfDataList[i]['likes']
-                                      ?.remove(APIs.user.uid);
-                                  userLiked = false;
-                                });
-                              }
-                            },
-                          ),
+                        IconButton(
+                          tooltip: APIs.user.uid == pdfData[index]['uploaderId']
+                              ? 'Thanks disabled'
+                              : 'Thanks',
+                          color: Colors.green,
+                          icon: userLiked
+                              ? const Icon(Icons.handshake_rounded)
+                              : const Icon(Icons.handshake_outlined),
+                          onPressed: APIs.user.uid ==
+                                  pdfData[index]['uploaderId']
+                              ? null
+                              : () async {
+                                  final pdfRef = APIs.firestore
+                                      .collection('pdfs')
+                                      .doc(pdfData[index]['pdfId']);
+                                  final docSnapshot = await pdfRef.get();
+                                  final currentLikes = List<String>.from(
+                                      docSnapshot.data()?['likes']);
+                                  if (!currentLikes.contains(APIs.user.uid)) {
+                                    currentLikes.add(APIs.user.uid);
+                                    await pdfRef
+                                        .update({'likes': currentLikes});
+                                    setState(() {
+                                      pdfDataList[i]['likes']
+                                          ?.add(APIs.user.uid);
+                                      userLiked = true;
+                                    });
+                                  } else {
+                                    currentLikes.remove(APIs.user.uid);
+                                    await pdfRef
+                                        .update({'likes': currentLikes});
+                                    setState(() {
+                                      pdfDataList[i]['likes']
+                                          ?.remove(APIs.user.uid);
+                                      userLiked = false;
+                                    });
+                                  }
+                                },
                         ),
-                        Text(pdfDataList[i]['likes'].length.toString(),
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold)),
-                        if (APIs.user.uid == pdfData[index]['uploaderId'])
-                          Padding(
-                            padding: EdgeInsets.only(left: mq.width * .03),
-                            child: IconButton(
-                              color: Colors.red,
-                              icon: const Icon(Icons.delete_rounded),
-                              onPressed: () => showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                        'Do you want to delete?',
-                                        style: TextStyle(fontSize: 20),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      content: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          TextButton(
-                                            child: Text('Yes',
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary)),
-                                            onPressed: () async {
-                                              await APIs.firestore
-                                                  .collection('pdfs')
-                                                  .doc(pdfData[index]['pdfId'])
-                                                  .delete();
-                                              await APIs.storage
-                                                  .ref()
-                                                  .child(
-                                                      'PDFs/${widget.category.title}/${pdfData[index]['name']}')
-                                                  .delete()
-                                                  .then((value) =>
-                                                      Dialogs.showSnackBar(
-                                                          context,
-                                                          'Deleted successfully!'));
-                                              await APIs.updateUploads(-1);
-                                              Navigator.pop(context);
-                                              _refresh();
+                        Text(
+                          '${pdfDataList[i]['likes'].length}',
+                          style: const TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 3),
+                          child: downloading[pdfData[index]['name']]!
+                              ? IconButton(
+                                  tooltip: 'Cancel download',
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    cancelDownload(pdfData[index]['name']);
+                                  },
+                                )
+                              : fileExists[pdfData[index]['name']] == true
+                                  ? IconButton(
+                                      tooltip: 'View',
+                                      onPressed: () {
+                                        openFile(pdfData[index]['name']);
+                                      },
+                                      icon: const Icon(
+                                          Icons.remove_red_eye_outlined))
+                                  : IconButton(
+                                      tooltip: 'Download',
+                                      icon: const Icon(Icons.download),
+                                      onPressed: () async {
+                                        bool permission = false;
+                                        if (!permission) {
+                                          permission = await CheckPermission
+                                              .isStoragePermission();
+                                        }
+                                        if (permission) {
+                                          downloadFile(
+                                            index,
+                                            (received, total) {
+                                              setState(() {
+                                                progress[pdfData[index]
+                                                        ['name']] =
+                                                    received / total;
+                                              });
                                             },
-                                          ),
-                                          TextButton(
-                                              child: Text('No',
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .secondary)),
-                                              onPressed: () =>
-                                                  Navigator.pop(context)),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          )
+                                          );
+                                        } else {
+                                          Dialogs.showErrorSnackBar(context,
+                                              'Storage permission denied!');
+                                        }
+                                      },
+                                    ),
+                        )
                       ],
                     ),
-                    if (fileExists[pdfData[index]['name']] == true)
-                      Text('Downloaded',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.bold,
-                          )),
-                    if (downloading[pdfData[index]['name']] == true)
-                      Row(
-                        children: [
-                          LinearProgressIndicator(
-                            value: progress[pdfData[index]['name']],
-                            color: Colors.green,
-                            backgroundColor: Colors.grey,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.green),
-                          ),
-                          Text(
-                            '${(progress[pdfData[index]['name']]! * 100).toStringAsFixed(0)}%',
-                            style: TextStyle(fontSize: 10),
-                          )
-                        ],
-                      )
-                  ],
-                ),
-                trailing: fileExists[pdfData[index]['name']] == true
-                    ? const Icon(Icons.check_circle, color: Colors.green)
-                    : downloading[pdfData[index]['name']] == true
-                        ? IconButton(
-                            icon: const Icon(Icons.close),
-                            tooltip: 'Cancel download',
-                            onPressed: () => cancelDownload(index),
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.download),
-                            tooltip: 'Download',
-                            onPressed: () => downloadPdf(
-                              index,
-                              pdfData[index]['name'],
-                              pdfData[index]['downloadUrl'],
-                            ),
-                          )),
-          ),
-        );
+                  ),
+                  if (downloading[pdfData[index]['name']]!)
+                    LinearProgressIndicator(
+                      value: progress[pdfData[index]['name']],
+                      backgroundColor: Colors.grey,
+                      color: widget.category.color,
+                    )
+                ],
+              ),
+              trailing: APIs.user.uid == pdfData[index]['uploaderId']
+                  ? Padding(
+                      padding: EdgeInsets.only(left: mq.width * .03),
+                      child: IconButton(
+                        tooltip: 'Delete',
+                        color: Colors.red,
+                        icon: const Icon(Icons.delete_rounded),
+                        onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                  'Do you want to delete?',
+                                  style: TextStyle(fontSize: 20),
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    TextButton(
+                                      child: Text('Yes',
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary)),
+                                      onPressed: () async {
+                                        await APIs.firestore
+                                            .collection('pdfs')
+                                            .doc(pdfData[index]['pdfId'])
+                                            .delete();
+                                        await APIs.storage
+                                            .ref()
+                                            .child(
+                                                'PDFs/${widget.category.title}/${pdfData[index]['name']}')
+                                            .delete()
+                                            .then((value) =>
+                                                Dialogs.showSnackBar(context,
+                                                    'Deleted successfully!'));
+                                        await APIs.updateUploads(-1);
+                                        Navigator.pop(context);
+                                        _refresh();
+                                      },
+                                    ),
+                                    TextButton(
+                                        child: Text('No',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary)),
+                                        onPressed: () =>
+                                            Navigator.pop(context)),
+                                  ],
+                                ),
+                              );
+                            }),
+                      ),
+                    )
+                  : null),
+        ));
       },
     );
   }
 
-  Future downloadPdf(int index, String name, String url) async {
-    bool permission = false;
-    if (!permission) {
-      permission = await CheckPermission.isStoragePermission();
-    }
-    if (permission) {
-      final path = '/storage/emulated/0/StudyBuddy/$name';
-      try {
-        downloading[pdfData[index]['name']] = true;
-        cancelTokens[pdfData[index]['name']] = CancelToken();
-        await Dio().download(
-          url,
-          path,
-          onReceiveProgress: (count, total) {
-            setState(() {
-              progress[pdfData[index]['name']] = count / total;
-            });
-          },
-          cancelToken: cancelTokens[pdfData[index]['name']],
-        );
-        Dialogs.showSnackBar(
-            context, '$name downloaded to\nStudyBuddy folder!');
-        setState(() {
-          downloading[pdfData[index]['name']] = false;
-          fileExists[pdfData[index]['name']] = true;
-        });
-      } catch (error) {
-        setState(() {
-          downloading[pdfData[index]['name']] = false;
-        });
-      }
-    } else {
-      Dialogs.showErrorSnackBar(context, 'Storage permission denied!');
-    }
+  void openFile(String name) {
+    String filePath = '/storage/emulated/0/StudyBuddy/$name';
+    OpenFile.open(filePath);
   }
 
-  cancelDownload(int index) {
-    cancelTokens[pdfData[index]['name']]?.cancel();
+  Future<void> downloadFile(
+    int index,
+    Function(double, double) onProgress,
+  ) async {
+    // M-1
+    // String directory = (await getExternalStorageDirectory())?.path ?? '';
+    // String filePath = '$directory/StudyBuddy/${pdfData[index]['name']}';
+
+    // M-2
+    // final directory = await getApplicationDocumentsDirectory();
+    // final filePath = '${directory.path}/${pdfData[index]['name']}';
+
+    String path = '/storage/emulated/0/StudyBuddy/${pdfData[index]['name']}';
+    Dio dio = Dio();
     setState(() {
-      downloading[pdfData[index]['name']] = false;
+      downloading[pdfData[index]['name']] = true;
     });
+    try {
+      cancelTokens[pdfData[index]['name']] = CancelToken();
+      await dio.download(
+        pdfData[index]['downloadUrl'],
+        path,
+        // filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            onProgress(received.toDouble(), total.toDouble());
+          }
+        },
+        cancelToken: cancelTokens[pdfData[index]['name']]!,
+      );
+      log(path);
+      // log(filePath);
+      Dialogs.showSnackBar(context,
+          '${pdfData[index]['name']} downloaded to\nStudyBuddy folder!');
+      setState(() {
+        fileExists[pdfData[index]['name']] = true;
+      });
+    } catch (e) {
+      log('Download failed: $e');
+      Dialogs.showErrorSnackBar(context, 'Download failed!');
+    } finally {
+      setState(() {
+        downloading[pdfData[index]['name']] = false;
+        progress[pdfData[index]['name']] = 0.0;
+      });
+    }
   }
 
-  openFile(String name) {
-    OpenFile.open('/storage/emulated/0/StudyBuddy/$name');
+  void cancelDownload(String name) {
+    cancelTokens[name]?.cancel();
+    setState(() {
+      downloading[name] = false;
+      progress[name] = 0.0;
+    });
   }
 }

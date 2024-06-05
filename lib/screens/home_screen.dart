@@ -6,7 +6,7 @@ import 'package:flutter_glow/flutter_glow.dart';
 
 import '../main.dart';
 import '../models/category.dart';
-import '../screens/pdf_screen2.dart';
+import '../screens/pdf_screen.dart';
 import '../screens/upload_pdf_screen.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
@@ -23,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -174,6 +173,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Text(
+                  '\u2022 Long press on the buttons to know it\'s functionality.\n',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Text(
                   '\u2022 You can upload PDFs by tapping on \'+\' button.\n',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
@@ -182,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '\u2022 Copyright section is \'clickable\'.\n',
+                  '\u2022 Copyright section is \'clickable\', where you can visit my github and contribute to the project.\n',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ],
