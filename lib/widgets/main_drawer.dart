@@ -11,6 +11,7 @@ import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../providers/my_themes.dart';
 import '../screens/leaderboard_screen.dart';
+import '../screens/payment_screen.dart';
 import '../screens/profile/profile_screen.dart';
 
 import './change_theme_button.dart';
@@ -140,7 +141,12 @@ class _MainDrawerState extends State<MainDrawer> {
                             color: Colors.green),
                         constraints:
                             const BoxConstraints(minWidth: 50, minHeight: 50),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const PaymentScreen()));
+                        },
                       ),
                     ),
                     const Text('Donate Now!'),
