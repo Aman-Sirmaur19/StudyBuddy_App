@@ -1,0 +1,22 @@
+import 'dart:io';
+
+double getFileSize(String path) {
+  final file = File(path);
+  int sizeInBytes = file.lengthSync();
+  double sizeInMb = sizeInBytes / (1024 * 1024);
+  return sizeInMb;
+}
+
+// String getFileSize(String path) {
+//   final file = File(path);
+//   int sizeInBytes = file.lengthSync();
+//   if (sizeInBytes > 1000000) {
+//     const MB = 'MB';
+//     String sizeInMb = (sizeInBytes / (1024 * 1024)).toStringAsFixed(1);
+//     return sizeInMb + MB;
+//   } else {
+//     const KB = 'KB';
+//     String sizeInKb = (sizeInBytes / 1024).toStringAsFixed(1);
+//     return sizeInKb + KB;
+//   }
+// }

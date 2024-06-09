@@ -2,9 +2,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:prep_night/helper/get_file_size.dart';
 
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
@@ -14,13 +14,11 @@ import '../widgets/category_item.dart';
 import '../widgets/particle_animation.dart';
 
 class UploadPdfScreen extends StatefulWidget {
-  final FilePickerResult? pickedFile;
   final String name;
   final String path;
 
   const UploadPdfScreen({
     super.key,
-    required this.pickedFile,
     required this.name,
     required this.path,
   });
@@ -129,6 +127,8 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   }
 
   Widget _pdfIsPicked() {
+    double pdfSize = getFileSize(widget.path);
+    log('size: $pdfSize');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -136,7 +136,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           padding: EdgeInsets.only(bottom: mq.width * .02),
           child: Image.asset('assets/images/pdf.png', width: mq.width * .35),
         ),
-        Text(widget.name),
+        Text(widget.name, textAlign: TextAlign.center),
         textField(
           labelText: 'PDF Name',
           inputType: TextInputType.text,
@@ -170,7 +170,11 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary)),
                 onPressed: () async {
-                  await uploadPdf(File(widget.path));
+                  if (pdfSize <= 5)
+                    await uploadPdf(File(widget.path));
+                  else
+                    Dialogs.showErrorSnackBar(context,
+                        'Kindly upload file of size less than or equal to 5MB.');
                 },
               ),
               ElevatedButton(
@@ -182,6 +186,17 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
                 },
               ),
             ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.all(mq.width * .1),
+          child: Text(
+            pdfSize > 5
+                ? 'File size: ${pdfSize.toStringAsFixed(2)} MB\n\nKindly upload PDFs of size less than or equal to 5MB.'
+                : 'It is recommended to upload PDFs of compressed size (<= 5MB).',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 1),
+            textAlign: TextAlign.center,
           ),
         ),
       ],

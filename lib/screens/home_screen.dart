@@ -24,6 +24,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool loading = false;
+
   @override
   void initState() {
     super.initState();
@@ -72,9 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => UploadPdfScreen(
-                        pickedFile: pickedFile,
                         name: pickedFile.files[0].name,
-                        path: pickedFile.files[0].path!,
+                        path: pickedFile.files.first.path!,
                       ),
                     ),
                   );
@@ -94,59 +95,61 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         drawer: const MainDrawer(),
-        body: Stack(
-          children: [
-            particles(context),
-            GridView(
-              padding: EdgeInsets.all(mq.width * .06),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: mq.width * .5,
-                childAspectRatio: 3 / 2,
-                crossAxisSpacing: mq.width * .05,
-                mainAxisSpacing: mq.width * .05,
+        body: loading
+            ? Center(child: CircularProgressIndicator())
+            : Stack(
+                children: [
+                  particles(context),
+                  GridView(
+                    padding: EdgeInsets.all(mq.width * .06),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: mq.width * .5,
+                      childAspectRatio: 3 / 2,
+                      crossAxisSpacing: mq.width * .05,
+                      mainAxisSpacing: mq.width * .05,
+                    ),
+                    children: DUMMY_CATEGORIES
+                        .map((catData) => InkWell(
+                              onTap: () => selectCategory(context, catData),
+                              splashColor: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(15),
+                              child: Container(
+                                padding: EdgeInsets.all(mq.width * .04),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      catData.color.withOpacity(0.7),
+                                      catData.color,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Image.asset(
+                                        catData.image,
+                                        width: mq.width * .15,
+                                      ),
+                                    ),
+                                    Text(
+                                      catData.title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ],
               ),
-              children: DUMMY_CATEGORIES
-                  .map((catData) => InkWell(
-                        onTap: () => selectCategory(context, catData),
-                        splashColor: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(15),
-                        child: Container(
-                          padding: EdgeInsets.all(mq.width * .04),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                catData.color.withOpacity(0.7),
-                                catData.color,
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Image.asset(
-                                  catData.image,
-                                  width: mq.width * .15,
-                                ),
-                              ),
-                              Text(
-                                catData.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -187,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '\u2022 It is recommended to upload PDFs of compressed size.\n',
+                  '\u2022 It is recommended to upload PDFs of compressed size (<= 5MB).\n',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 Text(

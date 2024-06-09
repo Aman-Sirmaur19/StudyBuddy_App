@@ -125,6 +125,25 @@ class _SplashScreenState extends State<SplashScreen> {
               ],
             ),
           ),
+          Positioned(
+            bottom: mq.height * .06,
+            width: mq.width,
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: const TextSpan(
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.3,
+                ),
+                children: [
+                  TextSpan(
+                    text: 'MADE WITH 💛 IN 🇮🇳',
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

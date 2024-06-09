@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_pdf_viewer/easy_pdf_viewer.dart';
 
 import '../api/apis.dart';
-import '../widgets/particle_animation.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   final String pdfName, pdfUrl;
@@ -45,14 +44,9 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         ),
         backgroundColor: widget.color,
       ),
-      body: Stack(
-        children: [
-          particles(context),
-          document != null
-              ? PDFViewer(document: document!)
-              : const Center(child: CircularProgressIndicator()),
-        ],
-      ),
+      body: document != null
+          ? PDFViewer(document: document!)
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }
