@@ -43,7 +43,7 @@ dependencies:
   flutter_glow: ^0.3.0
   firebase_storage: ^11.6.7
   file_picker: ^6.1.1
-  easy_pdf_viewer: ^1.0.7
+  easy_pdf_viewer: ^1.0.8
   percent_indicator: ^4.2.3
   cached_network_image: ^3.3.1
   fluttermoji: ^1.0.2

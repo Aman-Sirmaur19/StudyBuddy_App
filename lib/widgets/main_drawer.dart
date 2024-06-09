@@ -123,6 +123,28 @@ class _MainDrawerState extends State<MainDrawer> {
                         builder: (_) => const LeaderboardScreen()));
               },
             ),
+            ListTile(
+              leading: Icon(Icons.picture_as_pdf_outlined, size: 26),
+              title: Text(
+                'PDF Compressor',
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                '(recommended app, not a paid promotion)',
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                    color: Colors.grey),
+              ),
+              onTap: () {
+                const url =
+                    'https://play.google.com/store/apps/details?id=com.kompressor.pdf.compressor.reducepdfsize';
+                setState(() {
+                  _launchInBrowser(Uri.parse(url));
+                });
+              },
+            ),
             buildListTile(
               'More Apps!',
               Icons.apps_outage_outlined,
