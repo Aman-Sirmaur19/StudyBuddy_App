@@ -137,9 +137,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   letterSpacing: 1.3,
                 ),
                 children: [
-                  TextSpan(
-                    text: 'MADE WITH 💛 IN 🇮🇳',
-                  ),
+                  TextSpan(text: 'MADE WITH 💛 IN 🇮🇳'),
                 ],
               ),
             ),
