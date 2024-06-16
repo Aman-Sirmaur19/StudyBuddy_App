@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // Handle other FirebaseAuthExceptions if needed
         print('Error checking authentication: $e');
         Dialogs.showErrorSnackBar(context,
-            'Something went wrong! (Check internet and restart the app)');
+            'Something went wrong! (Check internet connection and \"TAP ANYWHERE\")');
       }
     } catch (e) {
       // Handle generic errors
@@ -80,49 +80,52 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         children: [
           particles(context),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // if (isLoading) CircularProgressIndicator(),
-                Image.asset('assets/images/study_buddy.png',
-                    width: mq.width * .6),
-                const SizedBox(height: 15),
-                Container(
-                  margin: const EdgeInsets.only(left: 3),
-                  decoration: BoxDecoration(
-                    gradient: SweepGradient(
-                      colors: [
-                        Colors.lightBlue.withOpacity(.85),
-                        Colors.lightBlue.shade400,
-                        Colors.lightBlue.shade400,
-                      ],
-                      startAngle: -1 * pi / 6,
-                      endAngle: pi * 11 / 6,
+          InkWell(
+            onTap: _checkAuthentication,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // if (isLoading) CircularProgressIndicator(),
+                  Image.asset('assets/images/study_buddy.png',
+                      width: mq.width * .6),
+                  const SizedBox(height: 15),
+                  Container(
+                    margin: const EdgeInsets.only(left: 3),
+                    decoration: BoxDecoration(
+                      gradient: SweepGradient(
+                        colors: [
+                          Colors.lightBlue.withOpacity(.85),
+                          Colors.lightBlue.shade400,
+                          Colors.lightBlue.shade400,
+                        ],
+                        startAngle: -1 * pi / 6,
+                        endAngle: pi * 11 / 6,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    borderRadius: BorderRadius.circular(15),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Study',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                              letterSpacing: 2,
+                              color: Colors.yellowAccent.shade700,
+                            )),
+                        Text('Buddy',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                              letterSpacing: 2,
+                              color: Colors.redAccent.shade400,
+                            )),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Study',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                            letterSpacing: 2,
-                            color: Colors.yellowAccent.shade700,
-                          )),
-                      Text('Buddy',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30,
-                            letterSpacing: 2,
-                            color: Colors.redAccent.shade400,
-                          )),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Positioned(

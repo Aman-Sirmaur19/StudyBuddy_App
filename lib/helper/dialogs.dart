@@ -5,7 +5,8 @@ class Dialogs {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        content: Text(msg,
+            style: const TextStyle(color: Colors.white, letterSpacing: 1)),
         backgroundColor: Colors.red.withOpacity(.8),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
