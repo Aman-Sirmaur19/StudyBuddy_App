@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermojiFunctions.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../main.dart';
 import '../api/apis.dart';
@@ -15,11 +18,36 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  bool isBannerLoaded = false;
+  late BannerAd bannerAd;
+
   List<MainUser> _list = [];
+
+  initializeBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          log(error.message);
+        },
+      ),
+      request: AdRequest(),
+    );
+    bannerAd.load();
+  }
 
   @override
   void initState() {
     super.initState();
+    initializeBannerAd();
     APIs.getAllUsers();
   }
 
@@ -45,6 +73,9 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true),
+      bottomNavigationBar: isBannerLoaded
+          ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+          : SizedBox(),
       body: Stack(
         children: [
           particles(context),

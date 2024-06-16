@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -16,6 +17,10 @@ _initializeFirebase() async {
   );
 }
 
+_initializeMobileAds() async {
+  await MobileAds.instance.initialize();
+}
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -24,6 +29,7 @@ void main() {
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) {
     _initializeFirebase();
+    _initializeMobileAds();
     runApp(const MyApp());
   });
 }

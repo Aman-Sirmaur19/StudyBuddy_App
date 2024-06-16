@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_glow/flutter_glow.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../main.dart';
 import '../models/category.dart';
@@ -26,9 +29,69 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool loading = false;
 
+  bool isBannerLoaded = false;
+  bool isInterstitialLoaded = false;
+  late BannerAd bannerAd;
+  late InterstitialAd interstitialAd;
+
+  initializeBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          log(error.message);
+        },
+      ),
+      request: AdRequest(),
+    );
+    bannerAd.load();
+  }
+
+  initializeInterstitialAd() async {
+    InterstitialAd.load(
+      adUnitId: 'ca-app-pub-9389901804535827/9271623155',
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          interstitialAd = ad;
+          setState(() {
+            isInterstitialLoaded = true;
+          });
+          interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              initializeInterstitialAd();
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+              initializeInterstitialAd();
+            },
+          );
+        },
+        onAdFailedToLoad: (error) {
+          log(error.message);
+          interstitialAd.dispose();
+          setState(() {
+            isInterstitialLoaded = false;
+          });
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    initializeBannerAd();
+    initializeInterstitialAd();
     APIs.getSelfInfo();
   }
 
@@ -60,41 +123,35 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true,
           actions: [
-            IconButton(
-              icon: const Icon(CupertinoIcons.add),
-              tooltip: 'Upload',
-              onPressed: () async {
-                final pickedFile = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ['pdf'],
-                  allowCompression: true,
-                );
-                if (pickedFile != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => UploadPdfScreen(
-                        name: pickedFile.files[0].name,
-                        path: pickedFile.files.first.path!,
-                      ),
+            customIconButton(Icon(CupertinoIcons.add), 'Upload', () async {
+              if (isInterstitialLoaded) interstitialAd.show();
+              final pickedFile = await FilePicker.platform.pickFiles(
+                type: FileType.custom,
+                allowedExtensions: ['pdf'],
+                allowCompression: true,
+              );
+              if (pickedFile != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UploadPdfScreen(
+                      name: pickedFile.files[0].name,
+                      path: pickedFile.files.first.path!,
                     ),
-                  );
-                }
-              },
-            ),
-            IconButton(
-              icon: const Icon(CupertinoIcons.info),
-              tooltip: 'Info',
-              onPressed: showInfoAlertDialog,
-            ),
-            IconButton(
-              icon: const GlowIcon(Icons.logout, color: Colors.redAccent),
-              tooltip: 'Logout',
-              onPressed: showLogOutAlertDialog,
-            )
+                  ),
+                );
+              }
+            }),
+            customIconButton(
+                Icon(CupertinoIcons.info), 'Info', showInfoAlertDialog),
+            customIconButton(GlowIcon(Icons.logout, color: Colors.redAccent),
+                'Logout', showLogOutAlertDialog)
           ],
         ),
         drawer: const MainDrawer(),
+        bottomNavigationBar: isBannerLoaded
+            ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+            : SizedBox(),
         body: loading
             ? Center(child: CircularProgressIndicator())
             : Stack(
@@ -201,6 +258,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         });
+  }
+
+  Widget customIconButton(Icon icon, String tip, void Function()? onPressed) {
+    return IconButton(
+      icon: icon,
+      tooltip: tip,
+      onPressed: onPressed,
+    );
   }
 
   Future showLogOutAlertDialog() {

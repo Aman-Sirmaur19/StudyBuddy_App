@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:open_file/open_file.dart';
 
 import '../main.dart';
@@ -26,6 +27,14 @@ class PdfScreen extends StatefulWidget {
 }
 
 class _PdfScreenState extends State<PdfScreen> {
+  bool isBanner1Loaded = false;
+  bool isBanner2Loaded = false;
+  late BannerAd bannerAd1;
+  late BannerAd bannerAd2;
+
+  bool isInterstitialLoaded = false;
+  late InterstitialAd interstitialAd;
+
   Map<String, bool> downloading = {};
   Map<String, bool> fileExists = {};
   Map<String, double> progress = {};
@@ -41,6 +50,77 @@ class _PdfScreenState extends State<PdfScreen> {
 
   //for storing searched items
   final List<Map<String, dynamic>> _searchList = [];
+
+  initializeBannerAd() async {
+    bannerAd1 = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBanner1Loaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBanner1Loaded = false;
+          log(error.message);
+        },
+      ),
+      request: AdRequest(),
+    );
+    bannerAd2 = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBanner2Loaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBanner2Loaded = false;
+          log(error.message);
+        },
+      ),
+      request: AdRequest(),
+    );
+    bannerAd1.load();
+    bannerAd2.load();
+  }
+
+  initializeInterstitialAd() async {
+    InterstitialAd.load(
+      adUnitId: 'ca-app-pub-9389901804535827/9271623155',
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          interstitialAd = ad;
+          setState(() {
+            isInterstitialLoaded = true;
+          });
+          interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              initializeInterstitialAd();
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+              initializeInterstitialAd();
+            },
+          );
+        },
+        onAdFailedToLoad: (error) {
+          log(error.message);
+          interstitialAd.dispose();
+          setState(() {
+            isInterstitialLoaded = false;
+          });
+        },
+      ),
+    );
+  }
 
   // for accessing files
   void getAllPdfs() async {
@@ -113,6 +193,8 @@ class _PdfScreenState extends State<PdfScreen> {
   @override
   void initState() {
     super.initState();
+    initializeBannerAd();
+    initializeInterstitialAd();
     getAllPdfs();
     fetchPdfData();
   }
@@ -197,6 +279,9 @@ class _PdfScreenState extends State<PdfScreen> {
             ],
             backgroundColor: widget.category.color.withOpacity(.7),
           ),
+          bottomNavigationBar: isBanner2Loaded
+              ? SizedBox(height: 50, child: AdWidget(ad: bannerAd2))
+              : SizedBox(),
           body: Stack(
             children: [
               particles(context),
@@ -220,6 +305,9 @@ class _PdfScreenState extends State<PdfScreen> {
         padding: EdgeInsets.only(top: mq.height * .07),
         child: Column(
           children: [
+            isBanner1Loaded
+                ? SizedBox(height: 50, child: AdWidget(ad: bannerAd1))
+                : SizedBox(),
             Padding(
               padding: EdgeInsets.only(bottom: mq.height * .04),
               child: const Text(
@@ -239,6 +327,7 @@ class _PdfScreenState extends State<PdfScreen> {
 
   Widget _pdfDataIsNotEmpty() {
     return ListView.builder(
+      physics: BouncingScrollPhysics(),
       itemCount: _isSearching ? _searchList.length : pdfData.length,
       itemBuilder: (context, index) {
         int i = pdfDataList.indexWhere((element) =>
@@ -248,6 +337,7 @@ class _PdfScreenState extends State<PdfScreen> {
         return Card(
             child: InkWell(
           onTap: () {
+            if (isInterstitialLoaded) interstitialAd.show();
             fileExists[pdfData[index]['name']] == true
                 ? openFile(pdfData[index]['name'])
                 : Navigator.of(context).push(MaterialPageRoute(
@@ -354,6 +444,8 @@ class _PdfScreenState extends State<PdfScreen> {
                                       tooltip: 'Download',
                                       icon: const Icon(Icons.download),
                                       onPressed: () async {
+                                        if (isInterstitialLoaded)
+                                          interstitialAd.show();
                                         bool permission = false;
                                         if (!permission) {
                                           permission = await CheckPermission
