@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
-import 'package:prep_night/screens/profile/avatar_screen.dart';
 
 import '../../main.dart';
 import '../../models/main_user.dart';
-
 import '../../api/apis.dart';
 import '../../helper/dialogs.dart';
 import '../../widgets/particle_animation.dart';
+
+import '../profile/avatar_screen.dart';
 
 // profile screen -- to show signed in user info
 class ProfileScreen extends StatefulWidget {

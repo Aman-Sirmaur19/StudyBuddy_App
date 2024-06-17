@@ -3,13 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:prep_night/helper/get_file_size.dart';
 
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/pdf_model.dart';
+import '../helper/get_file_size.dart';
 import '../widgets/category_item.dart';
 import '../widgets/particle_animation.dart';
 
@@ -28,6 +29,9 @@ class UploadPdfScreen extends StatefulWidget {
 }
 
 class _UploadPdfScreenState extends State<UploadPdfScreen> {
+  bool isBannerLoaded = false;
+  late BannerAd bannerAd;
+
   bool loading = false;
   double perCent = 0;
 
@@ -37,11 +41,38 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
 
   List<String> categories = [];
 
+  initializeBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          log(error.message);
+        },
+      ),
+      request: AdRequest(),
+    );
+    bannerAd.load();
+  }
+
   void addCategoriesFromDummyData() {
     categories.clear();
     for (final category in DUMMY_CATEGORIES) {
       categories.add(category.title);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeBannerAd();
   }
 
   @override
@@ -62,6 +93,9 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
+      bottomNavigationBar: isBannerLoaded
+          ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+          : SizedBox(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Stack(

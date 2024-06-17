@@ -3,14 +3,10 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermoji.dart';
-import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
-import 'package:fluttermoji/fluttermojiCustomizer.dart';
-import 'package:fluttermoji/fluttermojiSaveWidget.dart';
-import 'package:fluttermoji/fluttermojiThemeData.dart';
-import 'package:prep_night/api/apis.dart';
 
-import '../../helper/dialogs.dart';
 import '../../main.dart';
+import '../../api/apis.dart';
+import '../../helper/dialogs.dart';
 import '../../widgets/particle_animation.dart';
 
 class AvatarScreen extends StatelessWidget {

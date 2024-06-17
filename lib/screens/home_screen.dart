@@ -30,9 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool loading = false;
 
   bool isBannerLoaded = false;
-  bool isInterstitialLoaded = false;
   late BannerAd bannerAd;
-  late InterstitialAd interstitialAd;
 
   initializeBannerAd() async {
     bannerAd = BannerAd(
@@ -50,48 +48,15 @@ class _HomeScreenState extends State<HomeScreen> {
           log(error.message);
         },
       ),
-      request: AdRequest(),
+      request: const AdRequest(),
     );
     bannerAd.load();
-  }
-
-  initializeInterstitialAd() async {
-    InterstitialAd.load(
-      adUnitId: 'ca-app-pub-9389901804535827/9271623155',
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          interstitialAd = ad;
-          setState(() {
-            isInterstitialLoaded = true;
-          });
-          interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              ad.dispose();
-              initializeInterstitialAd();
-            },
-            onAdFailedToShowFullScreenContent: (ad, error) {
-              ad.dispose();
-              initializeInterstitialAd();
-            },
-          );
-        },
-        onAdFailedToLoad: (error) {
-          log(error.message);
-          interstitialAd.dispose();
-          setState(() {
-            isInterstitialLoaded = false;
-          });
-        },
-      ),
-    );
   }
 
   @override
   void initState() {
     super.initState();
     initializeBannerAd();
-    initializeInterstitialAd();
     APIs.getSelfInfo();
   }
 
@@ -123,8 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true,
           actions: [
-            customIconButton(Icon(CupertinoIcons.add), 'Upload', () async {
-              if (isInterstitialLoaded) interstitialAd.show();
+            customIconButton(const Icon(CupertinoIcons.add), 'Upload',
+                () async {
               final pickedFile = await FilePicker.platform.pickFiles(
                 type: FileType.custom,
                 allowedExtensions: ['pdf'],
@@ -143,17 +108,19 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }),
             customIconButton(
-                Icon(CupertinoIcons.info), 'Info', showInfoAlertDialog),
-            customIconButton(GlowIcon(Icons.logout, color: Colors.redAccent),
-                'Logout', showLogOutAlertDialog)
+                const Icon(CupertinoIcons.info), 'Info', showInfoAlertDialog),
+            customIconButton(
+                const GlowIcon(Icons.logout, color: Colors.redAccent),
+                'Logout',
+                showLogOutAlertDialog)
           ],
         ),
         drawer: const MainDrawer(),
         bottomNavigationBar: isBannerLoaded
             ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-            : SizedBox(),
+            : const SizedBox(),
         body: loading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Stack(
                 children: [
                   particles(context),

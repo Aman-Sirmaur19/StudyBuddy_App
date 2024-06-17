@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermoji.dart';
-import 'package:prep_night/widgets/particle_animation.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,6 +12,7 @@ import '../providers/my_themes.dart';
 import '../screens/leaderboard_screen.dart';
 import '../screens/payment_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../widgets/particle_animation.dart';
 
 import './change_theme_button.dart';
 
@@ -124,15 +124,14 @@ class _MainDrawerState extends State<MainDrawer> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.picture_as_pdf_outlined, size: 26),
-              title: Text(
+              leading: const Icon(Icons.picture_as_pdf_outlined, size: 26),
+              title: const Text(
                 'PDF Compressor',
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(
+              subtitle: const Text(
                 '(recommended app, not a paid promotion)',
-                style: const TextStyle(
+                style: TextStyle(
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
                     color: Colors.grey),
@@ -164,10 +163,12 @@ class _MainDrawerState extends State<MainDrawer> {
                         constraints:
                             const BoxConstraints(minWidth: 50, minHeight: 50),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const PaymentScreen()));
+                          Dialogs.showErrorSnackBar(
+                              context, 'Currently not implemented!');
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (_) => const PaymentScreen()));
                         },
                       ),
                     ),
