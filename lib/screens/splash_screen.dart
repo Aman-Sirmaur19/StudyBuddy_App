@@ -1,7 +1,9 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 import '../main.dart';
 import '../api/apis.dart';
@@ -22,7 +24,30 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    checkForUpdate();
     _checkAuthentication();
+  }
+
+  Future<void> checkForUpdate() async {
+    dev.log('Checking for Update!');
+    await InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          dev.log('Update available!');
+          update();
+        }
+      });
+    }).catchError((error) {
+      dev.log(error.toString());
+    });
+  }
+
+  void update() async {
+    dev.log('Updating');
+    await InAppUpdate.startFlexibleUpdate();
+    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((error) {
+      dev.log(error.toString());
+    });
   }
 
   Future<void> _checkAuthentication() async {

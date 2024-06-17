@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.prep_night"
+    namespace "com.example.study_buddy"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
