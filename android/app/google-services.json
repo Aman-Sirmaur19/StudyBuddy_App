@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "924782093651",
-    "project_id": "prepnight-94ecb",
-    "storage_bucket": "prepnight-94ecb.appspot.com"
+    "project_number": "22418565394",
+    "project_id": "studybuddy-4487c",
+    "storage_bucket": "studybuddy-4487c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:924782093651:android:44297ecdb6a36ad862ada6",
+        "mobilesdk_app_id": "1:22418565394:android:1613eeccf131aadbaa6bcb",
         "android_client_info": {
-          "package_name": "com.example.prep_night"
+          "package_name": "com.sirmaur.study_buddy"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBJMhC804vKz3c1FwWGloK0nCtEPt6lpL0"
+          "current_key": "AIzaSyBFRUUhNth1Egycx8sBGzq3TcX0EHIHnLg"
         }
       ],
       "services": {
