@@ -67,19 +67,19 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text('Study',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 25,
+                    fontSize: 21,
                     letterSpacing: 1,
                     color: Colors.yellowAccent.shade700,
                   )),
               Text('Buddy',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 25,
+                    fontSize: 21,
                     letterSpacing: 1,
                     color: Colors.redAccent.shade400,
                   )),

@@ -67,7 +67,7 @@ class _PdfScreenState extends State<PdfScreen> {
           log(error.message);
         },
       ),
-      request: AdRequest(),
+      request: const AdRequest(),
     );
     bannerAd2 = BannerAd(
       size: AdSize.banner,
@@ -84,7 +84,7 @@ class _PdfScreenState extends State<PdfScreen> {
           log(error.message);
         },
       ),
-      request: AdRequest(),
+      request: const AdRequest(),
     );
     bannerAd1.load();
     bannerAd2.load();
@@ -93,7 +93,7 @@ class _PdfScreenState extends State<PdfScreen> {
   initializeInterstitialAd() async {
     InterstitialAd.load(
       adUnitId: 'ca-app-pub-9389901804535827/9271623155',
-      request: AdRequest(),
+      request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           interstitialAd = ad;
@@ -178,7 +178,7 @@ class _PdfScreenState extends State<PdfScreen> {
 
       return pdfDataList;
     } catch (e) {
-      print("Error fetching PDF data: $e");
+      log("Error fetching PDF data: $e");
       throw e;
     }
   }
@@ -255,7 +255,7 @@ class _PdfScreenState extends State<PdfScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 10),
+                        margin: const EdgeInsets.only(left: 10),
                         width: mq.width * .11,
                         child: Image.asset(
                           widget.category.image,
@@ -281,7 +281,7 @@ class _PdfScreenState extends State<PdfScreen> {
           ),
           bottomNavigationBar: isBanner2Loaded
               ? SizedBox(height: 50, child: AdWidget(ad: bannerAd2))
-              : SizedBox(),
+              : const SizedBox(),
           body: Stack(
             children: [
               particles(context),
@@ -307,7 +307,7 @@ class _PdfScreenState extends State<PdfScreen> {
           children: [
             isBanner1Loaded
                 ? SizedBox(height: 50, child: AdWidget(ad: bannerAd1))
-                : SizedBox(),
+                : const SizedBox(),
             Padding(
               padding: EdgeInsets.only(bottom: mq.height * .04),
               child: const Text(
@@ -327,7 +327,7 @@ class _PdfScreenState extends State<PdfScreen> {
 
   Widget _pdfDataIsNotEmpty() {
     return ListView.builder(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       itemCount: _isSearching ? _searchList.length : pdfData.length,
       itemBuilder: (context, index) {
         int i = pdfDataList.indexWhere((element) =>
@@ -423,7 +423,7 @@ class _PdfScreenState extends State<PdfScreen> {
                               color: Colors.green, fontWeight: FontWeight.bold),
                         ),
                         Container(
-                          margin: EdgeInsets.only(left: 3),
+                          margin: const EdgeInsets.only(left: 3),
                           child: downloading[pdfData[index]['name']]!
                               ? IconButton(
                                   tooltip: 'Cancel download',
@@ -444,8 +444,9 @@ class _PdfScreenState extends State<PdfScreen> {
                                       tooltip: 'Download',
                                       icon: const Icon(Icons.download),
                                       onPressed: () async {
-                                        if (isInterstitialLoaded)
+                                        if (isInterstitialLoaded) {
                                           interstitialAd.show();
+                                        }
                                         bool permission = false;
                                         if (!permission) {
                                           permission = await CheckPermission
