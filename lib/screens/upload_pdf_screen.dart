@@ -57,7 +57,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           log(error.message);
         },
       ),
-      request: AdRequest(),
+      request: const AdRequest(),
     );
     bannerAd.load();
   }
@@ -95,7 +95,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
       ),
       bottomNavigationBar: isBannerLoaded
           ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-          : SizedBox(),
+          : const SizedBox(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Stack(
@@ -228,7 +228,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
             pdfSize > 5
                 ? 'File size: ${pdfSize.toStringAsFixed(2)} MB\n\nKindly upload PDFs of size less than or equal to 5MB.'
                 : 'It is recommended to upload PDFs of compressed size (<= 5MB).',
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 1),
             textAlign: TextAlign.center,
           ),

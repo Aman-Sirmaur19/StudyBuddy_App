@@ -163,8 +163,6 @@ class _MainDrawerState extends State<MainDrawer> {
                         constraints:
                             const BoxConstraints(minWidth: 50, minHeight: 50),
                         onPressed: () {
-                          Dialogs.showErrorSnackBar(
-                              context, 'Currently not implemented!');
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(

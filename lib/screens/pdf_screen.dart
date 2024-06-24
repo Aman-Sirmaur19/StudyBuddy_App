@@ -13,6 +13,7 @@ import '../api/apis.dart';
 import '../providers/permission.dart';
 import '../helper/dialogs.dart';
 import '../models/category.dart';
+import '../widgets/chart_bar.dart';
 
 import '../widgets/particle_animation.dart';
 import './pdf_viewer_screen.dart';
@@ -27,6 +28,7 @@ class PdfScreen extends StatefulWidget {
 }
 
 class _PdfScreenState extends State<PdfScreen> {
+  BuildContext? _scaffoldContext;
   bool isBanner1Loaded = false;
   bool isBanner2Loaded = false;
   late BannerAd bannerAd1;
@@ -44,6 +46,7 @@ class _PdfScreenState extends State<PdfScreen> {
   List<Map<String, dynamic>> pdfDataList = [];
 
   bool _isLoading = true;
+  bool _isDeleting = false;
 
   // for storing search status
   bool _isSearching = false;
@@ -199,6 +202,12 @@ class _PdfScreenState extends State<PdfScreen> {
     fetchPdfData();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scaffoldContext = context;
+  }
+
   Future<void> _refresh() async {
     getAllPdfs();
     fetchPdfData();
@@ -292,6 +301,7 @@ class _PdfScreenState extends State<PdfScreen> {
                   : pdfData.isEmpty
                       ? SingleChildScrollView(child: _pdfDataIsEmpty())
                       : _pdfDataIsNotEmpty(),
+              if (_isDeleting) const Center(child: CircularProgressIndicator())
             ],
           ),
         ),
@@ -474,11 +484,9 @@ class _PdfScreenState extends State<PdfScreen> {
                     ),
                   ),
                   if (downloading[pdfData[index]['name']]!)
-                    LinearProgressIndicator(
-                      value: progress[pdfData[index]['name']],
-                      backgroundColor: Colors.grey,
-                      color: widget.category.color,
-                    )
+                    LinearProgressBar(
+                        fraction: progress[pdfData[index]['name']]!,
+                        color: widget.category.color.withOpacity(.7))
                 ],
               ),
               trailing: APIs.user.uid == pdfData[index]['uploaderId']
@@ -507,23 +515,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .secondary)),
-                                      onPressed: () async {
-                                        await APIs.firestore
-                                            .collection('pdfs')
-                                            .doc(pdfData[index]['pdfId'])
-                                            .delete();
-                                        await APIs.storage
-                                            .ref()
-                                            .child(
-                                                'PDFs/${widget.category.title}/${pdfData[index]['name']}')
-                                            .delete()
-                                            .then((value) =>
-                                                Dialogs.showSnackBar(context,
-                                                    'Deleted successfully!'));
-                                        await APIs.updateUploads(-1);
-                                        Navigator.pop(context);
-                                        _refresh();
-                                      },
+                                      onPressed: () => _deletePdf(index),
                                     ),
                                     TextButton(
                                         child: Text('No',
@@ -582,8 +574,7 @@ class _PdfScreenState extends State<PdfScreen> {
       );
       log(path);
       // log(filePath);
-      Dialogs.showSnackBar(context,
-          '${pdfData[index]['name']} downloaded to\nStudyBuddy folder!');
+      Dialogs.showSnackBar(context, 'Downloaded to StudyBuddy folder!');
       setState(() {
         fileExists[pdfData[index]['name']] = true;
       });
@@ -604,5 +595,43 @@ class _PdfScreenState extends State<PdfScreen> {
       downloading[name] = false;
       progress[name] = 0.0;
     });
+  }
+
+  void _deletePdf(int index) async {
+    Navigator.pop(context);
+
+    setState(() {
+      _isDeleting = true;
+    });
+
+    try {
+      await APIs.firestore
+          .collection('pdfs')
+          .doc(pdfData[index]['pdfId'])
+          .delete();
+      await APIs.storage
+          .ref()
+          .child('PDFs/${widget.category.title}/${pdfData[index]['name']}')
+          .delete();
+      await APIs.updateUploads(-1);
+      setState(() {
+        _isDeleting = false;
+      });
+      _refresh();
+      if (_scaffoldContext != null) {
+        Dialogs.showSnackBar(_scaffoldContext!, 'Deleted successfully!');
+      }
+    } catch (error) {
+      setState(() {
+        _isDeleting = false;
+      });
+      if (_scaffoldContext != null) {
+        Dialogs.showErrorSnackBar(_scaffoldContext!, 'Deletion failed!');
+      }
+    } finally {
+      setState(() {
+        _isDeleting = false;
+      });
+    }
   }
 }

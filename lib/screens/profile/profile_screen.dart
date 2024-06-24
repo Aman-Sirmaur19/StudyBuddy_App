@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../main.dart';
 import '../../models/main_user.dart';
@@ -23,6 +26,36 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  bool isBannerLoaded = false;
+  late BannerAd bannerAd;
+
+  initializeBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          log(error.message);
+        },
+      ),
+      request: const AdRequest(),
+    );
+    bannerAd.load();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeBannerAd();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -36,6 +69,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
+        bottomNavigationBar: isBannerLoaded
+            ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+            : const SizedBox(),
         body: Stack(
           children: [
             particles(context),

@@ -76,7 +76,7 @@ class APIs {
       branch: '',
       college: '',
       email: '',
-      about: 'Hey, I am using PrepNight!',
+      about: 'Hey, I am using StudyBuddy!',
       image: '',
       createdAt: time,
       uploads: 0,
