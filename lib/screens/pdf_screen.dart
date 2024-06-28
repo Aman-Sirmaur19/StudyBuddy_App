@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../main.dart';
 import '../api/apis.dart';
@@ -187,7 +187,7 @@ class _PdfScreenState extends State<PdfScreen> {
   }
 
   Future<bool> checkFileDownloaded(String name) async {
-    String filePath = '/storage/emulated/0/StudyBuddy/$name';
+    String filePath = '/storage/emulated/0/Download/studybuddy_$name';
     bool check = await File(filePath).exists();
     log(check.toString());
     return check;
@@ -462,21 +462,19 @@ class _PdfScreenState extends State<PdfScreen> {
                                           permission = await CheckPermission
                                               .isStoragePermission();
                                         }
-                                        if (permission) {
-                                          downloadFile(
-                                            index,
-                                            (received, total) {
-                                              setState(() {
-                                                progress[pdfData[index]
-                                                        ['name']] =
-                                                    received / total;
-                                              });
-                                            },
-                                          );
-                                        } else {
-                                          Dialogs.showErrorSnackBar(context,
-                                              'Storage permission denied!');
-                                        }
+                                        downloadFile(
+                                          index,
+                                          (received, total) {
+                                            setState(() {
+                                              progress[pdfData[index]['name']] =
+                                                  received / total;
+                                            });
+                                          },
+                                        );
+                                        // } else {
+                                        //   Dialogs.showErrorSnackBar(context,
+                                        //       'Storage permission denied!');
+                                        // }
                                       },
                                     ),
                         )
@@ -537,24 +535,22 @@ class _PdfScreenState extends State<PdfScreen> {
     );
   }
 
-  void openFile(String name) {
-    String filePath = '/storage/emulated/0/StudyBuddy/$name';
-    OpenFile.open(filePath);
+  void openFile(String name) async {
+    String filePath = '/storage/emulated/0/Download/studybuddy_$name';
+    final result = await OpenFilex.open(filePath);
+    if (result.type != ResultType.done) {
+      // Handle error here
+      Dialogs.showErrorSnackBar(context, result.message);
+      print('Error opening file: ${result.message}');
+    }
   }
 
   Future<void> downloadFile(
     int index,
     Function(double, double) onProgress,
   ) async {
-    // M-1
-    // String directory = (await getExternalStorageDirectory())?.path ?? '';
-    // String filePath = '$directory/StudyBuddy/${pdfData[index]['name']}';
-
-    // M-2
-    // final directory = await getApplicationDocumentsDirectory();
-    // final filePath = '${directory.path}/${pdfData[index]['name']}';
-
-    String path = '/storage/emulated/0/StudyBuddy/${pdfData[index]['name']}';
+    String path =
+        '/storage/emulated/0/Download/studybuddy_${pdfData[index]['name']}';
     Dio dio = Dio();
     setState(() {
       downloading[pdfData[index]['name']] = true;
@@ -564,7 +560,6 @@ class _PdfScreenState extends State<PdfScreen> {
       await dio.download(
         pdfData[index]['downloadUrl'],
         path,
-        // filePath,
         onReceiveProgress: (received, total) {
           if (total != -1) {
             onProgress(received.toDouble(), total.toDouble());
@@ -573,8 +568,7 @@ class _PdfScreenState extends State<PdfScreen> {
         cancelToken: cancelTokens[pdfData[index]['name']]!,
       );
       log(path);
-      // log(filePath);
-      Dialogs.showSnackBar(context, 'Downloaded to StudyBuddy folder!');
+      Dialogs.showSnackBar(context, 'Downloaded to Download folder!');
       setState(() {
         fileExists[pdfData[index]['name']] = true;
       });
