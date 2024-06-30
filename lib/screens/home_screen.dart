@@ -67,9 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
       onRefresh: () => _refresh(),
       child: Scaffold(
         appBar: AppBar(
-          title: customTitle(21, 1),
+          title: customTitle(22, 1),
           backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true,
           actions: [
             customIconButton(const Icon(CupertinoIcons.add), 'Upload',
                 () async {
