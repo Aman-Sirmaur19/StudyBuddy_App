@@ -9,7 +9,9 @@ import '../../api/apis.dart';
 import '../../helper/dialogs.dart';
 import '../../main.dart';
 import '../../providers/my_themes.dart';
+import '../../widgets/custom_title.dart';
 import '../../widgets/particle_animation.dart';
+
 import '../home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -37,7 +39,9 @@ class _OTPScreenState extends State<OTPScreen> {
             particles(context),
             Padding(
               padding: EdgeInsets.only(
-                  left: mq.width * .1, right: mq.width * .1, top: mq.height * .15),
+                  left: mq.width * .1,
+                  right: mq.width * .1,
+                  top: mq.height * .15),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -51,31 +55,17 @@ class _OTPScreenState extends State<OTPScreen> {
                           Container(
                             margin: const EdgeInsets.only(left: 3),
                             decoration: BoxDecoration(
-                              gradient: SweepGradient(colors: [
-                                Colors.lightBlue.withOpacity(.85),
-                                Colors.lightBlue.shade400,
-                                Colors.lightBlue.shade400,
-                              ], startAngle: -1 * pi / 6, endAngle: pi * 11 / 6),
+                              gradient: SweepGradient(
+                                  colors: [
+                                    Colors.lightBlue.withOpacity(.85),
+                                    Colors.lightBlue.shade400,
+                                    Colors.lightBlue.shade400,
+                                  ],
+                                  startAngle: -1 * pi / 6,
+                                  endAngle: pi * 11 / 6),
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            child: Row(
-                              children: [
-                                Text('Study',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      letterSpacing: 2,
-                                      color: Colors.yellowAccent.shade700,
-                                    )),
-                                Text('Buddy',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      letterSpacing: 2,
-                                      color: Colors.redAccent.shade400,
-                                    )),
-                              ],
-                            ),
+                            child: customTitle(30, 2),
                           ),
                         ],
                       ),
@@ -88,8 +78,9 @@ class _OTPScreenState extends State<OTPScreen> {
                       'Enter OTP',
                       style: TextStyle(
                         fontSize: 25,
-                        color:
-                            themeProvider.isDarkMode ? Colors.grey : Colors.black54,
+                        color: themeProvider.isDarkMode
+                            ? Colors.grey
+                            : Colors.black54,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -99,8 +90,9 @@ class _OTPScreenState extends State<OTPScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color:
-                            themeProvider.isDarkMode ? Colors.grey : Colors.black54,
+                        color: themeProvider.isDarkMode
+                            ? Colors.grey
+                            : Colors.black54,
                       ),
                     ),
                     SizedBox(height: mq.height * .05),
@@ -131,7 +123,8 @@ class _OTPScreenState extends State<OTPScreen> {
                             child: Text(
                               'Verify OTP',
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.secondary),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
                             ),
                             onPressed: () async {
                               if (otp.isEmpty) {
@@ -172,7 +165,8 @@ class _OTPScreenState extends State<OTPScreen> {
                               } on FirebaseAuthException catch (e) {
                                 Dialogs.showErrorSnackBar(context, e.message!);
                               } catch (e) {
-                                Dialogs.showErrorSnackBar(context, e.toString());
+                                Dialogs.showErrorSnackBar(
+                                    context, e.toString());
                               } finally {
                                 setState(() {
                                   _isLoading = false;

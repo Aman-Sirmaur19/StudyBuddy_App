@@ -15,6 +15,7 @@ import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../widgets/category_item.dart';
 import '../widgets/main_drawer.dart';
+import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
 
 import './auth/auth_screen.dart';
@@ -66,25 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onRefresh: () => _refresh(),
       child: Scaffold(
         appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text('Study',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 21,
-                    letterSpacing: 1,
-                    color: Colors.yellowAccent.shade700,
-                  )),
-              Text('Buddy',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 21,
-                    letterSpacing: 1,
-                    color: Colors.redAccent.shade400,
-                  )),
-            ],
-          ),
+          title: customTitle(21, 1),
           backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true,
           actions: [

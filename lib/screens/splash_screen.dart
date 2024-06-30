@@ -8,8 +8,9 @@ import 'package:in_app_update/in_app_update.dart';
 import '../main.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
-
+import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
+
 import './auth/auth_screen.dart';
 import './home_screen.dart';
 
@@ -111,7 +112,6 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // if (isLoading) CircularProgressIndicator(),
                   Image.asset('assets/images/study_buddy.png',
                       width: mq.width * .6),
                   const SizedBox(height: 15),
@@ -129,25 +129,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Study',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              letterSpacing: 2,
-                              color: Colors.yellowAccent.shade700,
-                            )),
-                        Text('Buddy',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              letterSpacing: 2,
-                              color: Colors.redAccent.shade400,
-                            )),
-                      ],
-                    ),
+                    child: customTitle(30, 2),
                   ),
                 ],
               ),

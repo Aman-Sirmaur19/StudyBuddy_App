@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:country_picker/country_picker.dart';
@@ -8,10 +7,11 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../helper/dialogs.dart';
-
 import '../../providers/my_themes.dart';
+import '../../widgets/custom_title.dart';
 import '../../widgets/particle_animation.dart';
-import 'otp_screen.dart';
+
+import './otp_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -81,24 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                   endAngle: pi * 11 / 6),
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            child: Row(
-                              children: [
-                                Text('Study',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      letterSpacing: 2,
-                                      color: Colors.yellowAccent.shade700,
-                                    )),
-                                Text('Buddy',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      letterSpacing: 2,
-                                      color: Colors.redAccent.shade400,
-                                    )),
-                              ],
-                            ),
+                            child: customTitle(30, 2),
                           ),
                         ],
                       ),
@@ -139,7 +122,6 @@ class _AuthScreenState extends State<AuthScreen> {
                       controller: phoneController,
                       onChanged: (value) {
                         setState(() {
-                          // also, if we don't write anything inside setState, then also verify icon appears.
                           phoneController.text = value;
                         });
                       },
