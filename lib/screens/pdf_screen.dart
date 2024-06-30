@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
 import '../api/apis.dart';
@@ -184,13 +185,6 @@ class _PdfScreenState extends State<PdfScreen> {
       log("Error fetching PDF data: $e");
       throw e;
     }
-  }
-
-  Future<bool> checkFileDownloaded(String name) async {
-    String filePath = '/storage/emulated/0/Download/studybuddy_$name';
-    bool check = await File(filePath).exists();
-    log(check.toString());
-    return check;
   }
 
   @override
@@ -457,11 +451,11 @@ class _PdfScreenState extends State<PdfScreen> {
                                         if (isInterstitialLoaded) {
                                           interstitialAd.show();
                                         }
-                                        bool permission = false;
-                                        if (!permission) {
-                                          permission = await CheckPermission
-                                              .isStoragePermission();
-                                        }
+                                        // bool permission = false;
+                                        // if (!permission) {
+                                        //   permission = await CheckPermission
+                                        //       .isStoragePermission();
+                                        // }
                                         downloadFile(
                                           index,
                                           (received, total) {
@@ -471,10 +465,6 @@ class _PdfScreenState extends State<PdfScreen> {
                                             });
                                           },
                                         );
-                                        // } else {
-                                        //   Dialogs.showErrorSnackBar(context,
-                                        //       'Storage permission denied!');
-                                        // }
                                       },
                                     ),
                         )
@@ -535,13 +525,30 @@ class _PdfScreenState extends State<PdfScreen> {
     );
   }
 
+  Future<bool> checkFileDownloaded(String name) async {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final appDocPath = '${appDocDir.path}/$name';
+    bool check = await File(appDocPath).exists();
+    log(check.toString());
+    return check;
+  }
+
   void openFile(String name) async {
-    String filePath = '/storage/emulated/0/Download/studybuddy_$name';
-    final result = await OpenFilex.open(filePath);
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final appDocPath = '${appDocDir.path}/$name';
+    final result = await OpenFilex.open(appDocPath);
     if (result.type != ResultType.done) {
-      // Handle error here
       Dialogs.showErrorSnackBar(context, result.message);
       print('Error opening file: ${result.message}');
+    }
+  }
+
+  Future<void> deleteFileIfExists(String name) async {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final appDocPath = '${appDocDir.path}/$name';
+    final file = File(appDocPath);
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 
@@ -549,8 +556,9 @@ class _PdfScreenState extends State<PdfScreen> {
     int index,
     Function(double, double) onProgress,
   ) async {
-    String path =
-        '/storage/emulated/0/Download/studybuddy_${pdfData[index]['name']}';
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final appDocPath = '${appDocDir.path}/${pdfData[index]['name']}';
+    await deleteFileIfExists(pdfData[index]['name']);
     Dio dio = Dio();
     setState(() {
       downloading[pdfData[index]['name']] = true;
@@ -559,7 +567,7 @@ class _PdfScreenState extends State<PdfScreen> {
       cancelTokens[pdfData[index]['name']] = CancelToken();
       await dio.download(
         pdfData[index]['downloadUrl'],
-        path,
+        appDocPath,
         onReceiveProgress: (received, total) {
           if (total != -1) {
             onProgress(received.toDouble(), total.toDouble());
@@ -567,8 +575,8 @@ class _PdfScreenState extends State<PdfScreen> {
         },
         cancelToken: cancelTokens[pdfData[index]['name']]!,
       );
-      log(path);
-      Dialogs.showSnackBar(context, 'Downloaded to Download folder!');
+      log(appDocPath);
+      Dialogs.showSnackBar(context, 'Downloaded successfully!');
       setState(() {
         fileExists[pdfData[index]['name']] = true;
       });
