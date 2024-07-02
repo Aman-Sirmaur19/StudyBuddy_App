@@ -29,7 +29,7 @@ class _MainDrawerState extends State<MainDrawer> {
       leading: Icon(icon, size: 26),
       title: Text(
         title,
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       onTap: tapHandler,
     );
@@ -99,7 +99,7 @@ class _MainDrawerState extends State<MainDrawer> {
               title: Text(
                 themeProvider.isDarkMode ? 'Light Mode' : 'Dark Mode',
                 style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               trailing: const ChangeThemeButton(),
             ),
@@ -127,7 +127,7 @@ class _MainDrawerState extends State<MainDrawer> {
               leading: const Icon(Icons.picture_as_pdf_outlined, size: 26),
               title: const Text(
                 'PDF Compressor',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               subtitle: const Text(
                 '(recommended app, not a paid promotion)',
