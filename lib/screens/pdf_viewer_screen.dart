@@ -5,13 +5,9 @@ import '../api/apis.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   final String pdfName, pdfUrl;
-  final Color color;
 
   const PdfViewerScreen(
-      {super.key,
-      required this.pdfName,
-      required this.pdfUrl,
-      required this.color});
+      {super.key, required this.pdfName, required this.pdfUrl});
 
   @override
   State<PdfViewerScreen> createState() => _PdfViewerScreenState();
@@ -42,7 +38,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
           maxLines: 1,
           style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
-        backgroundColor: widget.color,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: document != null
           ? PDFViewer(document: document!)

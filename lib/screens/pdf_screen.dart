@@ -353,7 +353,6 @@ class _PdfScreenState extends State<PdfScreen> {
                           pdfUrl: _isSearching
                               ? _searchList[index]['url']
                               : pdfData[index]['url'],
-                          color: widget.category.color.withOpacity(.7),
                         )));
           },
           child: ListTile(
