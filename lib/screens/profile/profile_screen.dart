@@ -100,91 +100,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: mq.height * .02),
                       Text(APIs.user.phoneNumber!),
                       SizedBox(height: mq.height * .05),
-                      TextFormField(
-                        initialValue: widget.user.name,
-                        onSaved: (val) => APIs.me.name = val ?? '',
-                        validator: (val) => val != null && val.isNotEmpty
+                      customTextFormField(
+                        widget.user.name,
+                        (val) => APIs.me.name = val ?? '',
+                        (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            CupertinoIcons.person,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          labelText: 'Name',
-                          hintText: 'eg. Aman Sirmaur',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
+                        CupertinoIcons.person,
+                        'Name',
+                        'eg. Aman Sirmaur',
                       ),
                       SizedBox(height: mq.height * .02),
-                      TextFormField(
-                        initialValue: widget.user.about,
-                        onSaved: (val) => APIs.me.about = val ?? '',
-                        validator: (val) => val != null && val.isNotEmpty
+                      customTextFormField(
+                        widget.user.about,
+                        (val) => APIs.me.about = val ?? '',
+                        (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            CupertinoIcons.pencil_ellipsis_rectangle,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          labelText: 'About',
-                          hintText: 'eg. Feeling Happy!',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
+                        CupertinoIcons.pencil_ellipsis_rectangle,
+                        'About',
+                        'eg. Feeling Happy!',
                       ),
                       SizedBox(height: mq.height * .02),
-                      TextFormField(
-                        initialValue: widget.user.branch,
-                        onSaved: (val) => APIs.me.branch = val ?? '',
-                        validator: (val) => val != null && val.isNotEmpty
+                      customTextFormField(
+                        widget.user.branch,
+                        (val) => APIs.me.branch = val ?? '',
+                        (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.school_outlined,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          labelText: 'Branch',
-                          hintText: 'eg. Mechanical Engineering',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
+                        Icons.school_outlined,
+                        'Branch',
+                        'eg. Mechanical Engineering',
                       ),
                       SizedBox(height: mq.height * .02),
-                      TextFormField(
-                        initialValue: widget.user.college,
-                        onSaved: (val) => APIs.me.college = val ?? '',
-                        validator: (val) => val != null && val.isNotEmpty
+                      customTextFormField(
+                        widget.user.college,
+                        (val) => APIs.me.college = val ?? '',
+                        (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.apartment,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          labelText: 'College',
-                          hintText: 'eg. NIT Agartala',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
+                        Icons.apartment_rounded,
+                        'College',
+                        'eg. NIT Agartala',
                       ),
                       SizedBox(height: mq.height * .02),
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(),
-                          // backgroundColor: Colors.lightBlue.shade50,
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.lightBlue,
                           fixedSize: Size(mq.width * .35, mq.height * .05),
                         ),
-                        icon: Icon(Icons.edit_note_outlined,
-                            color: Theme.of(context).colorScheme.secondary),
-                        label: Text(
-                          'Update',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary),
-                        ),
+                        icon: const Icon(Icons.edit_note_outlined),
+                        label: const Text('Update'),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
@@ -201,6 +168,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget customTextFormField(
+    String? initialValue,
+    void Function(String?)? onSaved,
+    String? Function(String?)? validator,
+    IconData? icon,
+    String? labelText,
+    String? hintText,
+  ) {
+    return TextFormField(
+      initialValue: initialValue,
+      onSaved: onSaved,
+      validator: validator,
+      cursorColor: Colors.blue,
+      decoration: InputDecoration(
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        prefixIcon: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        labelText: labelText,
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide:
+              BorderSide(color: Theme.of(context).colorScheme.secondary),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.secondary.withOpacity(.4)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide:
+              BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
     );

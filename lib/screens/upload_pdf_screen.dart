@@ -143,15 +143,21 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
       padding: EdgeInsets.symmetric(
           horizontal: mq.width * .03, vertical: mq.width * .05),
       child: TextFormField(
-        cursorColor: Theme.of(context).colorScheme.primary,
+        cursorColor: Theme.of(context).colorScheme.secondary,
         controller: controller,
         keyboardType: inputType,
         maxLines: maxLines,
         decoration: InputDecoration(
-          enabledBorder:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          focusedBorder:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(.4))),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.secondary)),
           labelText: labelText,
           border: InputBorder.none,
           filled: true,
@@ -199,22 +205,29 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                child: Text('Upload',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary)),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.lightBlue,
+                ),
+                icon: const Icon(Icons.upload_outlined),
+                label: const Text('Upload'),
                 onPressed: () async {
-                  if (pdfSize <= 5)
+                  if (pdfSize <= 5) {
                     await uploadPdf(File(widget.path));
-                  else
+                  } else {
                     Dialogs.showErrorSnackBar(context,
                         'Kindly upload file of size less than or equal to 5MB.');
+                  }
                 },
               ),
-              ElevatedButton(
-                child: Text('Cancel',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary)),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.lightBlue,
+                ),
+                icon: const Icon(Icons.cancel_outlined),
+                label: const Text('Cancel'),
                 onPressed: () {
                   Navigator.pop(context);
                 },

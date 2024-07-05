@@ -118,7 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontSize: 18,
                           letterSpacing: 1),
                       keyboardType: TextInputType.number,
-                      cursorColor: Colors.purple,
+                      cursorColor: Colors.blue,
                       controller: phoneController,
                       onChanged: (value) {
                         setState(() {
@@ -130,11 +130,16 @@ class _AuthScreenState extends State<AuthScreen> {
                         errorText: _validate ? 'Enter 10 or more digits' : null,
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.black12),
+                          borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(.4)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.black12),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.secondary),
                         ),
                         prefixIcon: Container(
                           width: mq.width * .25,
@@ -177,13 +182,14 @@ class _AuthScreenState extends State<AuthScreen> {
                     SizedBox(height: mq.height * .02),
                     _isLoading == 0
                         ? ElevatedButton(
-                            child: Text(
-                              'Send OTP',
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
+                            style: ButtonStyle(
+                              foregroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.lightBlue),
                             ),
                             onPressed: sendOtp,
+                            child: const Text('Send OTP'),
                           )
                         : _isLoading == 1
                             ? const Text(

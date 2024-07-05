@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // Navigate to home screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => HomeScreen()),
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
       } else {
         // Navigate to login screen
@@ -83,13 +83,13 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       } else {
         // Handle other FirebaseAuthExceptions if needed
-        print('Error checking authentication: $e');
+        dev.log('Error checking authentication: $e');
         Dialogs.showErrorSnackBar(context,
-            'Something went wrong! (Check internet connection and \"TAP ANYWHERE\")');
+            'Something went wrong! (Check internet connection and "TAP ANYWHERE")');
       }
     } catch (e) {
       // Handle generic errors
-      print('Unexpected error checking authentication: $e');
+      dev.log('Unexpected error checking authentication: $e');
     } finally {
       // Set loading to false regardless of the result
       // setState(() {

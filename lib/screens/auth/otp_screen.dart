@@ -118,16 +118,17 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                     SizedBox(height: mq.height * .02),
                     _isLoading
-                        ? Center(
+                        ? const Center(
                             child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.secondary))
+                                color: Colors.lightBlue))
                         : ElevatedButton(
-                            child: Text(
-                              'Verify OTP',
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
+                            style: ButtonStyle(
+                              foregroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.lightBlue),
                             ),
+                            child: const Text('Verify OTP'),
                             onPressed: () async {
                               if (otp.isEmpty) {
                                 Dialogs.showErrorSnackBar(
@@ -152,14 +153,14 @@ class _OTPScreenState extends State<OTPScreen> {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => HomeScreen()),
+                                          builder: (_) => const HomeScreen()),
                                     );
                                   } else {
                                     await APIs.createUser().then((value) {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (_) => HomeScreen()),
+                                            builder: (_) => const HomeScreen()),
                                       );
                                     });
                                   }
