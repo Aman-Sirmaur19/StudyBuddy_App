@@ -118,7 +118,9 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                     SizedBox(height: mq.height * .02),
                     _isLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.secondary))
                         : ElevatedButton(
                             child: Text(
                               'Verify OTP',

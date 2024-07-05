@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => AvatarScreen()));
+                                  builder: (_) => const AvatarScreen()));
                         },
                         child: FluttermojiCircleAvatar(
                           backgroundColor: Colors.grey[200],

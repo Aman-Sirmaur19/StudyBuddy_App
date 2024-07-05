@@ -218,7 +218,7 @@ class _MainDrawerState extends State<MainDrawer> {
                     builder: (context) {
                       return AlertDialog(
                         backgroundColor: themeProvider.isDarkMode
-                            ? Colors.brown.shade100
+                            ? const Color(0xFF444446)
                             : null,
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -233,22 +233,36 @@ class _MainDrawerState extends State<MainDrawer> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            const Text(
+                            Text(
                               'Aman Sirmaur',
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.black54,
+                                color: Theme.of(context).colorScheme.secondary,
                                 letterSpacing: 1,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(mq.width * .01),
-                              child: const Text(
-                                'NIT AGARTALA',
+                              padding: EdgeInsets.only(top: mq.width * .01),
+                              child: Text(
+                                'MECHANICAL ENGINEERING',
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: mq.width * .03),
+                              child: Text(
+                                'NIT AGARTALA',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -322,7 +336,9 @@ class _MainDrawerState extends State<MainDrawer> {
                             child: Text('Close',
                                 style: TextStyle(
                                     color: themeProvider.isDarkMode
-                                        ? Theme.of(context).colorScheme.primary
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .secondary
                                         : Theme.of(context)
                                             .colorScheme
                                             .secondary)),

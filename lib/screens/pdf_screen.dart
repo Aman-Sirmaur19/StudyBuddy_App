@@ -272,7 +272,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 icon: Icon(_isSearching
                     ? CupertinoIcons.clear_circled_solid
                     : CupertinoIcons.search),
-                tooltip: 'Search',
+                tooltip: _isSearching ? 'Close' : 'Search',
                 onPressed: () {
                   setState(() {
                     _isSearching = !_isSearching;
@@ -280,7 +280,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 },
               ),
             ],
-            backgroundColor: widget.category.color.withOpacity(.7),
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           bottomNavigationBar: isBanner2Loaded
               ? SizedBox(height: 50, child: AdWidget(ad: bannerAd2))
@@ -289,8 +289,9 @@ class _PdfScreenState extends State<PdfScreen> {
             children: [
               particles(context),
               _isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
+                  ? Center(
+                      child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary),
                     )
                   : pdfData.isEmpty
                       ? SingleChildScrollView(child: _pdfDataIsEmpty())
@@ -386,7 +387,7 @@ class _PdfScreenState extends State<PdfScreen> {
                           tooltip: APIs.user.uid == pdfData[index]['uploaderId']
                               ? 'Thanks disabled'
                               : 'Thanks',
-                          color: Colors.green,
+                          color: Colors.lightBlue,
                           icon: userLiked
                               ? const Icon(Icons.handshake_rounded)
                               : const Icon(Icons.handshake_outlined),
@@ -424,7 +425,8 @@ class _PdfScreenState extends State<PdfScreen> {
                         Text(
                           '${pdfDataList[i]['likes'].length}',
                           style: const TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.bold),
+                              color: Colors.lightBlue,
+                              fontWeight: FontWeight.bold),
                         ),
                         Container(
                           margin: const EdgeInsets.only(left: 3),

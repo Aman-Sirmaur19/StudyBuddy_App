@@ -14,8 +14,11 @@ class ThemeProvider extends ChangeNotifier {
 class MyThemes {
   static final darkTheme = ThemeData(
     scaffoldBackgroundColor: Colors.grey.shade900,
-    colorScheme: ColorScheme.dark(
-        primary: Colors.brown.shade700, secondary: Colors.brown.shade300),
+    iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(Colors.lightBlue))),
+    colorScheme: const ColorScheme.dark(
+        primary: Color(0xFF242430), secondary: Color(0xFF88888D)),
     iconTheme: const IconThemeData(color: Colors.yellow, opacity: 0.8),
   );
   static final lightTheme = ThemeData(

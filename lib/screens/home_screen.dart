@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_glow/flutter_glow.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../main.dart';
@@ -64,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      color: Theme.of(context).colorScheme.secondary,
       onRefresh: () => _refresh(),
       child: Scaffold(
         appBar: AppBar(
@@ -92,9 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             customIconButton(
                 const Icon(CupertinoIcons.info), 'Info', showInfoAlertDialog),
             customIconButton(
-                const GlowIcon(Icons.logout, color: Colors.redAccent),
-                'Logout',
-                showLogOutAlertDialog)
+                const Icon(Icons.logout), 'Logout', showLogOutAlertDialog)
           ],
         ),
         drawer: const MainDrawer(),
