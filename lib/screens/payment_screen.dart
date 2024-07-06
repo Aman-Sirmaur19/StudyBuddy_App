@@ -52,7 +52,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Widget displayUpiApps(BuildContext context) {
     if (_upiApps == null) {
-      return Center(child: const CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     } else if (_upiApps!.isEmpty) {
       return Text(
         'No apps found to handle transaction!',
@@ -70,7 +70,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   _transaction = initiateTransaction(app);
                   setState(() {});
                 },
-                child: Container(
+                child: SizedBox(
                   height: 100,
                   width: 100,
                   child: Column(
@@ -115,7 +115,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Widget displayTxnData(String title, body) {
     return Padding(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -130,7 +130,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment',
+        title: const Text('Payment',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -148,13 +148,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     if (snapshot.hasError) {
                       return Center(child: Text('Error', style: header));
                     }
-                    UpiResponse _upiResponse = snapshot.data!;
+                    UpiResponse upiResponse = snapshot.data!;
 
-                    String txnId = _upiResponse.transactionId ?? 'N/A';
-                    String resCode = _upiResponse.responseCode ?? 'N/A';
-                    String txnRef = _upiResponse.transactionRefId ?? 'N/A';
-                    String status = _upiResponse.status ?? 'N/A';
-                    String approvalRef = _upiResponse.approvalRefNo ?? 'N/A';
+                    String txnId = upiResponse.transactionId ?? 'N/A';
+                    String resCode = upiResponse.responseCode ?? 'N/A';
+                    String txnRef = upiResponse.transactionRefId ?? 'N/A';
+                    String status = upiResponse.status ?? 'N/A';
+                    String approvalRef = upiResponse.approvalRefNo ?? 'N/A';
                     _checkTxnStatus(status);
 
                     return Padding(
@@ -171,8 +171,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ),
                     );
                   } else {
-                    return Center(
-                        child: Text('', style: header));
+                    return Center(child: Text('', style: header));
                   }
                 },
               ))

@@ -223,6 +223,7 @@ class _PdfScreenState extends State<PdfScreen> {
           appBar: AppBar(
             title: _isSearching
                 ? TextField(
+                    cursorColor: Colors.blue,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Enter PDF name...',
@@ -540,7 +541,7 @@ class _PdfScreenState extends State<PdfScreen> {
     final result = await OpenFilex.open(appDocPath);
     if (result.type != ResultType.done) {
       Dialogs.showErrorSnackBar(context, result.message);
-      print('Error opening file: ${result.message}');
+      log('Error opening file: ${result.message}');
     }
   }
 

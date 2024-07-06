@@ -18,7 +18,7 @@ Widget particles(BuildContext context) {
     onTapAnimation: false,
     particleColor:
         themeProvider.isDarkMode ? Colors.white.withAlpha(150) : Colors.black54,
-    awayAnimationDuration: Duration(milliseconds: 200),
+    awayAnimationDuration: const Duration(milliseconds: 200),
     maxParticleSize: 3,
     isRandSize: true,
     isRandomColor: false,

@@ -46,7 +46,7 @@ class AvatarScreen extends StatelessWidget {
                           "Customize:",
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
-                        Spacer(),
+                        const Spacer(),
                         FluttermojiSaveWidget(onTap: () async {
                           image = await FluttermojiFunctions()
                               .encodeMySVGtoString();

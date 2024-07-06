@@ -39,7 +39,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           log(error.message);
         },
       ),
-      request: AdRequest(),
+      request: const AdRequest(),
     );
     bannerAd.load();
   }
@@ -64,7 +64,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               ),
               Container(
                 width: mq.width * .12,
-                margin: EdgeInsets.only(left: 5),
+                margin: const EdgeInsets.only(left: 5),
                 child: Image.asset(
                   'assets/images/leaderboard.png',
                 ),
@@ -75,7 +75,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           centerTitle: true),
       bottomNavigationBar: isBannerLoaded
           ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-          : SizedBox(),
+          : const SizedBox(),
       body: Stack(
         children: [
           particles(context),
@@ -163,7 +163,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                                     width: mq.width * .065,
                                                   )
                                                 : Text(
-                                                    '${(index + 1).toString()}',
+                                                    (index + 1).toString(),
                                                     style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
