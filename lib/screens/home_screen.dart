@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../main.dart';
 import '../models/category.dart';
@@ -17,7 +17,7 @@ import '../widgets/main_drawer.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
 
-import './auth/auth_screen.dart';
+import 'auth/google signin/login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -82,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => UploadPdfScreen(
+                      userId: APIs.user.uid,
                       name: pickedFile.files[0].name,
                       path: pickedFile.files.first.path!,
                     ),
@@ -235,13 +236,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     Dialogs.showProgressBar(context);
 
                     // sign out from app
-                    await FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const AuthScreen()));
+                    await APIs.auth.signOut().then((value) async {
+                      await GoogleSignIn().signOut().then((value) {
+                        // for hiding progress dialog
+                        Navigator.pop(context);
+
+                        // for moving to home screen
+                        Navigator.pop(context);
+
+                        // for replacing home screen with login screen
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()));
+                      });
                     });
                   },
                 ),

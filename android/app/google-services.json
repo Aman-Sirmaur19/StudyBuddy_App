@@ -12,7 +12,20 @@
           "package_name": "com.sirmaur.study_buddy"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "22418565394-lcmo74h9kskejrveekbvcihkd64j20kd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sirmaur.study_buddy",
+            "certificate_hash": "cb3a06c99ea860b5a7ff768644340a15539a54a2"
+          }
+        },
+        {
+          "client_id": "22418565394-52mdor7mhskhnerhkges8fk1j9imonu2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBFRUUhNth1Egycx8sBGzq3TcX0EHIHnLg"
@@ -20,9 +33,15 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22418565394-52mdor7mhskhnerhkges8fk1j9imonu2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-9389901804535827~8981840935"
     }
   ],
   "configuration_version": "1"

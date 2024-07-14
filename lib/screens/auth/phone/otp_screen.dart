@@ -5,14 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 
-import '../../api/apis.dart';
-import '../../helper/dialogs.dart';
-import '../../main.dart';
-import '../../providers/my_themes.dart';
-import '../../widgets/custom_title.dart';
-import '../../widgets/particle_animation.dart';
+import '../../../api/apis.dart';
+import '../../../helper/dialogs.dart';
+import '../../../main.dart';
+import '../../../providers/my_themes.dart';
+import '../../../widgets/custom_title.dart';
+import '../../../widgets/particle_animation.dart';
 
-import '../home_screen.dart';
+import '../../home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   final String verificationId;

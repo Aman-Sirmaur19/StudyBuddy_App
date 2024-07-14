@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       SizedBox(height: mq.height * .02),
-                      Text(APIs.user.phoneNumber!),
+                      Text(APIs.user.email!),
                       SizedBox(height: mq.height * .05),
                       customTextFormField(
                         widget.user.name,

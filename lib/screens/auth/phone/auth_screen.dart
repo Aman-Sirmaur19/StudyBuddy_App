@@ -5,13 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
-import '../../helper/dialogs.dart';
-import '../../providers/my_themes.dart';
-import '../../widgets/custom_title.dart';
-import '../../widgets/particle_animation.dart';
+import '../../../main.dart';
+import '../../../helper/dialogs.dart';
+import '../../../providers/my_themes.dart';
+import '../../../widgets/custom_title.dart';
+import '../../../widgets/particle_animation.dart';
 
-import './otp_screen.dart';
+import 'otp_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

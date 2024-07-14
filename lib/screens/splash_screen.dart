@@ -11,7 +11,8 @@ import '../helper/dialogs.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
 
-import './auth/auth_screen.dart';
+import 'auth/google signin/login.dart';
+import 'auth/phone/auth_screen.dart';
 import './home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -68,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // Navigate to login screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {

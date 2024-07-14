@@ -21,6 +21,7 @@ class APIs {
 
   // for storing self info
   static late MainUser me;
+  static late MainUser uploadUser;
 
   static User get user => auth.currentUser!;
 
@@ -75,7 +76,7 @@ class APIs {
       name: 'Unknown',
       branch: '',
       college: '',
-      email: '',
+      email: user.email!,
       about: 'Hey, I am using StudyBuddy!',
       image: '',
       createdAt: time,
@@ -104,12 +105,22 @@ class APIs {
     });
   }
 
-  static Future<void> updateUploads(int n) async {
-    await getSelfInfo();
+  static Future<void> getUploadUserInfo(String id) async {
+    await firestore.collection('users').doc(id).get().then((user) async {
+      if (user.exists) {
+        uploadUser = MainUser.fromJson(user.data()!);
+      } else {
+        await createUser().then((value) => getUploadUserInfo(id));
+      }
+    });
+  }
+
+  static Future<void> updateUploads(String id, int n) async {
+    await getUploadUserInfo(id);
     await firestore
         .collection('users')
-        .doc(user.uid)
-        .update({'uploads': me.uploads + n});
+        .doc(id)
+        .update({'uploads': uploadUser.uploads + n});
   }
 
   // update profile picture of user
