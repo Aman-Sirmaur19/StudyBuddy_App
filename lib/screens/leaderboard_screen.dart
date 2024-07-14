@@ -101,6 +101,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     for (var i in _list) {
                       if (i.uploads > 0) {
                         count++;
+                        break;
                       }
                     }
 
