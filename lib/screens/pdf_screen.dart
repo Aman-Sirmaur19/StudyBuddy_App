@@ -297,7 +297,10 @@ class _PdfScreenState extends State<PdfScreen> {
                   : pdfData.isEmpty
                       ? SingleChildScrollView(child: _pdfDataIsEmpty())
                       : _pdfDataIsNotEmpty(),
-              if (_isDeleting) const Center(child: CircularProgressIndicator())
+              if (_isDeleting)
+                Center(
+                    child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary))
             ],
           ),
         ),
@@ -375,8 +378,8 @@ class _PdfScreenState extends State<PdfScreen> {
                       children: [
                         Text(
                           _isSearching
-                              ? _searchList[index]['uploader']
-                              : pdfData[index]['uploader'],
+                              ? _searchList[index]['uploader'].split(' ').first
+                              : pdfData[index]['uploader'].split(' ').first,
                           style: const TextStyle(
                             color: Colors.grey,
                             letterSpacing: 1,
@@ -428,48 +431,49 @@ class _PdfScreenState extends State<PdfScreen> {
                               color: Colors.lightBlue,
                               fontWeight: FontWeight.bold),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 3),
-                          child: downloading[pdfData[index]['name']]!
-                              ? IconButton(
-                                  tooltip: 'Cancel download',
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    cancelDownload(pdfData[index]['name']);
-                                  },
-                                )
-                              : fileExists[pdfData[index]['name']] == true
-                                  ? IconButton(
-                                      tooltip: 'View',
-                                      onPressed: () {
-                                        openFile(pdfData[index]['name']);
-                                      },
-                                      icon: const Icon(
-                                          Icons.remove_red_eye_outlined))
-                                  : IconButton(
-                                      tooltip: 'Download',
-                                      icon: const Icon(Icons.download),
-                                      onPressed: () async {
-                                        if (isInterstitialLoaded) {
-                                          interstitialAd.show();
-                                        }
-                                        // bool permission = false;
-                                        // if (!permission) {
-                                        //   permission = await CheckPermission
-                                        //       .isStoragePermission();
-                                        // }
-                                        downloadFile(
-                                          index,
-                                          (received, total) {
-                                            setState(() {
-                                              progress[pdfData[index]['name']] =
-                                                  received / total;
-                                            });
-                                          },
-                                        );
-                                      },
-                                    ),
-                        )
+                        if (APIs.user.uid == pdfData[index]['uploaderId'] ||
+                            APIs.user.uid == 'n9Q1BR2BlVeNpsbZbkYvHM8TgLs2')
+                          Container(
+                            margin: const EdgeInsets.only(left: 3),
+                            child: IconButton(
+                              tooltip: 'Delete',
+                              color: Colors.red,
+                              icon: const Icon(Icons.delete_rounded),
+                              onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text(
+                                        'Do you want to delete?',
+                                        style: TextStyle(fontSize: 20),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      content: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          TextButton(
+                                            child: Text('Yes',
+                                                style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary)),
+                                            onPressed: () => _deletePdf(index),
+                                          ),
+                                          TextButton(
+                                              child: Text('No',
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .secondary)),
+                                              onPressed: () =>
+                                                  Navigator.pop(context)),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          )
                       ],
                     ),
                   ),
@@ -479,49 +483,47 @@ class _PdfScreenState extends State<PdfScreen> {
                         color: widget.category.color.withOpacity(.7))
                 ],
               ),
-              trailing: APIs.user.uid == pdfData[index]['uploaderId']
-                  ? Padding(
-                      padding: EdgeInsets.only(left: mq.width * .03),
-                      child: IconButton(
-                        tooltip: 'Delete',
-                        color: Colors.red,
-                        icon: const Icon(Icons.delete_rounded),
-                        onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text(
-                                  'Do you want to delete?',
-                                  style: TextStyle(fontSize: 20),
-                                  textAlign: TextAlign.center,
-                                ),
-                                content: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TextButton(
-                                      child: Text('Yes',
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary)),
-                                      onPressed: () => _deletePdf(index),
-                                    ),
-                                    TextButton(
-                                        child: Text('No',
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondary)),
-                                        onPressed: () =>
-                                            Navigator.pop(context)),
-                                  ],
-                                ),
+              trailing: Padding(
+                padding: EdgeInsets.only(left: mq.width * .03),
+                child: downloading[pdfData[index]['name']]!
+                    ? IconButton(
+                        tooltip: 'Cancel download',
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          cancelDownload(pdfData[index]['name']);
+                        },
+                      )
+                    : fileExists[pdfData[index]['name']] == true
+                        ? IconButton(
+                            tooltip: 'View',
+                            onPressed: () {
+                              openFile(pdfData[index]['name']);
+                            },
+                            icon: const Icon(Icons.remove_red_eye_outlined))
+                        : IconButton(
+                            tooltip: 'Download',
+                            icon: const Icon(Icons.download),
+                            onPressed: () async {
+                              if (isInterstitialLoaded) {
+                                interstitialAd.show();
+                              }
+                              // bool permission = false;
+                              // if (!permission) {
+                              //   permission = await CheckPermission
+                              //       .isStoragePermission();
+                              // }
+                              downloadFile(
+                                index,
+                                (received, total) {
+                                  setState(() {
+                                    progress[pdfData[index]['name']] =
+                                        received / total;
+                                  });
+                                },
                               );
-                            }),
-                      ),
-                    )
-                  : null),
+                            },
+                          ),
+              )),
         ));
       },
     );
@@ -617,7 +619,7 @@ class _PdfScreenState extends State<PdfScreen> {
           .ref()
           .child('PDFs/${widget.category.title}/${pdfData[index]['name']}')
           .delete();
-      await APIs.updateUploads(-1);
+      await APIs.updateUploads(pdfData[index]['uploaderId'], -1);
       setState(() {
         _isDeleting = false;
       });

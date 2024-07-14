@@ -15,11 +15,13 @@ import '../widgets/category_item.dart';
 import '../widgets/particle_animation.dart';
 
 class UploadPdfScreen extends StatefulWidget {
+  final String userId;
   final String name;
   final String path;
 
   const UploadPdfScreen({
     super.key,
+    required this.userId,
     required this.name,
     required this.path,
   });
@@ -110,17 +112,17 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
                   children: [
                     loading
                         ? Center(
-                            child: CircularPercentIndicator(
-                              radius: 100,
-                              lineWidth: 10,
-                              percent: perCent / 100,
-                              backgroundColor: Colors.grey,
-                              progressColor: Colors.green,
-                              center: Text('${perCent.toStringAsFixed(1)}%',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                          )
+                      child: CircularPercentIndicator(
+                        radius: 100,
+                        lineWidth: 10,
+                        percent: perCent / 100,
+                        backgroundColor: Colors.grey,
+                        progressColor: Colors.green,
+                        center: Text('${perCent.toStringAsFixed(1)}%',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    )
                         : _pdfIsPicked(),
                   ],
                 ),
@@ -153,11 +155,11 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
                   color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(.4))),
+                  Theme.of(context).colorScheme.secondary.withOpacity(.4))),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.secondary)),
+              BorderSide(color: Theme.of(context).colorScheme.secondary)),
           labelText: labelText,
           border: InputBorder.none,
           filled: true,
@@ -299,7 +301,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           setState(() {
             loading = false;
           });
-          await APIs.updateUploads(1);
+          await APIs.updateUploads(widget.userId, 1);
 
           final pdfInfo = PDF(
             event.metadata?.customMetadata?['pdfId'],
