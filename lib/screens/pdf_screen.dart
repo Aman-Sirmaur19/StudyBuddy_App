@@ -432,7 +432,7 @@ class _PdfScreenState extends State<PdfScreen> {
                               fontWeight: FontWeight.bold),
                         ),
                         if (APIs.user.uid == pdfData[index]['uploaderId'] ||
-                            APIs.user.uid == 'n9Q1BR2BlVeNpsbZbkYvHM8TgLs2')
+                            APIs.user.email == 'amansirmaur190402@gmail.com')
                           Container(
                             margin: const EdgeInsets.only(left: 3),
                             child: IconButton(

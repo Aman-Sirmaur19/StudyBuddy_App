@@ -1,18 +1,18 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:in_app_update/in_app_update.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../main.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
+import '../providers/my_themes.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
 
-import 'auth/google signin/login.dart';
-import 'auth/phone/auth_screen.dart';
+import 'auth/email signin/login.dart';
 import './home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,30 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    checkForUpdate();
     _checkAuthentication();
-  }
-
-  Future<void> checkForUpdate() async {
-    dev.log('Checking for Update!');
-    await InAppUpdate.checkForUpdate().then((info) {
-      setState(() {
-        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-          dev.log('Update available!');
-          update();
-        }
-      });
-    }).catchError((error) {
-      dev.log(error.toString());
-    });
-  }
-
-  void update() async {
-    dev.log('Updating');
-    await InAppUpdate.startFlexibleUpdate();
-    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((error) {
-      dev.log(error.toString());
-    });
   }
 
   Future<void> _checkAuthentication() async {
@@ -59,7 +36,8 @@ class _SplashScreenState extends State<SplashScreen> {
       // Reloading current user data each time when the app starts
       await FirebaseAuth.instance.currentUser?.reload();
 
-      if (APIs.auth.currentUser != null) {
+      if (APIs.auth.currentUser != null &&
+          APIs.auth.currentUser!.emailVerified) {
         // Navigate to home screen
         Navigator.pushReplacement(
           context,
@@ -80,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context, 'User not found. The user may have been deleted.');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
       } else {
         // Handle other FirebaseAuthExceptions if needed
@@ -101,6 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     mq = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -141,13 +120,14 @@ class _SplashScreenState extends State<SplashScreen> {
             width: mq.width,
             child: RichText(
               textAlign: TextAlign.center,
-              text: const TextSpan(
+              text: TextSpan(
                 style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.3,
-                ),
-                children: [
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.3,
+                    color:
+                        themeProvider.isDarkMode ? Colors.white : Colors.black),
+                children: const [
                   TextSpan(text: 'MADE WITH 💛 IN 🇮🇳'),
                 ],
               ),

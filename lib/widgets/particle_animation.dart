@@ -11,7 +11,7 @@ Widget particles(BuildContext context) {
   return CircularParticle(
     key: UniqueKey(),
     awayRadius: 5,
-    numberOfParticles: 60,
+    numberOfParticles: 50,
     speedOfParticles: 0.7,
     height: mq.height,
     width: mq.width,
@@ -23,6 +23,6 @@ Widget particles(BuildContext context) {
     isRandSize: true,
     isRandomColor: false,
     awayAnimationCurve: Curves.linear,
-    connectDots: true,
+    connectDots: false,
   );
 }

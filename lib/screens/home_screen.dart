@@ -1,10 +1,11 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../main.dart';
 import '../models/category.dart';
@@ -17,7 +18,7 @@ import '../widgets/main_drawer.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
 
-import 'auth/google signin/login.dart';
+import 'auth/email signin/login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,10 +28,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool loading = false;
-
   bool isBannerLoaded = false;
   late BannerAd bannerAd;
+
+  Future<void> checkForUpdate() async {
+    log('Checking for Update!');
+    await InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          log('Update available!');
+          update();
+        }
+      });
+    }).catchError((error) {
+      log(error.toString());
+    });
+  }
+
+  void update() async {
+    log('Updating');
+    await InAppUpdate.startFlexibleUpdate();
+    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((error) {
+      log(error.toString());
+    });
+  }
 
   initializeBannerAd() async {
     bannerAd = BannerAd(
@@ -56,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    checkForUpdate();
     initializeBannerAd();
     APIs.getSelfInfo();
   }
@@ -100,9 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: isBannerLoaded
             ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
             : const SizedBox(),
-        body: loading
-            ? const Center(child: CircularProgressIndicator())
-            : Stack(
+        body: Stack(
                 children: [
                   particles(context),
                   GridView(
@@ -236,20 +256,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     Dialogs.showProgressBar(context);
 
                     // sign out from app
-                    await APIs.auth.signOut().then((value) async {
-                      await GoogleSignIn().signOut().then((value) {
-                        // for hiding progress dialog
-                        Navigator.pop(context);
+                    await FirebaseAuth.instance.signOut().then((value) async {
+                      // for hiding progress dialog
+                      Navigator.pop(context);
 
-                        // for moving to home screen
-                        Navigator.pop(context);
+                      // for moving to home screen
+                      Navigator.pop(context);
 
-                        // for replacing home screen with login screen
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const LoginScreen()));
-                      });
+                      // for replacing home screen with login screen
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const LoginScreen()));
                     });
                   },
                 ),

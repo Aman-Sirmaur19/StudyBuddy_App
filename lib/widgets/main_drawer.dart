@@ -137,8 +137,7 @@ class _MainDrawerState extends State<MainDrawer> {
                     color: Colors.grey),
               ),
               onTap: () {
-                const url =
-                    'https://play.google.com/store/apps/details?id=com.kompressor.pdf.compressor.reducepdfsize';
+                const url = 'https://www.freeconvert.com/compress-pdf';
                 setState(() {
                   _launchInBrowser(Uri.parse(url));
                 });
