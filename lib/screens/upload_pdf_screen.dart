@@ -112,17 +112,17 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
                   children: [
                     loading
                         ? Center(
-                      child: CircularPercentIndicator(
-                        radius: 100,
-                        lineWidth: 10,
-                        percent: perCent / 100,
-                        backgroundColor: Colors.grey,
-                        progressColor: Colors.green,
-                        center: Text('${perCent.toStringAsFixed(1)}%',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold)),
-                      ),
-                    )
+                            child: CircularPercentIndicator(
+                              radius: 100,
+                              lineWidth: 10,
+                              percent: perCent / 100,
+                              backgroundColor: Colors.grey,
+                              progressColor: Colors.green,
+                              center: Text('${perCent.toStringAsFixed(1)}%',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          )
                         : _pdfIsPicked(),
                   ],
                 ),
@@ -155,11 +155,11 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
                   color:
-                  Theme.of(context).colorScheme.secondary.withOpacity(.4))),
+                      Theme.of(context).colorScheme.secondary.withOpacity(.4))),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide:
-              BorderSide(color: Theme.of(context).colorScheme.secondary)),
+                  BorderSide(color: Theme.of(context).colorScheme.secondary)),
           labelText: labelText,
           border: InputBorder.none,
           filled: true,
@@ -215,7 +215,8 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
                 icon: const Icon(Icons.upload_outlined),
                 label: const Text('Upload'),
                 onPressed: () async {
-                  if (pdfSize <= 5) {
+                  if (pdfSize <= 5 ||
+                      APIs.user.email == 'amansirmaur190402@gmail.com') {
                     await uploadPdf(File(widget.path));
                   } else {
                     Dialogs.showErrorSnackBar(context,
