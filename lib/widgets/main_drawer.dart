@@ -123,91 +123,99 @@ class _MainDrawerState extends State<MainDrawer> {
                         builder: (_) => const LeaderboardScreen()));
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.picture_as_pdf_outlined, size: 26),
-              title: const Text(
-                'PDF Compressor',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            if (APIs.user.email == 'amansirmaur190402@gmail.com')
+              ListTile(
+                leading: const Icon(Icons.picture_as_pdf_outlined, size: 26),
+                title: const Text(
+                  'PDF Compressor',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                subtitle: const Text(
+                  '(recommended app, not a paid promotion)',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                      color: Colors.grey),
+                ),
+                onTap: () {
+                  const url = 'https://www.freeconvert.com/compress-pdf';
+                  setState(() {
+                    _launchInBrowser(Uri.parse(url));
+                  });
+                },
               ),
-              subtitle: const Text(
-                '(recommended app, not a paid promotion)',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                    color: Colors.grey),
-              ),
-              onTap: () {
-                const url = 'https://www.freeconvert.com/compress-pdf';
+            buildListTile(
+              'More Apps!',
+              Icons.apps_outage_outlined,
+              () {
+                const url =
+                    'https://play.google.com/store/apps/developer?id=SIRMAUR';
                 setState(() {
                   _launchInBrowser(Uri.parse(url));
                 });
               },
             ),
-            buildListTile(
-              'More Apps!',
-              Icons.apps_outage_outlined,
-              () {},
-            ),
             const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton.outlined(
-                        icon: const GlowIcon(Icons.payments_outlined,
-                            color: Colors.green),
-                        constraints:
-                            const BoxConstraints(minWidth: 50, minHeight: 50),
-                        onPressed: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (_) => const PaymentScreen()));
-                        },
+            if (APIs.user.email == 'amansirmaur190402@gmail.com')
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton.outlined(
+                          icon: const GlowIcon(Icons.payments_outlined,
+                              color: Colors.green),
+                          constraints:
+                              const BoxConstraints(minWidth: 50, minHeight: 50),
+                          onPressed: () {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (_) => const PaymentScreen()));
+                          },
+                        ),
                       ),
-                    ),
-                    const Text('Donate Now!'),
-                    const Text(''),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton.outlined(
-                        icon: const GlowIcon(Icons.share,
-                            color: Colors.lightBlue),
-                        constraints:
-                            const BoxConstraints(minWidth: 50, minHeight: 50),
-                        onPressed: () {},
+                      const Text('Donate Now!'),
+                      const Text(''),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton.outlined(
+                          icon: const GlowIcon(Icons.share,
+                              color: Colors.lightBlue),
+                          constraints:
+                              const BoxConstraints(minWidth: 50, minHeight: 50),
+                          onPressed: () {},
+                        ),
                       ),
-                    ),
-                    const Text('Share with your'),
-                    const Text('friends!'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton.outlined(
-                        icon: const GlowIcon(Icons.star_rate_outlined,
-                            color: Colors.redAccent),
-                        iconSize: 30,
-                        constraints:
-                            const BoxConstraints(minWidth: 50, minHeight: 50),
-                        onPressed: () {},
+                      const Text('Share with your'),
+                      const Text('friends!'),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton.outlined(
+                          icon: const GlowIcon(Icons.star_rate_outlined,
+                              color: Colors.redAccent),
+                          iconSize: 30,
+                          constraints:
+                              const BoxConstraints(minWidth: 50, minHeight: 50),
+                          onPressed: () {},
+                        ),
                       ),
-                    ),
-                    const Text('Rate us!'),
-                    const Text(''),
-                  ],
-                ),
-              ],
-            ),
+                      const Text('Rate us!'),
+                      const Text(''),
+                    ],
+                  ),
+                ],
+              ),
             const Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: mq.height * .02),

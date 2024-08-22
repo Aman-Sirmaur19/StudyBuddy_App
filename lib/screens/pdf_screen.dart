@@ -137,13 +137,13 @@ class _PdfScreenState extends State<PdfScreen> {
         final downloadUrl = await item.getDownloadURL();
         final metadata = await item.getMetadata();
         final uploaderId = metadata.customMetadata!['uploader']!;
-        final uploaderName = await APIs.getUserName(uploaderId);
+        // final uploaderName = await APIs.getUserName(uploaderId);
         final pdfId = metadata.customMetadata!['pdfId']!;
         return {
           'name': item.name,
           'url': item.fullPath,
           'metadata': metadata,
-          'uploader': uploaderName,
+          // 'uploader': uploaderName,
           'uploaderId': uploaderId,
           'pdfId': pdfId,
           'downloadUrl': downloadUrl,
@@ -360,8 +360,7 @@ class _PdfScreenState extends State<PdfScreen> {
                         )));
           },
           child: ListTile(
-              leading:
-                  Image.asset(widget.category.image, width: mq.width * .15),
+              leading: Image.asset(widget.category.image, width: mq.width * .1),
               title: Text(
                 _isSearching
                     ? _searchList[index]['name'].split('.').first
@@ -376,24 +375,30 @@ class _PdfScreenState extends State<PdfScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        Text(
-                          _isSearching
-                              ? _searchList[index]['uploader'].split(' ').first
-                              : pdfData[index]['uploader'].split(' ').first,
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        // Text(
+                        //   _isSearching
+                        //       ? _searchList[index]['uploader'].split(' ').first
+                        //       : pdfData[index]['uploader'].split(' ').first,
+                        //   style: const TextStyle(
+                        //     color: Colors.grey,
+                        //     letterSpacing: 1,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ),
+                        // IconButton(
+                        //     onPressed: () {},
+                        //     icon: Image.asset(
+                        //       'assets/images/youtube.png',
+                        //       width: 20,
+                        //     )),
                         IconButton(
                           tooltip: APIs.user.uid == pdfData[index]['uploaderId']
                               ? 'Thanks disabled'
                               : 'Thanks',
                           color: Colors.lightBlue,
                           icon: userLiked
-                              ? const Icon(Icons.handshake_rounded)
-                              : const Icon(Icons.handshake_outlined),
+                              ? const Icon(CupertinoIcons.hand_thumbsup_fill)
+                              : const Icon(CupertinoIcons.hand_thumbsup),
                           onPressed: APIs.user.uid ==
                                   pdfData[index]['uploaderId']
                               ? null

@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../helper/dialogs.dart';
-import '../../home_screen.dart';
 import '../../../main.dart';
+import '../../../helper/dialogs.dart';
 import '../../../providers/my_themes.dart';
 import '../../../widgets/custom_title.dart';
 import '../../../widgets/particle_animation.dart';
+import '../../home_screen.dart';
 
 enum AuthMode { signUp, logIn, reset }
 
@@ -52,7 +52,9 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = true;
       });
       await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: email.text.trim());
+          .sendPasswordResetEmail(email: email.text.trim())
+          .then((value) => Dialogs.showSnackBar(
+              context, 'Password reset link sent to your email!'));
     } on FirebaseAuthException catch (error) {
       Dialogs.showErrorSnackBar(context, error.toString());
     } catch (error) {

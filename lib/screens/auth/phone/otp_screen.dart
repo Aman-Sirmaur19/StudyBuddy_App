@@ -11,7 +11,6 @@ import '../../../main.dart';
 import '../../../providers/my_themes.dart';
 import '../../../widgets/custom_title.dart';
 import '../../../widgets/particle_animation.dart';
-
 import '../../home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
