@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:upi_india/upi_india.dart';
 
@@ -130,9 +131,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Back',
+          icon: const Icon(CupertinoIcons.chevron_back),
+        ),
         title: const Text('Payment',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Stack(
         children: [

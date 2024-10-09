@@ -1,24 +1,25 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../main.dart';
-import '../models/category.dart';
-import '../screens/pdf_screen.dart';
-import '../screens/upload_pdf_screen.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
-import '../widgets/category_item.dart';
-import '../widgets/main_drawer.dart';
-import '../widgets/custom_title.dart';
-import '../widgets/particle_animation.dart';
-
+import '../providers/my_themes.dart';
 import 'auth/email signin/login.dart';
+import 'college notes/branches.dart';
+import 'college notes/home.dart';
+import 'upload_pdf_screen.dart';
+import 'youtube/home.dart';
+import 'youtube/youtube_topics.dart';
+import '../widgets/custom_title.dart';
+import '../widgets/main_drawer.dart';
+import '../widgets/particle_animation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,28 +31,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isBannerLoaded = false;
   late BannerAd bannerAd;
-
-  Future<void> checkForUpdate() async {
-    log('Checking for Update!');
-    await InAppUpdate.checkForUpdate().then((info) {
-      setState(() {
-        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-          log('Update available!');
-          update();
-        }
-      });
-    }).catchError((error) {
-      log(error.toString());
-    });
-  }
-
-  void update() async {
-    log('Updating');
-    await InAppUpdate.startFlexibleUpdate();
-    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((error) {
-      log(error.toString());
-    });
-  }
 
   initializeBannerAd() async {
     bannerAd = BannerAd(
@@ -82,6 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
     APIs.getSelfInfo();
   }
 
+  Future<void> _refresh() async {
+    await APIs.getSelfInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -90,31 +73,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: customTitle(22, 1),
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          centerTitle: false,
           actions: [
             if (APIs.user.email == 'amansirmaur190402@gmail.com')
-              customIconButton(const Icon(CupertinoIcons.add), 'Upload',
-                  () async {
-                final pickedFile = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ['pdf'],
-                  allowCompression: true,
-                );
-                if (pickedFile != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => UploadPdfScreen(
-                        userId: APIs.user.uid,
-                        name: pickedFile.files[0].name,
-                        path: pickedFile.files.first.path!,
-                      ),
-                    ),
-                  );
-                }
-              }),
-            customIconButton(
-                const Icon(CupertinoIcons.info), 'Info', showInfoAlertDialog),
+              customIconButton(
+                  const Icon(CupertinoIcons.cloud_upload), 'Upload', uploadPdf),
             customIconButton(
                 const Icon(Icons.logout), 'Logout', showLogOutAlertDialog)
           ],
@@ -126,106 +89,33 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Stack(
           children: [
             particles(context),
-            GridView(
-              padding: EdgeInsets.all(mq.width * .06),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: mq.width * .5,
-                childAspectRatio: 3 / 2,
-                crossAxisSpacing: mq.width * .05,
-                mainAxisSpacing: mq.width * .05,
-              ),
-              children: DUMMY_CATEGORIES
-                  .map((catData) => InkWell(
-                        onTap: () => selectCategory(context, catData),
-                        splashColor: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(15),
-                        child: Container(
-                          padding: EdgeInsets.all(mq.width * .04),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                catData.color.withOpacity(0.7),
-                                catData.color,
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Image.asset(
-                                  catData.image,
-                                  width: mq.width * .15,
-                                ),
-                              ),
-                              Text(
-                                catData.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            ),
+            const Body(),
           ],
         ),
       ),
     );
   }
 
-  void selectCategory(BuildContext ctx, Category category) {
-    Navigator.of(ctx).push(
-        MaterialPageRoute(builder: (ctx) => PdfScreen(category: category)));
+  Future<void> checkForUpdate() async {
+    log('Checking for Update!');
+    await InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          log('Update available!');
+          update();
+        }
+      });
+    }).catchError((error) {
+      log(error.toString());
+    });
   }
 
-  Future<void> _refresh() async {
-    await APIs.getSelfInfo();
-  }
-
-  showInfoAlertDialog() {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(
-              '-- NOTE --',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (APIs.user.email == 'amansirmaur190402@gmail.com')
-                  const Text(
-                    '\u2022 It is recommended to set your profile, if you haven\'t.\n',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                if (APIs.user.email == 'amansirmaur190402@gmail.com')
-                  const Text(
-                    '\u2022 You can upload PDFs by tapping on \'+\' button.\n',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                if (APIs.user.email == 'amansirmaur190402@gmail.com')
-                  const Text(
-                    '\u2022 It is recommended to upload PDFs of compressed size (<= 5MB).\n',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                const Text(
-                  '\u2022 Copyright section is \'clickable\', where you can visit my github and contribute to the project.\n',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          );
-        });
+  void update() async {
+    log('Updating');
+    await InAppUpdate.startFlexibleUpdate();
+    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((error) {
+      log(error.toString());
+    });
   }
 
   Widget customIconButton(Icon icon, String tip, void Function()? onPressed) {
@@ -234,6 +124,26 @@ class _HomeScreenState extends State<HomeScreen> {
       tooltip: tip,
       onPressed: onPressed,
     );
+  }
+
+  uploadPdf() async {
+    final pickedFile = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      allowCompression: true,
+    );
+    if (pickedFile != null) {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => UploadPdfScreen(
+            userId: APIs.user.uid,
+            name: pickedFile.files[0].name,
+            path: pickedFile.files.first.path!,
+          ),
+        ),
+      );
+    }
   }
 
   Future showLogOutAlertDialog() {
@@ -286,5 +196,97 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         });
+  }
+}
+
+class Body extends StatelessWidget {
+  const Body({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return ListView(
+      padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+      children: [
+        _customRow(
+            title: 'College Notes',
+            context: context,
+            onPressed: () => Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => const AllBranchesScreen()))),
+        const BranchesGrid(),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Row(
+              children: [
+                Text(
+                  'You',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                Text(
+                  'Tube',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const AllYoutubeScreen()));
+              },
+              child: Text(
+                "Show All",
+                style: TextStyle(
+                    fontSize: 13,
+                    color: themeProvider.isDarkMode
+                        ? Colors.lightBlue
+                        : Colors.blue),
+              ),
+            )
+          ],
+        ),
+        const YoutubeGrid(),
+      ],
+    );
+  }
+
+  Widget _customRow({
+    required String title,
+    required BuildContext context,
+    required void Function()? onPressed,
+  }) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        TextButton(
+          onPressed: onPressed,
+          child: Text("Show All",
+              style: TextStyle(
+                  fontSize: 13,
+                  color: themeProvider.isDarkMode
+                      ? Colors.lightBlue
+                      : Colors.blue)),
+        )
+      ],
+    );
   }
 }

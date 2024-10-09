@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermojiFunctions.dart';
@@ -55,24 +56,29 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Leaderboard',
-                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Back',
+          icon: const Icon(CupertinoIcons.chevron_back),
+        ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Leaderboard',
+              style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+            ),
+            Container(
+              width: mq.width * .12,
+              margin: const EdgeInsets.only(left: 5),
+              child: Image.asset(
+                'assets/images/leaderboard.png',
               ),
-              Container(
-                width: mq.width * .12,
-                margin: const EdgeInsets.only(left: 5),
-                child: Image.asset(
-                  'assets/images/leaderboard.png',
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: isBannerLoaded
           ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
           : const SizedBox(),

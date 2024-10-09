@@ -1,15 +1,16 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../home_screen.dart';
 import '../../../main.dart';
 import '../../../helper/dialogs.dart';
 import '../../../providers/my_themes.dart';
 import '../../../widgets/custom_title.dart';
 import '../../../widgets/particle_animation.dart';
-import '../../home_screen.dart';
 
 enum AuthMode { signUp, logIn, reset }
 
@@ -80,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               email: email.text, password: password.text);
       if (userCredential.user != null && userCredential.user!.emailVerified) {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+            context, CupertinoPageRoute(builder: (_) => const HomeScreen()));
       } else {
         await FirebaseAuth.instance.signOut();
         Dialogs.showErrorSnackBar(context, 'Email not verified!');

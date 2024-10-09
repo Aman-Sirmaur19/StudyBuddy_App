@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -11,7 +13,6 @@ import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/pdf_model.dart';
 import '../helper/get_file_size.dart';
-import '../widgets/category_item.dart';
 import '../widgets/particle_animation.dart';
 
 class UploadPdfScreen extends StatefulWidget {
@@ -64,10 +65,19 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
     bannerAd.load();
   }
 
-  void addCategoriesFromDummyData() {
-    categories.clear();
-    for (final category in DUMMY_CATEGORIES) {
-      categories.add(category.title);
+  Future<void> _fetchBranches() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('branches').get();
+      List<String> fetchedCategories =
+          querySnapshot.docs.map((doc) => doc['name'] as String).toList();
+
+      setState(() {
+        categories = fetchedCategories;
+      });
+    } catch (e) {
+      // Handle any errors
+      print("Error fetching branches: $e");
     }
   }
 
@@ -75,6 +85,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   void initState() {
     super.initState();
     initializeBannerAd();
+    _fetchBranches();
   }
 
   @override
@@ -86,14 +97,17 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
 
   @override
   Widget build(BuildContext context) {
-    addCategoriesFromDummyData();
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Back',
+          icon: const Icon(CupertinoIcons.chevron_back),
+        ),
         title: const Text(
           'Upload',
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       bottomNavigationBar: isBannerLoaded
           ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
@@ -304,17 +318,17 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           });
           await APIs.updateUploads(widget.userId, 1);
 
-          final pdfInfo = PDF(
-            event.metadata?.customMetadata?['pdfId'],
-            nameController.text,
-            event.metadata?.customMetadata?['uploader'],
-            categoryController.text,
-            [],
-          );
-          await APIs.firestore
-              .collection('pdfs')
-              .doc(event.metadata?.customMetadata?['pdfId'])
-              .set(pdfInfo.toJson());
+          // final pdfInfo = PDF(
+          //   event.metadata?.customMetadata?['pdfId'],
+          //   nameController.text,
+          //   event.metadata?.customMetadata?['uploader'],
+          //   categoryController.text,
+          //   [],
+          // );
+          // await APIs.firestore
+          //     .collection('pdfs')
+          //     .doc(event.metadata?.customMetadata?['pdfId'])
+          //     .set(pdfInfo.toJson());
 
           Dialogs.showSnackBar(context, 'PDF uploaded successfully!');
           Navigator.pop(context);

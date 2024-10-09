@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,12 +9,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../main.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
+import 'home_screen.dart';
 import '../providers/my_themes.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
-
 import 'auth/email signin/login.dart';
-import './home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -41,13 +41,13 @@ class _SplashScreenState extends State<SplashScreen> {
         // Navigate to home screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          CupertinoPageRoute(builder: (_) => const HomeScreen()),
         );
       } else {
         // Navigate to login screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          CupertinoPageRoute(builder: (_) => const LoginScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context, 'User not found. The user may have been deleted.');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          CupertinoPageRoute(builder: (_) => const LoginScreen()),
         );
       } else {
         // Handle other FirebaseAuthExceptions if needed
@@ -128,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     color:
                         themeProvider.isDarkMode ? Colors.white : Colors.black),
                 children: const [
-                  TextSpan(text: 'MADE WITH 💛 IN 🇮🇳'),
+                  TextSpan(text: 'MADE WITH ❤️ IN 🇮🇳'),
                 ],
               ),
             ),

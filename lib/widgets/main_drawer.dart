@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,8 +10,6 @@ import '../main.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../providers/my_themes.dart';
-import '../screens/leaderboard_screen.dart';
-import '../screens/payment_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../widgets/particle_animation.dart';
 
@@ -89,8 +88,8 @@ class _MainDrawerState extends State<MainDrawer> {
             ListTile(
               leading: GlowIcon(
                 themeProvider.isDarkMode
-                    ? Icons.lightbulb
-                    : Icons.lightbulb_outline_rounded,
+                    ? CupertinoIcons.lightbulb_fill
+                    : CupertinoIcons.lightbulb,
                 size: 26,
                 color: themeProvider.isDarkMode
                     ? Colors.yellowAccent
@@ -105,22 +104,12 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
             buildListTile(
               'About',
-              Icons.person_outline,
+              CupertinoIcons.person,
               () {
                 Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    CupertinoPageRoute(
                         builder: (_) => ProfileScreen(user: APIs.me)));
-              },
-            ),
-            buildListTile(
-              'Leaderboard',
-              Icons.leaderboard_outlined,
-              () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const LeaderboardScreen()));
               },
             ),
             if (APIs.user.email == 'amansirmaur190402@gmail.com')
@@ -146,7 +135,7 @@ class _MainDrawerState extends State<MainDrawer> {
               ),
             buildListTile(
               'More Apps!',
-              Icons.apps_outage_outlined,
+              CupertinoIcons.app_badge,
               () {
                 const url =
                     'https://play.google.com/store/apps/developer?id=SIRMAUR';
@@ -154,6 +143,138 @@ class _MainDrawerState extends State<MainDrawer> {
                   _launchInBrowser(Uri.parse(url));
                 });
               },
+            ),
+            buildListTile(
+              'Copyright',
+              Icons.copyright_rounded,
+              () => showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      backgroundColor: themeProvider.isDarkMode
+                          ? const Color(0xFF444446)
+                          : null,
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(mq.width * .15),
+                            child: Image.asset(
+                              'assets/images/avatar.png',
+                              width: mq.width * .3,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Aman Sirmaur',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Theme.of(context).colorScheme.secondary,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: mq.width * .01),
+                            child: Text(
+                              'MECHANICAL ENGINEERING',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.secondary,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: mq.width * .03),
+                            child: Text(
+                              'NIT AGARTALA',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                color: Theme.of(context).colorScheme.secondary,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          InkWell(
+                            child: Image.asset('assets/images/linkedin.png',
+                                width: mq.width * .07),
+                            onTap: () async {
+                              const url =
+                                  'https://www.linkedin.com/in/aman-kumar-257613257/';
+                              setState(() {
+                                _launchInBrowser(Uri.parse(url));
+                              });
+                            },
+                          ),
+                          InkWell(
+                            child: Image.asset('assets/images/github.png',
+                                width: mq.width * .07),
+                            onTap: () async {
+                              const url = 'https://github.com/Aman-Sirmaur19';
+                              setState(() {
+                                _launchInBrowser(Uri.parse(url));
+                              });
+                            },
+                          ),
+                          InkWell(
+                            child: Image.asset('assets/images/instagram.png',
+                                width: mq.width * .07),
+                            onTap: () async {
+                              const url =
+                                  'https://www.instagram.com/aman_sirmaur19/';
+                              setState(() {
+                                _launchInBrowser(Uri.parse(url));
+                              });
+                            },
+                          ),
+                          InkWell(
+                            child: Image.asset('assets/images/twitter.png',
+                                width: mq.width * .07),
+                            onTap: () async {
+                              const url =
+                                  'https://x.com/AmanSirmaur?t=2QWiqzkaEgpBFNmLI38sbA&s=09';
+                              setState(() {
+                                _launchInBrowser(Uri.parse(url));
+                              });
+                            },
+                          ),
+                          InkWell(
+                            child: Image.asset('assets/images/youtube.png',
+                                width: mq.width * .07),
+                            onTap: () async {
+                              const url =
+                                  'https://www.youtube.com/@AmanSirmaur';
+                              setState(() {
+                                _launchInBrowser(Uri.parse(url));
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Close',
+                              style: TextStyle(
+                                  color: themeProvider.isDarkMode
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .secondary)),
+                        ),
+                      ],
+                    );
+                  }),
             ),
             const Spacer(),
             if (APIs.user.email == 'amansirmaur190402@gmail.com')
@@ -219,154 +340,11 @@ class _MainDrawerState extends State<MainDrawer> {
             const Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: mq.height * .02),
-              child: InkWell(
-                onTap: () => showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        backgroundColor: themeProvider.isDarkMode
-                            ? const Color(0xFF444446)
-                            : null,
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(mq.width * .15),
-                              child: Image.asset(
-                                'assets/images/Aman Kumar.heic',
-                                width: mq.width * .3,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Aman Sirmaur',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).colorScheme.secondary,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: mq.width * .01),
-                              child: Text(
-                                'MECHANICAL ENGINEERING',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: mq.width * .03),
-                              child: Text(
-                                'NIT AGARTALA',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        content: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            InkWell(
-                              child: Image.asset('assets/images/linkedin.png',
-                                  width: mq.width * .07),
-                              onTap: () async {
-                                const url =
-                                    'https://www.linkedin.com/in/aman-kumar-257613257/';
-                                setState(() {
-                                  _launchInBrowser(Uri.parse(url));
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Image.asset('assets/images/github.png',
-                                  width: mq.width * .07),
-                              onTap: () async {
-                                const url = 'https://github.com/Aman-Sirmaur19';
-                                setState(() {
-                                  _launchInBrowser(Uri.parse(url));
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Image.asset('assets/images/instagram.png',
-                                  width: mq.width * .07),
-                              onTap: () async {
-                                const url =
-                                    'https://www.instagram.com/aman_sirmaur19/';
-                                setState(() {
-                                  _launchInBrowser(Uri.parse(url));
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Image.asset('assets/images/twitter.png',
-                                  width: mq.width * .07),
-                              onTap: () async {
-                                const url =
-                                    'https://x.com/AmanSirmaur?t=2QWiqzkaEgpBFNmLI38sbA&s=09';
-                                setState(() {
-                                  _launchInBrowser(Uri.parse(url));
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Image.asset('assets/images/youtube.png',
-                                  width: mq.width * .07),
-                              onTap: () async {
-                                const url =
-                                    'https://www.youtube.com/@AmanSirmaur';
-                                setState(() {
-                                  _launchInBrowser(Uri.parse(url));
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Close',
-                                style: TextStyle(
-                                    color: themeProvider.isDarkMode
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .secondary)),
-                          ),
-                        ],
-                      );
-                    }),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.copyright_rounded),
-                    Text(
-                      'Aman Sirmaur',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: const Text('MADE WITH ❤️ IN 🇮🇳',
+                  style: TextStyle(
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
           ],
         ),

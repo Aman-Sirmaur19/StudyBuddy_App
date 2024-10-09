@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermoji.dart';
 
@@ -17,11 +18,16 @@ class AvatarScreen extends StatelessWidget {
     String image = '';
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Back',
+          icon: const Icon(CupertinoIcons.chevron_back),
+        ),
+        centerTitle: true,
         title: const Text(
           'Custom Avatar',
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Stack(
         children: [

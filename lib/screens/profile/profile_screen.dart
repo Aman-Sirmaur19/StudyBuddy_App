@@ -63,11 +63,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Back',
+            icon: const Icon(CupertinoIcons.chevron_back),
+          ),
+          centerTitle: true,
           title: const Text(
             'My Profile',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         bottomNavigationBar: isBannerLoaded
             ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
@@ -89,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // _showBottomSheet();
                           Navigator.push(
                               context,
-                              MaterialPageRoute(
+                              CupertinoPageRoute(
                                   builder: (_) => const AvatarScreen()));
                         },
                         child: FluttermojiCircleAvatar(

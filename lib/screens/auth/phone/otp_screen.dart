@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
@@ -151,14 +152,14 @@ class _OTPScreenState extends State<OTPScreen> {
                                   if (await APIs.userExists()) {
                                     Navigator.pushReplacement(
                                       context,
-                                      MaterialPageRoute(
+                                      CupertinoPageRoute(
                                           builder: (_) => const HomeScreen()),
                                     );
                                   } else {
                                     await APIs.createUser().then((value) {
                                       Navigator.pushReplacement(
                                         context,
-                                        MaterialPageRoute(
+                                        CupertinoPageRoute(
                                             builder: (_) => const HomeScreen()),
                                       );
                                     });
