@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,7 +25,7 @@ class BranchesGrid extends StatelessWidget {
 
   void selectBranch(BuildContext ctx, Map<String, dynamic> branch) {
     Navigator.of(ctx)
-        .push(MaterialPageRoute(builder: (ctx) => PdfScreen(branch: branch)));
+        .push(CupertinoPageRoute(builder: (ctx) => PdfScreen(branch: branch)));
   }
 
   @override
