@@ -1,17 +1,54 @@
 import 'dart:math';
+import 'dart:developer' as dev;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermoji.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../main.dart';
 import '../../api/apis.dart';
 import '../../helper/dialogs.dart';
 import '../../widgets/particle_animation.dart';
 
-class AvatarScreen extends StatelessWidget {
+class AvatarScreen extends StatefulWidget {
   const AvatarScreen({super.key});
+
+  @override
+  State<AvatarScreen> createState() => _AvatarScreenState();
+}
+
+class _AvatarScreenState extends State<AvatarScreen> {
+  bool isBannerLoaded = false;
+  late BannerAd bannerAd;
+
+  initializeBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          dev.log(error.message);
+        },
+      ),
+      request: const AdRequest(),
+    );
+    bannerAd.load();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeBannerAd();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +66,9 @@ class AvatarScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
       ),
+      bottomNavigationBar: isBannerLoaded
+          ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+          : const SizedBox(),
       body: Stack(
         children: [
           particles(context),
