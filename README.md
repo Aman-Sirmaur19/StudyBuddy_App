@@ -18,7 +18,7 @@ adhering to a clean architecture approach organized into multiple modules.
 
 ## Download App
 
-<a href="https://play.google.com/store/apps/details?id=com.sirmaur.study_buddy"><img src="./assets/images/google_play.png" width="200"></a>
+<a href="https://play.google.com/store/apps/details?id=com.sirmaur.study_buddy"><img src="assets/images/google_play.png" width="200"></a>
 
 ## Screenshots
 
@@ -29,9 +29,9 @@ adhering to a clean architecture approach organized into multiple modules.
     <th width="32%">Engineering Branches</th>
   </tr>
   <tr>
-    <td><img src="./assets/images/1.png"  alt=""/></td>
     <td><img src="assets/images/1.png"  alt=""/></td>
     <td><img src="assets/images/2.png"  alt=""/></td>
+    <td><img src="assets/images/3.png"  alt=""/></td>
   </tr>  
 </table>
 
@@ -42,9 +42,9 @@ adhering to a clean architecture approach organized into multiple modules.
     <th width="32%">Youtube Playlists</th>
   </tr>
   <tr>
-    <td><img src="assets/images/3.png"  alt=""/></td>
     <td><img src="assets/images/4.png"  alt=""/></td>
     <td><img src="assets/images/5.png"  alt=""/></td>
+    <td><img src="assets/images/6.png"  alt=""/></td>
   </tr>  
 </table>
 
