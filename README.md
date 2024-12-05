@@ -1,4 +1,4 @@
-<p align="center">MADE WITH ❤️ IN <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag" width="18"></p>
+<p align="center">MADE WITH ❤️ IN <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag" width="17"></p>
 
 # StudyBuddy 📚
 
