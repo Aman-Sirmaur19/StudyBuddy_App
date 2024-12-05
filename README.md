@@ -1,4 +1,4 @@
-<p align="center"> MADE WITH ❤️ IN 🇮🇳 </p>
+<p align="center">MADE WITH ❤️ IN 🇮🇳</p>
 
 # StudyBuddy 📚
 
@@ -51,9 +51,13 @@ adhering to a clean architecture approach organized into multiple modules.
 <table>
   <tr>
     <th width="32%">Youtube Playlists</th>
+    <th width="32%"></th>
+    <th width="32%"></th>
   </tr>
   <tr>
     <td><img src="./assets/images/4.png"  alt=""/></td>
+    <td></td>
+    <td></td>
   </tr>  
 </table>
 
