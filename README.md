@@ -1,4 +1,4 @@
-<p align="center">MADE WITH ❤️ IN 🇮🇳</p>
+<p align="center">MADE WITH ❤️ IN <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag" width="20"></p>
 
 # StudyBuddy 📚
 
@@ -24,40 +24,27 @@ adhering to a clean architecture approach organized into multiple modules.
 
 <table>
   <tr>
-    <th width="32%">Splash Screen</th>
     <th width="32%">Login Screen</th>
     <th width="32%">Home Screen</th>
+    <th width="32%">Engineering Branches</th>
   </tr>
   <tr>
     <td><img src="./assets/images/1.png"  alt=""/></td>
-    <td><img src="./assets/images/2.png"  alt=""/></td>
-    <td><img src="./assets/images/3.png"  alt=""/></td>
+    <td><img src="assets/images/1.png"  alt=""/></td>
+    <td><img src="assets/images/2.png"  alt=""/></td>
   </tr>  
 </table>
 
 <table>
   <tr>
-    <th width="32%">Engineering Branches</th>
     <th width="32%">Notes</th>
     <th width="32%">Youtube Topics</th>
-  </tr>
-  <tr>
-    <td><img src="./assets/images/4.png"  alt=""/></td>
-    <td><img src="./assets/images/5.png"  alt=""/></td>
-    <td><img src="./assets/images/6.png"  alt=""/></td>
-  </tr>  
-</table>
-
-<table>
-  <tr>
     <th width="32%">Youtube Playlists</th>
-    <th width="32%"></th>
-    <th width="32%"></th>
   </tr>
   <tr>
-    <td><img src="./assets/images/4.png"  alt=""/></td>
-    <td></td>
-    <td></td>
+    <td><img src="assets/images/3.png"  alt=""/></td>
+    <td><img src="assets/images/4.png"  alt=""/></td>
+    <td><img src="assets/images/5.png"  alt=""/></td>
   </tr>  
 </table>
 
