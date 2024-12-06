@@ -188,7 +188,15 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
                       fontSize: 20,
                     ),
                   )),
-                  errorWidget: (error) => Center(child: Text(error.toString())),
+                  errorWidget: (error) => const Center(
+                      child: Text(
+                    'Kindly check your internet connection!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
+                  )),
                 );
         },
       ),
