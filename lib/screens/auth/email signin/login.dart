@@ -1,7 +1,9 @@
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -22,6 +24,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool isBannerLoaded = false;
+  late BannerAd bannerAd;
   bool isLoading = false;
   bool obstructPassword = true;
   bool obstructConfirmPassword = true;
@@ -30,6 +34,44 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+
+  initializeBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          dev.log(error.message);
+        },
+      ),
+      request: const AdRequest(),
+    );
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            isBannerLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded = false;
+          dev.log(error.message);
+        },
+      ),
+      request: const AdRequest(),
+    );
+    bannerAd.load();
+  }
 
   void _switchAuthMode() {
     if (_authMode == AuthMode.logIn) {
@@ -164,6 +206,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initializeBannerAd();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     email.dispose();
@@ -178,6 +226,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        bottomNavigationBar: isBannerLoaded
+            ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+            : const SizedBox(),
         body: Stack(
           children: [
             particles(context),

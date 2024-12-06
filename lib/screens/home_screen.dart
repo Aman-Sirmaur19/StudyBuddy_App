@@ -58,11 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     checkForUpdate();
     initializeBannerAd();
-    APIs.getSelfInfo();
+    // APIs.getSelfInfo();
   }
 
   Future<void> _refresh() async {
-    await APIs.getSelfInfo();
+    // await APIs.getSelfInfo();
   }
 
   @override
@@ -74,13 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: customTitle(22, 1),
           centerTitle: false,
-          actions: [
-            if (APIs.user.email == 'amansirmaur190402@gmail.com')
-              customIconButton(
-                  const Icon(CupertinoIcons.cloud_upload), 'Upload', uploadPdf),
-            customIconButton(
-                const Icon(Icons.logout), 'Logout', showLogOutAlertDialog)
-          ],
         ),
         drawer: const MainDrawer(),
         bottomNavigationBar: isBannerLoaded
