@@ -187,9 +187,11 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
                 ),
               ],
             ),
-      bottomNavigationBar: isBannerLoaded
-          ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-          : const SizedBox(),
+      bottomNavigationBar: isFullscreen
+          ? null
+          : isBannerLoaded
+              ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
+              : const SizedBox(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : playlistVideos.isEmpty
