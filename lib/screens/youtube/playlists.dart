@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../main.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/particle_animation.dart';
+import 'youtube_player_screen.dart';
 
 class Playlists extends StatefulWidget {
   final String id;
@@ -64,10 +64,6 @@ class _PlaylistsState extends State<Playlists> {
       print("Error fetching playlists: $e");
     }
     return null;
-  }
-
-  Future<void> _launchInBrowser(Uri url) async {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -138,7 +134,13 @@ class _PlaylistsState extends State<Playlists> {
                   String key = playlists.keys.elementAt(index);
                   dynamic value = playlists[key];
                   return InkWell(
-                    onTap: () => _launchInBrowser(Uri.parse(value)),
+                    onTap: () => Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => YoutubePlayerScreen(
+                                  title: key,
+                                  playlistLink: value,
+                                ))),
                     borderRadius: BorderRadius.circular(30),
                     child: GlassContainer(
                       color1: Colors.redAccent.shade200,
