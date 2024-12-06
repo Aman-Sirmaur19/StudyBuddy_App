@@ -113,7 +113,7 @@ Below is our current technology stack:
 - **Firebase Authentication**: For secure user authentication.
 - **Firebase Firestore**: A scalable database for storing app data.
 - **Cloud Functions**: To run backend code in response to events triggered by Firebase features.
-- **Easy Pdf Viewer**: To view pdf files.
+- **Flutter Cached PdfView**: To view pdf files.
 
 ## Contribution 🤝
 
@@ -122,8 +122,6 @@ appreciate community feedback and suggestions for future improvements.
 
 ## What's Coming Next? 🚀
 
-- **Inbuilt Youtube Player**: StudyBuddy will soon support in-built youtube player feature, that
-  helps users to watch videos in the app.
 - **Offline Mode**: Study with your downloaded notes through StudyBuddy as we introduce offline mode
   in the app, making it easier to run the app even in offline mode.
 
