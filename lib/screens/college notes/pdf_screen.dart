@@ -133,7 +133,7 @@ class _PdfScreenState extends State<PdfScreen> {
           .map((item) async {
         final downloadUrl = await item.getDownloadURL();
         final metadata = await item.getMetadata();
-        final uploaderId = metadata.customMetadata!['uploader']!;
+        // final uploaderId = metadata.customMetadata!['uploader']!;
         // final uploaderName = await APIs.getUserName(uploaderId);
         final pdfId = metadata.customMetadata!['pdfId']!;
         return {
@@ -141,7 +141,7 @@ class _PdfScreenState extends State<PdfScreen> {
           'url': item.fullPath,
           'metadata': metadata,
           // 'uploader': uploaderName,
-          'uploaderId': uploaderId,
+          // 'uploaderId': uploaderId,
           'pdfId': pdfId,
           'downloadUrl': downloadUrl,
         };
@@ -368,27 +368,17 @@ class _PdfScreenState extends State<PdfScreen> {
                           tooltip: 'Cancel download',
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            cancelDownload(pdfData[index]['name']);
+                            _cancelDownload(pdfData[index]['name']);
                           },
                         )
                       : fileExists[pdfData[index]['name']] == true
                           ? IconButton(
-                              tooltip: 'View',
-                              onPressed: () {
-                                if (isInterstitialLoaded) interstitialAd.show();
-                                Navigator.of(context).push(CupertinoPageRoute(
-                                    builder: (context) => PdfViewerScreen(
-                                          isDownloaded: fileExists[
-                                              pdfData[index]['name']],
-                                          pdfName: _isSearching
-                                              ? _searchList[index]['name']
-                                              : pdfData[index]['name'],
-                                          pdfUrl: _isSearching
-                                              ? _searchList[index]['url']
-                                              : pdfData[index]['url'],
-                                        )));
+                              tooltip: 'Delete',
+                              onPressed: () async {
+                                await _deleteFileIfExists(
+                                    pdfData[index]['name']);
                               },
-                              icon: const Icon(Icons.remove_red_eye_outlined))
+                              icon: const Icon(Icons.delete_rounded))
                           : IconButton(
                               tooltip: 'Download',
                               icon: const Icon(Icons.file_download_outlined),
@@ -401,7 +391,7 @@ class _PdfScreenState extends State<PdfScreen> {
                                 //   permission = await CheckPermission
                                 //       .isStoragePermission();
                                 // }
-                                downloadFile(
+                                _downloadFile(
                                   index,
                                   (received, total) {
                                     setState(() {
@@ -412,45 +402,45 @@ class _PdfScreenState extends State<PdfScreen> {
                                 );
                               },
                             ),
-                  if (APIs.user.uid == pdfData[index]['uploaderId'] ||
-                      APIs.user.email == 'amansirmaur190402@gmail.com')
-                    IconButton(
-                      tooltip: 'Delete',
-                      color: Colors.red,
-                      icon: const Icon(CupertinoIcons.delete_solid),
-                      onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                'Do you want to delete?',
-                                style: TextStyle(fontSize: 20),
-                                textAlign: TextAlign.center,
-                              ),
-                              content: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  TextButton(
-                                    child: Text('Yes',
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary)),
-                                    onPressed: () => _deletePdf(index),
-                                  ),
-                                  TextButton(
-                                      child: Text('No',
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary)),
-                                      onPressed: () => Navigator.pop(context)),
-                                ],
-                              ),
-                            );
-                          }),
-                    )
+                  // if (APIs.user.uid == pdfData[index]['uploaderId'] ||
+                  //     APIs.user.email == 'amansirmaur190402@gmail.com')
+                  //   IconButton(
+                  //     tooltip: 'Delete',
+                  //     color: Colors.red,
+                  //     icon: const Icon(CupertinoIcons.delete_solid),
+                  //     onPressed: () => showDialog(
+                  //         context: context,
+                  //         builder: (context) {
+                  //           return AlertDialog(
+                  //             title: const Text(
+                  //               'Do you want to delete?',
+                  //               style: TextStyle(fontSize: 20),
+                  //               textAlign: TextAlign.center,
+                  //             ),
+                  //             content: Row(
+                  //               mainAxisAlignment:
+                  //                   MainAxisAlignment.spaceAround,
+                  //               children: [
+                  //                 TextButton(
+                  //                   child: Text('Yes',
+                  //                       style: TextStyle(
+                  //                           color: Theme.of(context)
+                  //                               .colorScheme
+                  //                               .secondary)),
+                  //                   onPressed: () => _deletePdf(index),
+                  //                 ),
+                  //                 TextButton(
+                  //                     child: Text('No',
+                  //                         style: TextStyle(
+                  //                             color: Theme.of(context)
+                  //                                 .colorScheme
+                  //                                 .secondary)),
+                  //                     onPressed: () => Navigator.pop(context)),
+                  //               ],
+                  //             ),
+                  //           );
+                  //         }),
+                  //   )
                 ],
               )),
         ));
@@ -476,22 +466,35 @@ class _PdfScreenState extends State<PdfScreen> {
   //   }
   // }
 
-  Future<void> deleteFileIfExists(String name) async {
-    final appDocDir = await getApplicationDocumentsDirectory();
-    final appDocPath = '${appDocDir.path}/$name';
-    final file = File(appDocPath);
-    if (await file.exists()) {
-      await file.delete();
+  Future<void> _deleteFileIfExists(String fileName) async {
+    try {
+      // Get the app's documents directory
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final filePath = '${appDocDir.path}/$fileName';
+
+      // Check if the file exists
+      final file = File(filePath);
+      if (await file.exists()) {
+        await file.delete();
+        Dialogs.showSnackBar(context, 'Deleted successfully!');
+        setState(() {
+          fileExists[fileName] = false;
+        });
+      } else {
+        print('File $fileName does not exist.');
+      }
+    } catch (e) {
+      Dialogs.showErrorSnackBar(context, e.toString());
     }
   }
 
-  Future<void> downloadFile(
+  Future<void> _downloadFile(
     int index,
     Function(double, double) onProgress,
   ) async {
     final appDocDir = await getApplicationDocumentsDirectory();
     final appDocPath = '${appDocDir.path}/${pdfData[index]['name']}';
-    await deleteFileIfExists(pdfData[index]['name']);
+    await _deleteFileIfExists(pdfData[index]['name']);
     Dio dio = Dio();
     setState(() {
       downloading[pdfData[index]['name']] = true;
@@ -524,7 +527,7 @@ class _PdfScreenState extends State<PdfScreen> {
     }
   }
 
-  void cancelDownload(String name) {
+  void _cancelDownload(String name) {
     cancelTokens[name]?.cancel();
     setState(() {
       downloading[name] = false;
