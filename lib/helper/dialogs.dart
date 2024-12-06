@@ -7,7 +7,7 @@ class Dialogs {
       SnackBar(
         content: Text(msg,
             style: const TextStyle(color: Colors.white, letterSpacing: 1)),
-        backgroundColor: Colors.red.withOpacity(.8),
+        backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

@@ -1,16 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glow/flutter_glow.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:fluttermoji/fluttermoji.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
-import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../providers/my_themes.dart';
-import '../screens/profile/profile_screen.dart';
 import '../widgets/particle_animation.dart';
 
 import './change_theme_button.dart';
@@ -42,10 +38,10 @@ class _MainDrawerState extends State<MainDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final name = APIs.me.name;
-    final image = APIs.me.image;
+    // final name = APIs.me.name;
+    // final image = APIs.me.image;
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final img = FluttermojiFunctions().decodeFluttermojifromString(image);
+    // final img = FluttermojiFunctions().decodeFluttermojifromString(image);
     return Drawer(
         child: Stack(
       children: [
@@ -59,28 +55,41 @@ class _MainDrawerState extends State<MainDrawer> {
               child: Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
-                        top: mq.height * .01, left: mq.width * .05),
-                    child: Text(
-                      name == 'Unknown'
-                          ? 'Let\'s Study!'
-                          : 'Hi ${name.split(' ').first}!',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: name.length > 9 ? 25 : 30,
-                          color: themeProvider.isDarkMode
-                              ? Colors.yellow.shade800
-                              : Colors.blue.shade800),
-                    ),
-                  ),
+                      padding: EdgeInsets.only(
+                          top: mq.height * .01, left: mq.width * .05),
+                      child: Text(
+                        'Let\'s Study!',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 30,
+                            color: themeProvider.isDarkMode
+                                ? Colors.yellow.shade800
+                                : Colors.blue.shade800),
+                      )
+                      // child: Text(
+                      //   name == 'Unknown'
+                      //       ? 'Let\'s Study!'
+                      //       : 'Hi ${name.split(' ').first}!',
+                      //   style: TextStyle(
+                      //       fontWeight: FontWeight.w900,
+                      //       fontSize: name.length > 9 ? 25 : 30,
+                      //       color: themeProvider.isDarkMode
+                      //           ? Colors.yellow.shade800
+                      //           : Colors.blue.shade800),
+                      // ),
+                      ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
-                    child: image != ''
-                        ? SizedBox(
-                            width: mq.width * .15,
-                            child: SvgPicture.string(img))
-                        : Image.asset('assets/images/book.png', width: 50),
+                    child: Image.asset('assets/images/book.png', width: 50),
                   ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
+                  //   child: image != ''
+                  //       ? SizedBox(
+                  //           width: mq.width * .15,
+                  //           child: SvgPicture.string(img))
+                  //       : Image.asset('assets/images/book.png', width: 50),
+                  // ),
                 ],
               ),
             ),
@@ -102,37 +111,37 @@ class _MainDrawerState extends State<MainDrawer> {
               ),
               trailing: const ChangeThemeButton(),
             ),
-            buildListTile(
-              'About',
-              CupertinoIcons.person,
-              () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (_) => ProfileScreen(user: APIs.me)));
-              },
-            ),
-            if (APIs.user.email == 'amansirmaur190402@gmail.com')
-              ListTile(
-                leading: const Icon(Icons.picture_as_pdf_outlined, size: 26),
-                title: const Text(
-                  'PDF Compressor',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                subtitle: const Text(
-                  '(recommended app, not a paid promotion)',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                      color: Colors.grey),
-                ),
-                onTap: () {
-                  const url = 'https://www.freeconvert.com/compress-pdf';
-                  setState(() {
-                    _launchInBrowser(Uri.parse(url));
-                  });
-                },
-              ),
+            // buildListTile(
+            //   'About',
+            //   CupertinoIcons.person,
+            //   () {
+            //     Navigator.push(
+            //         context,
+            //         CupertinoPageRoute(
+            //             builder: (_) => ProfileScreen(user: APIs.me)));
+            //   },
+            // ),
+            // if (APIs.user.email == 'amansirmaur190402@gmail.com')
+            //   ListTile(
+            //     leading: const Icon(Icons.picture_as_pdf_outlined, size: 26),
+            //     title: const Text(
+            //       'PDF Compressor',
+            //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //     ),
+            //     subtitle: const Text(
+            //       '(recommended app, not a paid promotion)',
+            //       style: TextStyle(
+            //           fontWeight: FontWeight.bold,
+            //           letterSpacing: 1,
+            //           color: Colors.grey),
+            //     ),
+            //     onTap: () {
+            //       const url = 'https://www.freeconvert.com/compress-pdf';
+            //       setState(() {
+            //         _launchInBrowser(Uri.parse(url));
+            //       });
+            //     },
+            //   ),
             buildListTile(
               'More Apps!',
               CupertinoIcons.app_badge,
@@ -277,66 +286,66 @@ class _MainDrawerState extends State<MainDrawer> {
                   }),
             ),
             const Spacer(),
-            if (APIs.user.email == 'amansirmaur190402@gmail.com')
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: IconButton.outlined(
-                          icon: const GlowIcon(Icons.payments_outlined,
-                              color: Colors.green),
-                          constraints:
-                              const BoxConstraints(minWidth: 50, minHeight: 50),
-                          onPressed: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (_) => const PaymentScreen()));
-                          },
-                        ),
-                      ),
-                      const Text('Donate Now!'),
-                      const Text(''),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: IconButton.outlined(
-                          icon: const GlowIcon(Icons.share,
-                              color: Colors.lightBlue),
-                          constraints:
-                              const BoxConstraints(minWidth: 50, minHeight: 50),
-                          onPressed: () {},
-                        ),
-                      ),
-                      const Text('Share with your'),
-                      const Text('friends!'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: IconButton.outlined(
-                          icon: const GlowIcon(Icons.star_rate_outlined,
-                              color: Colors.redAccent),
-                          iconSize: 30,
-                          constraints:
-                              const BoxConstraints(minWidth: 50, minHeight: 50),
-                          onPressed: () {},
-                        ),
-                      ),
-                      const Text('Rate us!'),
-                      const Text(''),
-                    ],
-                  ),
-                ],
-              ),
+            // if (APIs.user.email == 'amansirmaur190402@gmail.com')
+            //   Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //     children: [
+            //       Column(
+            //         children: [
+            //           Padding(
+            //             padding: const EdgeInsets.all(8.0),
+            //             child: IconButton.outlined(
+            //               icon: const GlowIcon(Icons.payments_outlined,
+            //                   color: Colors.green),
+            //               constraints:
+            //                   const BoxConstraints(minWidth: 50, minHeight: 50),
+            //               onPressed: () {
+            //                 // Navigator.push(
+            //                 //     context,
+            //                 //     MaterialPageRoute(
+            //                 //         builder: (_) => const PaymentScreen()));
+            //               },
+            //             ),
+            //           ),
+            //           const Text('Donate Now!'),
+            //           const Text(''),
+            //         ],
+            //       ),
+            //       Column(
+            //         children: [
+            //           Padding(
+            //             padding: const EdgeInsets.all(8.0),
+            //             child: IconButton.outlined(
+            //               icon: const GlowIcon(Icons.share,
+            //                   color: Colors.lightBlue),
+            //               constraints:
+            //                   const BoxConstraints(minWidth: 50, minHeight: 50),
+            //               onPressed: () {},
+            //             ),
+            //           ),
+            //           const Text('Share with your'),
+            //           const Text('friends!'),
+            //         ],
+            //       ),
+            //       Column(
+            //         children: [
+            //           Padding(
+            //             padding: const EdgeInsets.all(8.0),
+            //             child: IconButton.outlined(
+            //               icon: const GlowIcon(Icons.star_rate_outlined,
+            //                   color: Colors.redAccent),
+            //               iconSize: 30,
+            //               constraints:
+            //                   const BoxConstraints(minWidth: 50, minHeight: 50),
+            //               onPressed: () {},
+            //             ),
+            //           ),
+            //           const Text('Rate us!'),
+            //           const Text(''),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
             const Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: mq.height * .02),
