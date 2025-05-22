@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+
+import '../../widgets/custom_banner_ad.dart';
 
 class YoutubePlayerScreen extends StatefulWidget {
   final String title;
@@ -24,28 +25,6 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   bool isLoading = true;
   double playbackRate = 1.0;
   bool isFullscreen = false;
-  bool isBannerLoaded = false;
-  late BannerAd bannerAd;
-
-  initializeBannerAd() async {
-    bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isBannerLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          isBannerLoaded = false;
-        },
-      ),
-      request: const AdRequest(),
-    );
-    bannerAd.load();
-  }
 
   Future<void> _fetchPlaylistVideos(String playlistUrl) async {
     try {
@@ -140,7 +119,6 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   @override
   void initState() {
     super.initState();
-    initializeBannerAd();
     _fetchPlaylistVideos(widget.playlistLink);
   }
 
@@ -157,99 +135,97 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: isFullscreen
-          ? null
-          : AppBar(
-              leading: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                tooltip: 'Back',
-                icon: const Icon(CupertinoIcons.chevron_back),
+    return SafeArea(
+      child: Scaffold(
+        appBar: isFullscreen
+            ? null
+            : AppBar(
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  tooltip: 'Back',
+                  icon: const Icon(CupertinoIcons.chevron_back),
+                ),
+                title: Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                actions: [
+                  IconButton(
+                    onPressed: () => _toggleFullscreen(),
+                    tooltip: 'Toggle Fullscreen',
+                    icon: const Icon(Icons.fullscreen_rounded),
+                  ),
+                  IconButton(
+                    onPressed: _showPlaybackOptions,
+                    tooltip: 'Video Settings',
+                    icon: const Icon(CupertinoIcons.gear),
+                  ),
+                ],
               ),
-              title: Text(
-                widget.title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () => _toggleFullscreen(),
-                  tooltip: 'Toggle Fullscreen',
-                  icon: const Icon(Icons.fullscreen_rounded),
-                ),
-                IconButton(
-                  onPressed: _showPlaybackOptions,
-                  tooltip: 'Video Settings',
-                  icon: const Icon(CupertinoIcons.gear),
-                ),
-              ],
-            ),
-      bottomNavigationBar: isFullscreen
-          ? null
-          : isBannerLoaded
-              ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-              : const SizedBox(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : playlistVideos.isEmpty
-              ? const Center(child: Text("No videos found in the playlist."))
-              : Stack(
-                  children: [
-                    Column(
-                      children: [
-                        YoutubePlayer(
-                          controller: _controller,
-                          aspectRatio: isFullscreen ? 16 / 7.44 : 16 / 9,
-                        ),
-                        if (!isFullscreen) ...[
-                          const SizedBox(height: 10),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: playlistVideos.length,
-                              itemBuilder: (context, index) {
-                                final video = playlistVideos[index];
-                                return ListTile(
-                                  leading:
-                                      Image.network(video.thumbnails.lowResUrl),
-                                  title: Text(
-                                    video.title,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Text(
-                                    video.author,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
-                                  ),
-                                  onTap: () {
-                                    _controller.loadVideoById(
-                                      videoId: video.id.value,
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+        bottomNavigationBar: isFullscreen ? null : const CustomBannerAd(),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : playlistVideos.isEmpty
+                ? const Center(child: Text("No videos found in the playlist."))
+                : Stack(
+                    children: [
+                      Column(
+                        children: [
+                          YoutubePlayer(
+                            controller: _controller,
+                            aspectRatio: isFullscreen ? 16 / 7.44 : 16 / 9,
                           ),
-                        ]
-                      ],
-                    ),
-                    if (isFullscreen)
-                      Positioned(
-                        top: 16,
-                        right: 75,
-                        child: IconButton(
-                            onPressed: _toggleFullscreen,
-                            icon: const Icon(
-                              Icons.fullscreen_exit_rounded,
-                              color: Colors.white,
-                            )),
+                          if (!isFullscreen) ...[
+                            const SizedBox(height: 10),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: playlistVideos.length,
+                                itemBuilder: (context, index) {
+                                  final video = playlistVideos[index];
+                                  return ListTile(
+                                    leading: Image.network(
+                                        video.thumbnails.lowResUrl),
+                                    title: Text(
+                                      video.title,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                      video.author,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey),
+                                    ),
+                                    onTap: () {
+                                      _controller.loadVideoById(
+                                        videoId: video.id.value,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ]
+                        ],
                       ),
-                  ],
-                ),
+                      if (isFullscreen)
+                        Positioned(
+                          top: 16,
+                          right: 75,
+                          child: IconButton(
+                              onPressed: _toggleFullscreen,
+                              icon: const Icon(
+                                Icons.fullscreen_exit_rounded,
+                                color: Colors.white,
+                              )),
+                        ),
+                    ],
+                  ),
+      ),
     );
   }
 }

@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../providers/my_themes.dart';
+import '../../widgets/custom_navigation.dart';
 import '../../widgets/glass_container.dart';
 import 'pdf_screen.dart';
 
@@ -24,8 +24,7 @@ class BranchesGrid extends StatelessWidget {
   }
 
   void selectBranch(BuildContext ctx, Map<String, dynamic> branch) {
-    Navigator.of(ctx)
-        .push(CupertinoPageRoute(builder: (ctx) => PdfScreen(branch: branch)));
+    CustomNavigation().navigateWithAd(ctx, PdfScreen(branch: branch));
   }
 
   @override

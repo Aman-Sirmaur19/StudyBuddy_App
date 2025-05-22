@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_glow/flutter_glow.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_glow/flutter_glow.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../main.dart';
 import '../helper/dialogs.dart';
@@ -65,31 +66,11 @@ class _MainDrawerState extends State<MainDrawer> {
                             color: themeProvider.isDarkMode
                                 ? Colors.yellow.shade800
                                 : Colors.blue.shade800),
-                      )
-                      // child: Text(
-                      //   name == 'Unknown'
-                      //       ? 'Let\'s Study!'
-                      //       : 'Hi ${name.split(' ').first}!',
-                      //   style: TextStyle(
-                      //       fontWeight: FontWeight.w900,
-                      //       fontSize: name.length > 9 ? 25 : 30,
-                      //       color: themeProvider.isDarkMode
-                      //           ? Colors.yellow.shade800
-                      //           : Colors.blue.shade800),
-                      // ),
-                      ),
+                      )),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
                     child: Image.asset('assets/images/book.png', width: 50),
                   ),
-                  // Padding(
-                  //   padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
-                  //   child: image != ''
-                  //       ? SizedBox(
-                  //           width: mq.width * .15,
-                  //           child: SvgPicture.string(img))
-                  //       : Image.asset('assets/images/book.png', width: 50),
-                  // ),
                 ],
               ),
             ),
@@ -286,6 +267,49 @@ class _MainDrawerState extends State<MainDrawer> {
                   }),
             ),
             const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                children: [
+                  _customAppListTile(
+                    appLink:
+                        'https://play.google.com/store/apps/details?id=com.sirmaur.attendance_tracker',
+                    imageUrl:
+                        'https://play-lh.googleusercontent.com/yM6xx4rQUYU583yQxBh8uze0nipScuPbRDMMC53Z_O-iw2D-Whq7pCW3DHRZGDlXbDo=w480-h960-rw',
+                    firstName: 'Attendance',
+                    lastName: 'Tracker',
+                    firstColor: Colors.lightBlue,
+                    lastColor: Colors.amber.shade700,
+                    subtitle: 'Track your college attendance',
+                  ),
+                  const SizedBox(height: 5),
+                  _customAppListTile(
+                    appLink:
+                        'https://play.google.com/store/apps/details?id=com.sirmaur.habito',
+                    imageUrl:
+                        'https://play-lh.googleusercontent.com/6pVzCQ-zskiVRkDHCfplR_2JNIUgotMHc_5wGG3EsQR9maMJeIoIhWjpkk4qyR_-UZ5a=w480-h960-rw',
+                    firstName: 'Habit ',
+                    lastName: 'Tracker',
+                    firstColor: Colors.lightBlue,
+                    lastColor: Colors.red,
+                    subtitle: 'Track your daily habits',
+                  ),
+                  const SizedBox(height: 5),
+                  _customAppListTile(
+                    appLink:
+                        'https://play.google.com/store/apps/details?id=com.sirmaur.shreemad_bhagavad_geeta',
+                    imageUrl:
+                        'https://play-lh.googleusercontent.com/L4FMm88yMoWIKhUX3U1XJTmvd8_MkoQUX4IfN61QBSq51GWpnMPvs4Dz7gpmlmXspA=w480-h960-rw',
+                    firstName: 'Bhagavad ',
+                    lastName: 'Gita',
+                    firstColor: Colors.orange.shade600,
+                    lastColor: Colors.green,
+                    subtitle: 'Listen the Divine Song of God',
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(),
             // if (APIs.user.email == 'amansirmaur190402@gmail.com')
             //   Row(
             //     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -359,5 +383,54 @@ class _MainDrawerState extends State<MainDrawer> {
         ),
       ],
     ));
+  }
+
+  Widget _customAppListTile({
+    required String appLink,
+    required String imageUrl,
+    required String firstName,
+    required String lastName,
+    required String subtitle,
+    required Color firstColor,
+    required Color lastColor,
+  }) {
+    return ListTile(
+      onTap: () async {
+        setState(() {
+          _launchInBrowser(Uri.parse(appLink));
+        });
+      },
+      contentPadding: const EdgeInsets.only(left: 5),
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: Colors.grey),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      leading: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: CachedNetworkImage(
+            imageUrl: imageUrl,
+            width: 45,
+          )),
+      title: RichText(
+          text: TextSpan(
+        text: firstName,
+        style: TextStyle(
+          fontSize: 20,
+          color: firstColor,
+          fontWeight: FontWeight.bold,
+        ),
+        children: [
+          TextSpan(
+            text: lastName,
+            style: TextStyle(
+              fontSize: 20,
+              color: lastColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      )),
+      subtitle: Text(subtitle),
+    );
   }
 }

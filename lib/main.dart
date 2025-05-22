@@ -5,8 +5,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'firebase_options.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 
+import 'providers/my_themes.dart';
 import 'screens/splash_screen.dart';
-import './providers/my_themes.dart';
+import 'widgets/custom_navigation.dart';
 
 // global object for accessing device screen size
 late Size mq;
@@ -37,6 +38,7 @@ _initializeFirebase() async {
 
 _initializeMobileAds() async {
   await MobileAds.instance.initialize();
+  CustomNavigation().initialize();
 }
 
 void main() {

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
 import '../../api/apis.dart';
+import '../../widgets/custom_banner_ad.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   final bool? isDownloaded;
@@ -23,31 +23,9 @@ class PdfViewerScreen extends StatefulWidget {
 }
 
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
-  Future<String>? pdfPathFuture;
+  Future<String>? _pdfPathFuture;
   PDFViewController? _pdfViewController;
   int? _totalPages;
-  bool isBannerLoaded = false;
-  late BannerAd bannerAd;
-
-  initializeBannerAd() async {
-    bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isBannerLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          isBannerLoaded = false;
-        },
-      ),
-      request: const AdRequest(),
-    );
-    bannerAd.load();
-  }
 
   void _goToPageDialog() {
     showDialog(
@@ -98,8 +76,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   @override
   void initState() {
     super.initState();
-    initializeBannerAd();
-    pdfPathFuture = _initialisePdf();
+    _pdfPathFuture = _initialisePdf();
   }
 
   Future<String> _initialisePdf() async {
@@ -117,88 +94,89 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          tooltip: 'Back',
-          icon: const Icon(CupertinoIcons.chevron_back),
-        ),
-        title: Text(
-          widget.pdfName.split('.').first,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _goToPageDialog,
-            tooltip: 'Go to Page',
-            icon: const Icon(CupertinoIcons.doc_text_search),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Back',
+            icon: const Icon(CupertinoIcons.chevron_back),
           ),
-        ],
-      ),
-      bottomNavigationBar: isBannerLoaded
-          ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-          : const SizedBox(),
-      body: FutureBuilder<String>(
-        future: pdfPathFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Invalid PDF path.'));
-          }
+          title: Text(
+            widget.pdfName.split('.').first,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style:
+                const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+          ),
+          actions: [
+            IconButton(
+              onPressed: _goToPageDialog,
+              tooltip: 'Go to Page',
+              icon: const Icon(CupertinoIcons.doc_text_search),
+            ),
+          ],
+        ),
+        bottomNavigationBar: const CustomBannerAd(),
+        body: FutureBuilder<String>(
+          future: _pdfPathFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('Invalid PDF path.'));
+            }
 
-          final path = snapshot.data!;
-          return widget.isDownloaded!
-              ? PDF(
-                  enableSwipe: true,
-                  swipeHorizontal: true,
-                  onViewCreated: (controller) {
-                    _pdfViewController = controller;
-                  },
-                  onPageChanged: (currentPage, totalPages) {
-                    setState(() {
-                      _totalPages = totalPages;
-                    });
-                  },
-                ).fromPath(path)
-              : PDF(
-                  enableSwipe: true,
-                  swipeHorizontal: true,
-                  onViewCreated: (controller) {
-                    _pdfViewController = controller;
-                  },
-                  onPageChanged: (currentPage, totalPages) {
-                    setState(() {
-                      _totalPages = totalPages;
-                    });
-                  },
-                ).cachedFromUrl(
-                  path,
-                  placeholder: (progress) => Center(
-                      child: Text(
-                    '$progress %\nLoading',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  )),
-                  errorWidget: (error) => const Center(
-                      child: Text(
-                    'Kindly check your internet connection!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                    ),
-                  )),
-                );
-        },
+            final path = snapshot.data!;
+            return widget.isDownloaded!
+                ? PDF(
+                    enableSwipe: true,
+                    swipeHorizontal: true,
+                    onViewCreated: (controller) {
+                      _pdfViewController = controller;
+                    },
+                    onPageChanged: (currentPage, totalPages) {
+                      setState(() {
+                        _totalPages = totalPages;
+                      });
+                    },
+                  ).fromPath(path)
+                : PDF(
+                    enableSwipe: true,
+                    swipeHorizontal: true,
+                    onViewCreated: (controller) {
+                      _pdfViewController = controller;
+                    },
+                    onPageChanged: (currentPage, totalPages) {
+                      setState(() {
+                        _totalPages = totalPages;
+                      });
+                    },
+                  ).cachedFromUrl(
+                    path,
+                    placeholder: (progress) => Center(
+                        child: Text(
+                      '$progress %\nLoading',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    )),
+                    errorWidget: (error) => const Center(
+                        child: Text(
+                      'Kindly check your internet connection!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    )),
+                  );
+          },
+        ),
       ),
     );
   }

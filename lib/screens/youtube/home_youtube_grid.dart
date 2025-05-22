@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../widgets/custom_navigation.dart';
 import '../../widgets/glass_container.dart';
 import 'playlists.dart';
 
-class YoutubeGrid extends StatelessWidget {
-  const YoutubeGrid({super.key});
+class HomeYoutubeGrid extends StatelessWidget {
+  const HomeYoutubeGrid({super.key});
 
   Future<List<Map<String, dynamic>>> fetchYoutubeTopics() async {
     try {
@@ -46,14 +46,13 @@ class YoutubeGrid extends StatelessWidget {
           itemCount: youtubeTopics.length < 6 ? youtubeTopics.length : 6,
           itemBuilder: (context, index) {
             return InkWell(
-              onTap: () => Navigator.push(
+              onTap: () => CustomNavigation().navigateWithAd(
                   context,
-                  CupertinoPageRoute(
-                      builder: (context) => Playlists(
-                            id: youtubeTopics[index]['id'],
-                            title: youtubeTopics[index]['name'],
-                            imageUrl: youtubeTopics[index]['url'],
-                          ))),
+                  Playlists(
+                    id: youtubeTopics[index]['id'],
+                    title: youtubeTopics[index]['name'],
+                    imageUrl: youtubeTopics[index]['url'],
+                  )),
               borderRadius: BorderRadius.circular(30),
               child: GlassContainer(
                 color1: Colors.redAccent.shade200,

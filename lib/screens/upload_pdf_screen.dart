@@ -1,18 +1,17 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../main.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
-import '../main.dart';
-import '../models/pdf_model.dart';
 import '../helper/get_file_size.dart';
+import '../widgets/custom_banner_ad.dart';
 import '../widgets/particle_animation.dart';
 
 class UploadPdfScreen extends StatefulWidget {
@@ -32,9 +31,6 @@ class UploadPdfScreen extends StatefulWidget {
 }
 
 class _UploadPdfScreenState extends State<UploadPdfScreen> {
-  bool isBannerLoaded = false;
-  late BannerAd bannerAd;
-
   bool loading = false;
   double perCent = 0;
 
@@ -43,27 +39,6 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   String? selectedCategory;
 
   List<String> categories = [];
-
-  initializeBannerAd() async {
-    bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isBannerLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          isBannerLoaded = false;
-          log(error.message);
-        },
-      ),
-      request: const AdRequest(),
-    );
-    bannerAd.load();
-  }
 
   Future<void> _fetchBranches() async {
     try {
@@ -84,7 +59,6 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   @override
   void initState() {
     super.initState();
-    initializeBannerAd();
     _fetchBranches();
   }
 
@@ -109,9 +83,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
       ),
-      bottomNavigationBar: isBannerLoaded
-          ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-          : const SizedBox(),
+      bottomNavigationBar: const CustomBannerAd(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Stack(

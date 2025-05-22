@@ -9,11 +9,12 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../main.dart';
+import '../../secrets.dart';
 import '../../api/apis.dart';
-import '../../providers/permission.dart';
 import '../../helper/dialogs.dart';
 import '../../widgets/chart_bar.dart';
-
+import '../../widgets/custom_banner_ad.dart';
+import '../../widgets/custom_navigation.dart';
 import '../../widgets/particle_animation.dart';
 import 'pdf_viewer_screen.dart';
 
@@ -28,13 +29,11 @@ class PdfScreen extends StatefulWidget {
 
 class _PdfScreenState extends State<PdfScreen> {
   BuildContext? _scaffoldContext;
-  bool isBanner1Loaded = false;
-  bool isBanner2Loaded = false;
-  late BannerAd bannerAd1;
-  late BannerAd bannerAd2;
 
-  bool isInterstitialLoaded = false;
-  late InterstitialAd interstitialAd;
+  int _downloadCount = 0;
+  bool _isInterstitialLoaded = false;
+  bool _isAdBeingLoaded = false;
+  InterstitialAd? _interstitialAd;
 
   Map<String, bool> downloading = {};
   Map<String, bool> fileExists = {};
@@ -52,79 +51,48 @@ class _PdfScreenState extends State<PdfScreen> {
   //for storing searched items
   final List<Map<String, dynamic>> _searchList = [];
 
-  initializeBannerAd() async {
-    bannerAd1 = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isBanner1Loaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          isBanner1Loaded = false;
-          log(error.message);
-        },
-      ),
-      request: const AdRequest(),
-    );
-    bannerAd2 = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isBanner2Loaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          isBanner2Loaded = false;
-          log(error.message);
-        },
-      ),
-      request: const AdRequest(),
-    );
-    bannerAd1.load();
-    bannerAd2.load();
-  }
+  void _initializeInterstitialAd() {
+    if (_isInterstitialLoaded || _isAdBeingLoaded) return;
 
-  initializeInterstitialAd() async {
+    _isAdBeingLoaded = true;
+
     InterstitialAd.load(
-      adUnitId: 'ca-app-pub-9389901804535827/9271623155',
+      adUnitId: Secrets.interstitialAdId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          interstitialAd = ad;
-          setState(() {
-            isInterstitialLoaded = true;
-          });
-          interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+          _interstitialAd = ad;
+          _isInterstitialLoaded = true;
+          _isAdBeingLoaded = false;
+
+          _interstitialAd!.fullScreenContentCallback =
+              FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              initializeInterstitialAd();
+              _interstitialAd = null;
+              _isInterstitialLoaded = false;
+              _initializeInterstitialAd(); // preload next
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
-              initializeInterstitialAd();
+              _interstitialAd = null;
+              _isInterstitialLoaded = false;
+              _initializeInterstitialAd(); // try loading again
             },
           );
         },
         onAdFailedToLoad: (error) {
-          log(error.message);
-          interstitialAd.dispose();
-          setState(() {
-            isInterstitialLoaded = false;
-          });
+          log('Interstitial failed to load: ${error.message}');
+          _isInterstitialLoaded = false;
+          _isAdBeingLoaded = false;
+          _interstitialAd = null;
         },
       ),
     );
   }
 
   // for accessing files
-  void getAllPdfs() async {
+  void _getAllPdfs() async {
     final results =
         await APIs.storage.ref('PDFs/${widget.branch['name']}').listAll();
     pdfData = await Future.wait(
@@ -150,7 +118,7 @@ class _PdfScreenState extends State<PdfScreen> {
 
     // Initialize the download state maps and check if the file is downloaded
     for (var pdf in pdfData) {
-      bool fileDownloaded = await checkFileDownloaded(pdf['name']);
+      bool fileDownloaded = await _checkFileDownloaded(pdf['name']);
       setState(() {
         downloading[pdf['name']] = false;
         fileExists[pdf['name']] = fileDownloaded;
@@ -167,9 +135,8 @@ class _PdfScreenState extends State<PdfScreen> {
   @override
   void initState() {
     super.initState();
-    initializeBannerAd();
-    initializeInterstitialAd();
-    getAllPdfs();
+    _initializeInterstitialAd();
+    _getAllPdfs();
     // fetchPdfData();
   }
 
@@ -180,7 +147,7 @@ class _PdfScreenState extends State<PdfScreen> {
   }
 
   Future<void> _refresh() async {
-    getAllPdfs();
+    _getAllPdfs();
     // fetchPdfData();
   }
 
@@ -196,96 +163,96 @@ class _PdfScreenState extends State<PdfScreen> {
             });
           }
         },
-        child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Back',
-              icon: const Icon(CupertinoIcons.chevron_back),
-            ),
-            title: _isSearching
-                ? TextField(
-                    cursorColor: Colors.blue,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter PDF name...',
-                    ),
-                    autofocus: true,
-                    style: const TextStyle(fontSize: 17, letterSpacing: 1),
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                tooltip: 'Back',
+                icon: const Icon(CupertinoIcons.chevron_back),
+              ),
+              title: _isSearching
+                  ? TextField(
+                      cursorColor: Colors.blue,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter PDF name...',
+                      ),
+                      autofocus: true,
+                      style: const TextStyle(fontSize: 17, letterSpacing: 1),
 
-                    // when search text changes, update search list
-                    onChanged: (val) {
-                      // search logic
-                      _searchList.clear();
-                      for (var i in pdfData) {
-                        if (i['name']
-                            .toLowerCase()
-                            .contains(val.toLowerCase())) {
-                          _searchList.add(i);
+                      // when search text changes, update search list
+                      onChanged: (val) {
+                        // search logic
+                        _searchList.clear();
+                        for (var i in pdfData) {
+                          if (i['name']
+                              .toLowerCase()
+                              .contains(val.toLowerCase())) {
+                            _searchList.add(i);
+                          }
+                          setState(() {
+                            _searchList;
+                          });
                         }
-                        setState(() {
-                          _searchList;
-                        });
-                      }
-                    },
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.branch['name'],
-                          style: const TextStyle(
-                            fontSize: 20,
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.bold,
-                            overflow: TextOverflow.ellipsis,
+                      },
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.branch['name'],
+                            style: const TextStyle(
+                              fontSize: 20,
+                              letterSpacing: 1,
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 10),
-                        child: CachedNetworkImage(
-                          imageUrl: widget.branch['url'],
-                          width: mq.width * .11,
+                        Container(
+                          margin: const EdgeInsets.only(left: 10),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.branch['url'],
+                            width: mq.width * .11,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-            actions: [
-              IconButton(
-                icon: Icon(_isSearching
-                    ? CupertinoIcons.clear_circled_solid
-                    : CupertinoIcons.search),
-                tooltip: _isSearching ? 'Close' : 'Search',
-                onPressed: () {
-                  setState(() {
-                    _isSearching = !_isSearching;
-                  });
-                },
-              ),
-            ],
-          ),
-          bottomNavigationBar: isBanner2Loaded
-              ? SizedBox(height: 50, child: AdWidget(ad: bannerAd2))
-              : const SizedBox(),
-          body: Stack(
-            children: [
-              particles(context),
-              _isLoading
-                  ? Center(
+                      ],
+                    ),
+              actions: [
+                IconButton(
+                  icon: Icon(_isSearching
+                      ? CupertinoIcons.clear_circled_solid
+                      : CupertinoIcons.search),
+                  tooltip: _isSearching ? 'Close' : 'Search',
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = !_isSearching;
+                    });
+                  },
+                ),
+              ],
+            ),
+            bottomNavigationBar: const CustomBannerAd(),
+            body: Stack(
+              children: [
+                particles(context),
+                _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary),
+                      )
+                    : pdfData.isEmpty
+                        ? SingleChildScrollView(child: _pdfDataIsEmpty())
+                        : _pdfDataIsNotEmpty(),
+                if (_isDeleting)
+                  Center(
                       child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.secondary),
-                    )
-                  : pdfData.isEmpty
-                      ? SingleChildScrollView(child: _pdfDataIsEmpty())
-                      : _pdfDataIsNotEmpty(),
-              if (_isDeleting)
-                Center(
-                    child: CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.secondary))
-            ],
+                          color: Theme.of(context).colorScheme.secondary))
+              ],
+            ),
           ),
         ),
       ),
@@ -298,9 +265,7 @@ class _PdfScreenState extends State<PdfScreen> {
         padding: EdgeInsets.only(top: mq.height * .07),
         child: Column(
           children: [
-            isBanner1Loaded
-                ? SizedBox(height: 50, child: AdWidget(ad: bannerAd1))
-                : const SizedBox(),
+            const CustomBannerAd(),
             Padding(
               padding: EdgeInsets.only(bottom: mq.height * .04),
               child: const Text(
@@ -328,19 +293,17 @@ class _PdfScreenState extends State<PdfScreen> {
       itemBuilder: (context, index) {
         return Card(
             child: InkWell(
-          onTap: () {
-            if (isInterstitialLoaded) interstitialAd.show();
-            Navigator.of(context).push(CupertinoPageRoute(
-                builder: (context) => PdfViewerScreen(
-                      isDownloaded: fileExists[pdfData[index]['name']],
-                      pdfName: _isSearching
-                          ? _searchList[index]['name']
-                          : pdfData[index]['name'],
-                      pdfUrl: _isSearching
-                          ? _searchList[index]['url']
-                          : pdfData[index]['url'],
-                    )));
-          },
+          onTap: () => CustomNavigation().navigateWithAd(
+              context,
+              PdfViewerScreen(
+                isDownloaded: fileExists[pdfData[index]['name']],
+                pdfName: _isSearching
+                    ? _searchList[index]['name']
+                    : pdfData[index]['name'],
+                pdfUrl: _isSearching
+                    ? _searchList[index]['url']
+                    : pdfData[index]['url'],
+              )),
           child: ListTile(
               leading: CachedNetworkImage(
                 imageUrl: widget.branch['url'],
@@ -383,8 +346,15 @@ class _PdfScreenState extends State<PdfScreen> {
                               tooltip: 'Download',
                               icon: const Icon(Icons.file_download_outlined),
                               onPressed: () async {
-                                if (isInterstitialLoaded) {
-                                  interstitialAd.show();
+                                if (_isInterstitialLoaded &&
+                                    _downloadCount == 4) {
+                                  _interstitialAd!.show();
+                                  _downloadCount = 0;
+                                  _isInterstitialLoaded = false;
+                                  _interstitialAd = null;
+                                  _initializeInterstitialAd();
+                                } else {
+                                  _downloadCount++;
                                 }
                                 // bool permission = false;
                                 // if (!permission) {
@@ -448,7 +418,7 @@ class _PdfScreenState extends State<PdfScreen> {
     );
   }
 
-  Future<bool> checkFileDownloaded(String name) async {
+  Future<bool> _checkFileDownloaded(String name) async {
     final appDocDir = await getApplicationDocumentsDirectory();
     final appDocPath = '${appDocDir.path}/$name';
     bool check = await File(appDocPath).exists();

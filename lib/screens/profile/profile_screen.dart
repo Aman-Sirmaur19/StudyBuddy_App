@@ -1,60 +1,23 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../main.dart';
-import '../../models/main_user.dart';
 import '../../api/apis.dart';
 import '../../helper/dialogs.dart';
+import '../../models/main_user.dart';
+import '../../widgets/custom_banner_ad.dart';
+import '../../widgets/custom_navigation.dart';
 import '../../widgets/particle_animation.dart';
+import '../../widgets/custom_text_form_field.dart';
 
 import '../profile/avatar_screen.dart';
 
-// profile screen -- to show signed in user info
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   final MainUser user;
-
-  const ProfileScreen({super.key, required this.user});
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  bool isBannerLoaded = false;
-  late BannerAd bannerAd;
-
-  initializeBannerAd() async {
-    bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-9389901804535827/8331104249',
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            isBannerLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          isBannerLoaded = false;
-          log(error.message);
-        },
-      ),
-      request: const AdRequest(),
-    );
-    bannerAd.load();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initializeBannerAd();
-  }
+  ProfileScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
         ),
-        bottomNavigationBar: isBannerLoaded
-            ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
-            : const SizedBox(),
+        bottomNavigationBar: const CustomBannerAd(),
         body: Stack(
           children: [
             particles(context),
@@ -92,10 +53,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(mq.height * .075),
                         onTap: () {
                           // _showBottomSheet();
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (_) => const AvatarScreen()));
+                          CustomNavigation()
+                              .navigateWithAd(context, const AvatarScreen());
                         },
                         child: FluttermojiCircleAvatar(
                           backgroundColor: Colors.grey[200],
@@ -105,48 +64,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: mq.height * .02),
                       Text(APIs.user.email!),
                       SizedBox(height: mq.height * .05),
-                      customTextFormField(
-                        widget.user.name,
-                        (val) => APIs.me.name = val ?? '',
-                        (val) => val != null && val.isNotEmpty
+                      CustomTextFormField(
+                        initialValue: user.name,
+                        icon: CupertinoIcons.person,
+                        hintText: 'eg. Aman Sirmaur',
+                        labelText: 'Name',
+                        onSaved: (val) => APIs.me.name = val ?? '',
+                        validator: (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        CupertinoIcons.person,
-                        'Name',
-                        'eg. Aman Sirmaur',
                       ),
                       SizedBox(height: mq.height * .02),
-                      customTextFormField(
-                        widget.user.about,
-                        (val) => APIs.me.about = val ?? '',
-                        (val) => val != null && val.isNotEmpty
+                      CustomTextFormField(
+                        initialValue: user.about,
+                        icon: CupertinoIcons.pencil_ellipsis_rectangle,
+                        hintText: 'eg. Feeling Happy!',
+                        labelText: 'About',
+                        onSaved: (val) => APIs.me.about = val ?? '',
+                        validator: (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        CupertinoIcons.pencil_ellipsis_rectangle,
-                        'About',
-                        'eg. Feeling Happy!',
                       ),
                       SizedBox(height: mq.height * .02),
-                      customTextFormField(
-                        widget.user.branch,
-                        (val) => APIs.me.branch = val ?? '',
-                        (val) => val != null && val.isNotEmpty
+                      CustomTextFormField(
+                        initialValue: user.branch,
+                        icon: Icons.school_outlined,
+                        hintText: 'eg. Mechanical Engineering',
+                        labelText: 'Branch',
+                        onSaved: (val) => APIs.me.branch = val ?? '',
+                        validator: (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        Icons.school_outlined,
-                        'Branch',
-                        'eg. Mechanical Engineering',
                       ),
                       SizedBox(height: mq.height * .02),
-                      customTextFormField(
-                        widget.user.college,
-                        (val) => APIs.me.college = val ?? '',
-                        (val) => val != null && val.isNotEmpty
+                      CustomTextFormField(
+                        initialValue: user.college,
+                        icon: Icons.apartment_rounded,
+                        hintText: 'eg. NIT Agartala',
+                        labelText: 'College',
+                        onSaved: (val) => APIs.me.college = val ?? '',
+                        validator: (val) => val != null && val.isNotEmpty
                             ? null
                             : 'Required Field',
-                        Icons.apartment_rounded,
-                        'College',
-                        'eg. NIT Agartala',
                       ),
                       SizedBox(height: mq.height * .02),
                       ElevatedButton.icon(
@@ -173,46 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget customTextFormField(
-    String? initialValue,
-    void Function(String?)? onSaved,
-    String? Function(String?)? validator,
-    IconData? icon,
-    String? labelText,
-    String? hintText,
-  ) {
-    return TextFormField(
-      initialValue: initialValue,
-      onSaved: onSaved,
-      validator: validator,
-      cursorColor: Colors.blue,
-      decoration: InputDecoration(
-        labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-        prefixIcon: Icon(
-          icon,
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        labelText: labelText,
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide:
-              BorderSide(color: Theme.of(context).colorScheme.secondary),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.secondary.withOpacity(.4)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide:
-              BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
     );
