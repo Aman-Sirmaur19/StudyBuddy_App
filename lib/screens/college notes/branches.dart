@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../providers/my_themes.dart';
-import '../../widgets/custom_navigation.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/custom_banner_ad.dart';
+import '../../widgets/custom_navigation.dart';
 import '../../widgets/particle_animation.dart';
 import 'pdf_screen.dart';
 
@@ -32,7 +30,6 @@ class AllBranchesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -77,10 +74,10 @@ class AllBranchesScreen extends StatelessWidget {
                       onTap: () => selectBranch(context, branches[index]),
                       borderRadius: BorderRadius.circular(30),
                       child: GlassContainer(
-                        color1: themeProvider.isDarkMode
+                        color1: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
                             : Colors.blue,
-                        color2: themeProvider.isDarkMode
+                        color2: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white10
                             : Colors.blue.shade200,
                         child: Column(

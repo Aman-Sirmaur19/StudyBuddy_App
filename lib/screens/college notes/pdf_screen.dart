@@ -10,8 +10,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../main.dart';
 import '../../secrets.dart';
-import '../../api/apis.dart';
-import '../../helper/dialogs.dart';
+import '../../services/apis.dart';
+import '../../utils/dialogs.dart';
 import '../../widgets/chart_bar.dart';
 import '../../widgets/custom_banner_ad.dart';
 import '../../widgets/custom_navigation.dart';

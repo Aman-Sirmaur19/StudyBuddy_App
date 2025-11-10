@@ -6,8 +6,8 @@ import 'package:fluttermoji/fluttermoji.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../main.dart';
-import '../../api/apis.dart';
-import '../../helper/dialogs.dart';
+import '../../services/apis.dart';
+import '../../utils/dialogs.dart';
 import '../../widgets/custom_banner_ad.dart';
 import '../../widgets/particle_animation.dart';
 

@@ -8,9 +8,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../main.dart';
-import '../api/apis.dart';
-import '../helper/dialogs.dart';
-import '../helper/get_file_size.dart';
+import '../services/apis.dart';
+import '../utils/dialogs.dart';
+import '../utils/get_file_size.dart';
 import '../widgets/custom_banner_ad.dart';
 import '../widgets/particle_animation.dart';
 

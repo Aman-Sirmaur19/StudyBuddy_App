@@ -88,6 +88,7 @@ class _CustomBannerAdState extends State<CustomBannerAd> {
 
   @override
   Widget build(BuildContext context) {
+    // return const SizedBox();
     return isBannerAdLoaded
         ? SizedBox(height: 50, child: AdWidget(ad: bannerAd))
         : isNativeAdLoaded

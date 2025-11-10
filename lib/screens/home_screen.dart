@@ -1,14 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:in_app_update/in_app_update.dart';
 
-import '../api/apis.dart';
-import '../helper/dialogs.dart';
-import '../providers/my_themes.dart';
+import '../services/apis.dart';
+import '../utils/dialogs.dart';
 import '../widgets/main_drawer.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/custom_banner_ad.dart';
@@ -47,6 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: customTitle(22, 1),
           centerTitle: false,
+          // actions: [
+          //   IconButton(
+          //     onPressed: _showLogOutAlertDialog,
+          //     icon: const Icon(Icons.logout_rounded, color: Colors.red),
+          //   ),
+          // ],
         ),
         drawer: const MainDrawer(),
         bottomNavigationBar: const CustomBannerAd(),
@@ -157,7 +161,6 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return ListView(
       padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
       children: [
@@ -200,7 +203,7 @@ class Body extends StatelessWidget {
                 "Show All",
                 style: TextStyle(
                     fontSize: 13,
-                    color: themeProvider.isDarkMode
+                    color: Theme.of(context).brightness == Brightness.dark
                         ? Colors.lightBlue
                         : Colors.blue),
               ),
@@ -217,7 +220,6 @@ class Body extends StatelessWidget {
     required BuildContext context,
     required void Function()? onPressed,
   }) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -230,7 +232,7 @@ class Body extends StatelessWidget {
           child: Text("Show All",
               style: TextStyle(
                   fontSize: 13,
-                  color: themeProvider.isDarkMode
+                  color: Theme.of(context).brightness == Brightness.dark
                       ? Colors.lightBlue
                       : Colors.blue)),
         )

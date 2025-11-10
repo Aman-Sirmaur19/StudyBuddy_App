@@ -19,7 +19,7 @@ class YoutubePlayerScreen extends StatefulWidget {
 }
 
 class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
-  late YoutubePlayerController _controller;
+  YoutubePlayerController? _controller;
   final YoutubeExplode yt = YoutubeExplode();
   List<Video> playlistVideos = [];
   bool isLoading = true;
@@ -27,75 +27,25 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   bool isFullscreen = false;
 
   Future<void> _fetchPlaylistVideos(String playlistUrl) async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final playlistId = PlaylistId.parsePlaylistId(playlistUrl);
       final videos = await yt.playlists.getVideos(playlistId).toList();
-
       setState(() {
         playlistVideos = videos;
         isLoading = false;
       });
-
-      // Initialize the first video in the playlist
-      _controller = YoutubePlayerController.fromVideoId(
-        videoId: videos[0].id.value,
-        autoPlay: false,
-        params: const YoutubePlayerParams(showControls: true),
-      );
+      if (videos.isNotEmpty) {
+        _controller?.loadVideoById(videoId: videos[0].id.value);
+      }
     } catch (e) {
       print('Error fetching playlist videos: $e');
       setState(() {
         isLoading = false;
       });
     }
-  }
-
-  void _showPlaybackOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.only(top: 10),
-          height: 100,
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    title: const Text(
-                      'Playback Speed',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    trailing: DropdownButton<double>(
-                      value: playbackRate, // Use the main state variable
-                      items: [0.25, 0.5, 1.0, 1.5, 2.0]
-                          .map((rate) => DropdownMenuItem(
-                                value: rate,
-                                child: Text(
-                                  '$rate ×',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ))
-                          .toList(),
-                      onChanged: (rate) {
-                        if (rate != null) {
-                          _controller.setPlaybackRate(rate);
-                          setState(() {
-                            playbackRate = rate; // Update the main state
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-      },
-    );
   }
 
   void _toggleFullscreen() {
@@ -119,12 +69,18 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchPlaylistVideos(widget.playlistLink);
+    _controller = YoutubePlayerController(
+      params: const YoutubePlayerParams(
+        showControls: true,
+        origin: 'https://www.youtube-nocookie.com', // The fix for Error 150
+      ),
+    );
+    _fetchPlaylistVideos(widget.playlistLink.trim());
   }
 
   @override
   void dispose() {
-    _controller.close();
+    _controller?.close();
     yt.close();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setPreferredOrientations(
@@ -159,65 +115,69 @@ class _YoutubePlayerScreenState extends State<YoutubePlayerScreen> {
                     tooltip: 'Toggle Fullscreen',
                     icon: const Icon(Icons.fullscreen_rounded),
                   ),
-                  IconButton(
-                    onPressed: _showPlaybackOptions,
-                    tooltip: 'Video Settings',
-                    icon: const Icon(CupertinoIcons.gear),
-                  ),
                 ],
               ),
         bottomNavigationBar: isFullscreen ? null : const CustomBannerAd(),
         body: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator(color: Colors.blue))
             : playlistVideos.isEmpty
                 ? const Center(child: Text("No videos found in the playlist."))
                 : Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Column(
+                      ListView(
                         children: [
-                          YoutubePlayer(
-                            controller: _controller,
-                            aspectRatio: isFullscreen ? 16 / 7.44 : 16 / 9,
-                          ),
+                          // YoutubePlayer(
+                          //   controller: _controller!,
+                          //   aspectRatio: isFullscreen ? 16 / 7.44 : 16 / 9,
+                          // ),
+                          _controller == null
+                              ? const SizedBox.shrink()
+                              : YoutubePlayer(
+                                  controller: _controller!,
+                                  aspectRatio:
+                                      isFullscreen ? 16 / 7.44 : 16 / 9,
+                                ),
                           if (!isFullscreen) ...[
                             const SizedBox(height: 10),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: playlistVideos.length,
-                                itemBuilder: (context, index) {
-                                  final video = playlistVideos[index];
-                                  return ListTile(
-                                    leading: Image.network(
-                                        video.thumbnails.lowResUrl),
-                                    title: Text(
-                                      video.title,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Text(
-                                      video.author,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey),
-                                    ),
-                                    onTap: () {
-                                      _controller.loadVideoById(
-                                        videoId: video.id.value,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: playlistVideos.length,
+                              itemBuilder: (context, index) {
+                                final video = playlistVideos[index];
+                                return ListTile(
+                                  leading:
+                                      Image.network(video.thumbnails.lowResUrl),
+                                  title: Text(
+                                    video.title,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(
+                                    video.author,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey),
+                                  ),
+                                  onTap: () {
+                                    _controller?.loadVideoById(
+                                      videoId: video.id.value,
+                                    );
+                                  },
+                                );
+                              },
                             ),
                           ]
                         ],
                       ),
                       if (isFullscreen)
                         Positioned(
-                          top: 16,
-                          right: 75,
+                          bottom: 60,
+                          right: 10,
                           child: IconButton(
                               onPressed: _toggleFullscreen,
+                              tooltip: 'End Fullscreen',
                               icon: const Icon(
                                 Icons.fullscreen_exit_rounded,
                                 color: Colors.white,

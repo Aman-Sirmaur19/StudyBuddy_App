@@ -2,16 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../home_screen.dart';
 import '../../../main.dart';
-import '../../../helper/dialogs.dart';
-import '../../../providers/my_themes.dart';
+import '../../../utils/dialogs.dart';
 import '../../../widgets/custom_title.dart';
 import '../../../widgets/custom_banner_ad.dart';
 import '../../../widgets/particle_animation.dart';
+import '../../home_screen.dart';
 
 enum AuthMode { signUp, logIn, reset }
 
@@ -173,7 +171,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     mq = MediaQuery.of(context).size;
 
     return GestureDetector(
@@ -219,12 +216,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? 'Register Here'
                             : 'Reset Password',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: const TextStyle(
                       fontSize: 25,
-                      color: themeProvider.isDarkMode
-                          ? Colors.grey
-                          : Colors.black54,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
@@ -234,12 +228,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? 'Create your account with email-id & password'
                             : 'Enter your registered email to get password reset link',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: const TextStyle(
                       fontSize: 15,
-                      color: themeProvider.isDarkMode
-                          ? Colors.grey
-                          : Colors.black54,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: mq.height * .05),
@@ -314,11 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _authMode = AuthMode.reset;
                           });
                         },
-                        child: Text('Forgot Password?',
-                            style: TextStyle(
-                                color: themeProvider.isDarkMode
-                                    ? Colors.grey
-                                    : Colors.black54)),
+                        child: const Text('Forgot Password?'),
                       ),
                     ),
                   if (_authMode == AuthMode.signUp) const SizedBox(height: 10),
@@ -396,12 +383,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? 'Already have an account?'
                             : 'Don\'t want to reset password?',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.w500,
-                        color: themeProvider.isDarkMode
-                            ? Colors.grey
-                            : Colors.black54),
+                    style: const TextStyle(
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   TextButton(
                     onPressed: _switchAuthMode,

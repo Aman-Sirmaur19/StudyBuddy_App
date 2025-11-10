@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
-import '../../api/apis.dart';
+import '../../services/apis.dart';
 import '../../widgets/custom_banner_ad.dart';
 
 class PdfViewerScreen extends StatefulWidget {

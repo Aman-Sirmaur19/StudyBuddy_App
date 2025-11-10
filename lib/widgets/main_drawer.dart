@@ -1,16 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_glow/flutter_glow.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../main.dart';
-import '../helper/dialogs.dart';
-import '../providers/my_themes.dart';
+import '../utils/dialogs.dart';
 import '../widgets/particle_animation.dart';
-
-import './change_theme_button.dart';
 
 class MainDrawer extends StatefulWidget {
   const MainDrawer({super.key});
@@ -41,7 +36,6 @@ class _MainDrawerState extends State<MainDrawer> {
   Widget build(BuildContext context) {
     // final name = APIs.me.name;
     // final image = APIs.me.image;
-    final themeProvider = Provider.of<ThemeProvider>(context);
     // final img = FluttermojiFunctions().decodeFluttermojifromString(image);
     return Drawer(
         child: Stack(
@@ -63,9 +57,10 @@ class _MainDrawerState extends State<MainDrawer> {
                         style: TextStyle(
                             fontWeight: FontWeight.w900,
                             fontSize: 30,
-                            color: themeProvider.isDarkMode
-                                ? Colors.yellow.shade800
-                                : Colors.blue.shade800),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.yellow.shade800
+                                    : Colors.blue.shade800),
                       )),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: mq.width * .04),
@@ -75,23 +70,25 @@ class _MainDrawerState extends State<MainDrawer> {
               ),
             ),
             SizedBox(height: mq.height * .03),
-            ListTile(
-              leading: GlowIcon(
-                themeProvider.isDarkMode
-                    ? CupertinoIcons.lightbulb_fill
-                    : CupertinoIcons.lightbulb,
-                size: 26,
-                color: themeProvider.isDarkMode
-                    ? Colors.yellowAccent
-                    : Colors.black,
-              ),
-              title: Text(
-                themeProvider.isDarkMode ? 'Light Mode' : 'Dark Mode',
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              trailing: const ChangeThemeButton(),
-            ),
+            // ListTile(
+            //   leading: GlowIcon(
+            //     Theme.of(context).brightness == Brightness.dark
+            //         ? CupertinoIcons.lightbulb_fill
+            //         : CupertinoIcons.lightbulb,
+            //     size: 26,
+            //     color: Theme.of(context).brightness == Brightness.dark
+            //         ? Colors.yellowAccent
+            //         : Colors.black,
+            //   ),
+            //   title: Text(
+            //     Theme.of(context).brightness == Brightness.dark
+            //         ? 'Light Mode'
+            //         : 'Dark Mode',
+            //     style:
+            //         const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            //   ),
+            //   trailing: const ChangeThemeButton(),
+            // ),
             // buildListTile(
             //   'About',
             //   CupertinoIcons.person,
@@ -141,9 +138,10 @@ class _MainDrawerState extends State<MainDrawer> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      backgroundColor: themeProvider.isDarkMode
-                          ? const Color(0xFF444446)
-                          : null,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF444446)
+                              : null,
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -256,7 +254,8 @@ class _MainDrawerState extends State<MainDrawer> {
                           },
                           child: Text('Close',
                               style: TextStyle(
-                                  color: themeProvider.isDarkMode
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
                                       ? Theme.of(context).colorScheme.secondary
                                       : Theme.of(context)
                                           .colorScheme
@@ -270,7 +269,12 @@ class _MainDrawerState extends State<MainDrawer> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text(
+                    ' Sponsored',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   _customAppListTile(
                     appLink:
                         'https://play.google.com/store/apps/details?id=com.sirmaur.attendance_tracker',
@@ -279,20 +283,20 @@ class _MainDrawerState extends State<MainDrawer> {
                     firstName: 'Attendance',
                     lastName: 'Tracker',
                     firstColor: Colors.lightBlue,
-                    lastColor: Colors.amber.shade700,
+                    lastColor: Colors.redAccent,
                     subtitle: 'Track your college attendance',
                   ),
                   const SizedBox(height: 5),
                   _customAppListTile(
                     appLink:
-                        'https://play.google.com/store/apps/details?id=com.sirmaur.habito',
+                        'https://play.google.com/store/apps/details?id=com.sirmaur.jeebuddy',
                     imageUrl:
-                        'https://play-lh.googleusercontent.com/6pVzCQ-zskiVRkDHCfplR_2JNIUgotMHc_5wGG3EsQR9maMJeIoIhWjpkk4qyR_-UZ5a=w480-h960-rw',
-                    firstName: 'Habit ',
-                    lastName: 'Tracker',
-                    firstColor: Colors.lightBlue,
-                    lastColor: Colors.red,
-                    subtitle: 'Track your daily habits',
+                        'https://play-lh.googleusercontent.com/X0VHDLVJEjY9UbCAj4wM_LmPoBii0hNV28ABQ8zidG2OfZ3wWAsZxNLBLVt6c396l6E=w480-h960-rw',
+                    firstName: 'JEE',
+                    lastName: 'Buddy',
+                    firstColor: Colors.orange,
+                    lastColor: Colors.white,
+                    subtitle: 'IIT-JEE College Predictor',
                   ),
                   const SizedBox(height: 5),
                   _customAppListTile(

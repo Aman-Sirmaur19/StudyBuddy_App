@@ -2,14 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
-import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../api/apis.dart';
-import '../../../helper/dialogs.dart';
 import '../../../main.dart';
-import '../../../providers/my_themes.dart';
+import '../../../services/apis.dart';
+import '../../../utils/dialogs.dart';
 import '../../../widgets/custom_title.dart';
 import '../../../widgets/particle_animation.dart';
 import '../../home_screen.dart';
@@ -29,8 +27,6 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -74,25 +70,19 @@ class _OTPScreenState extends State<OTPScreen> {
                         borderRadius: BorderRadius.circular(mq.width * .1),
                         child: Image.asset('assets/images/login.jpg',
                             width: mq.width * .65)),
-                    Text(
+                    const Text(
                       'Enter OTP',
                       style: TextStyle(
                         fontSize: 25,
-                        color: themeProvider.isDarkMode
-                            ? Colors.grey
-                            : Colors.black54,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Enter the 6-digits verification code sent on your phone number',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: themeProvider.isDarkMode
-                            ? Colors.grey
-                            : Colors.black54,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: mq.height * .05),

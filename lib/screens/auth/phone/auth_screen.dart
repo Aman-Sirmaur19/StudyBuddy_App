@@ -4,11 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:provider/provider.dart';
 
 import '../../../main.dart';
-import '../../../helper/dialogs.dart';
-import '../../../providers/my_themes.dart';
+import '../../../utils/dialogs.dart';
 import '../../../widgets/custom_title.dart';
 import '../../../widgets/particle_animation.dart';
 
@@ -46,8 +44,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -91,25 +87,19 @@ class _AuthScreenState extends State<AuthScreen> {
                         borderRadius: BorderRadius.circular(mq.width * .1),
                         child: Image.asset('assets/images/login.jpg',
                             width: mq.width * .65)),
-                    Text(
+                    const Text(
                       'Register Here',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 25,
-                        color: themeProvider.isDarkMode
-                            ? Colors.grey
-                            : Colors.black54,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Enter your phone number. We\'ll send you a verification code',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: themeProvider.isDarkMode
-                            ? Colors.grey
-                            : Colors.black54,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: mq.height * .05),

@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermojiFunctions.dart';
 
 import '../main.dart';
-import '../api/apis.dart';
+import '../services/apis.dart';
 import '../models/main_user.dart';
 import '../widgets/custom_banner_ad.dart';
 import '../widgets/particle_animation.dart';

@@ -1,14 +1,17 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../main.dart';
-import 'home_screen.dart';
-import '../providers/my_themes.dart';
+import '../services/apis.dart';
+import '../utils/dialogs.dart';
 import '../widgets/custom_title.dart';
 import '../widgets/particle_animation.dart';
+import 'home_screen.dart';
+import 'auth/email signin/login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -78,7 +81,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     mq = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -116,10 +118,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.3,
-                        color: themeProvider.isDarkMode
-                            ? Colors.white
-                            : Colors.black),
+                        letterSpacing: 1.3),
                     children: const [
                       TextSpan(text: 'MADE WITH ❤️ IN 🇮🇳'),
                     ],
